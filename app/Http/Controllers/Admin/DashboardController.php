@@ -17,12 +17,12 @@ class DashboardController extends Controller
         $today = today();
 
         $totalKegiatan = Activity::count();
-        $kegiatanHariIni = Activity::whereDate('date', $today)->count();
-        $kegiatanMendatang = Activity::whereDate('date', '>', $today)->count();
-        $kegiatanSelesai = Activity::whereDate('date', '<', $today)->count();
+        $kegiatanHariIni = Activity::whereDate('activity_date', $today)->count();
+        $kegiatanMendatang = Activity::whereDate('activity_date', '>', $today)->count();
+        $kegiatanSelesai = Activity::whereDate('activity_date', '<', $today)->count();
 
-        // Ambil 5 kegiatan terbaru berdasarkan tanggal input / pelaksanaan terbaru
-        $kegiatanTerbaru = Activity::orderBy('date', 'desc')
+        // Ambil 5 kegiatan terbaru berdasarkan tanggal pelaksanaan terbaru
+        $kegiatanTerbaru = Activity::orderBy('activity_date', 'desc')
             ->orderBy('time', 'desc')
             ->take(5)
             ->get();

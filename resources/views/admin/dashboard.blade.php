@@ -118,7 +118,7 @@
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-[#1A1A1A]">
-                                            <div>{{ $kegiatan->date->isoFormat('D MMM YYYY') }}</div>
+                                            <div>{{ $kegiatan->activity_date->isoFormat('D MMM YYYY') }}</div>
                                             <div class="text-xs text-[#6B6B6B] font-mono mt-0.5">
                                                 {{ \Carbon\Carbon::parse($kegiatan->time)->format('H:i') }} WIB
                                             </div>
@@ -128,7 +128,7 @@
                                         </td>
                                         <td class="px-6 py-4 text-sm">
                                             @php
-                                                $kegiatanDate = $kegiatan->date->toDateString();
+                                                $kegiatanDate = $kegiatan->activity_date->toDateString();
                                                 $todayDate = today()->toDateString();
                                             @endphp
 
@@ -181,7 +181,7 @@
                 </div>
 
                 <div class="pt-4 border-t border-[#E8E4DF] text-[0.7rem] text-[#6B6B6B] font-mono space-y-1">
-                    <div>User: <span class="text-[#1A1A1A]">{{ Auth::guard('admin')->user()->email }}</span></div>
+                    <div>User: <span class="text-[#1A1A1A]">{{ Auth::user()->email }}</span></div>
                     <div>Level: <span class="text-[#1A1A1A]">Administrator Utama</span></div>
                 </div>
             </div>

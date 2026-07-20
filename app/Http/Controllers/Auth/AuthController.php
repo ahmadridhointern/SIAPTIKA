@@ -16,7 +16,7 @@ class AuthController extends Controller
      */
     public function showLogin(): View|RedirectResponse
     {
-        if (Auth::guard('admin')->check()) {
+        if (Auth::check()) {
             return redirect()->route('admin.dashboard');
         }
 
@@ -24,13 +24,13 @@ class AuthController extends Controller
     }
 
     /**
-     * Proses login Admin.
+     * Proses login Admin (menggunakan tabel users).
      */
     public function login(LoginRequest $request): RedirectResponse
     {
         $credentials = $request->only('email', 'password');
 
-        if (! Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
+        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             return back()
                 ->withInput($request->only('email'))
                 ->withErrors([
@@ -48,7 +48,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request): RedirectResponse
     {
-        Auth::guard('admin')->logout();
+        Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

@@ -11,10 +11,11 @@ class AdminMiddleware
 {
     /**
      * Pastikan hanya Admin yang dapat mengakses route yang dilindungi.
+     * Menggunakan default web guard (tabel users).
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! Auth::guard('admin')->check()) {
+        if (! Auth::check()) {
             return redirect()->route('login')
                 ->with('error', 'Silakan login terlebih dahulu.');
         }

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Admin;
+use App\Models\User;
 
 return [
 
@@ -16,8 +16,8 @@ return [
     */
 
     'defaults' => [
-        'guard'     => env('AUTH_GUARD', 'admin'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'admins'),
+        'guard' => env('AUTH_GUARD', 'web'),
+        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
     /*
@@ -34,9 +34,9 @@ return [
     */
 
     'guards' => [
-        'admin' => [
-            'driver'   => 'session',
-            'provider' => 'admins',
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
         ],
     ],
 
@@ -54,9 +54,9 @@ return [
     */
 
     'providers' => [
-        'admins' => [
+        'users' => [
             'driver' => 'eloquent',
-            'model'  => env('AUTH_MODEL', Admin::class),
+            'model' => env('AUTH_MODEL', User::class),
         ],
     ],
 

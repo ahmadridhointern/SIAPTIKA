@@ -18,7 +18,7 @@ Route::get('/', function () {
 | Auth Routes — Hanya untuk guest (belum login)
 |--------------------------------------------------------------------------
 */
-Route::middleware('guest:admin')->group(function () {
+Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 });

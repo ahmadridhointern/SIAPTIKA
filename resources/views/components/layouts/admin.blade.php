@@ -23,7 +23,7 @@
             {{-- Admin Info + Logout --}}
             <div class="flex items-center gap-5">
                 <span class="text-sm" style="color: #6B6B6B; font-family: 'Source Sans 3', system-ui, sans-serif;">
-                    {{ Auth::guard('admin')->user()->name }}
+                    {{ Auth::user()->name }}
                 </span>
                 <form id="form-logout" method="POST" action="{{ route('admin.logout') }}">
                     @csrf
