@@ -1,9 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
+/* ============================================================
+   SIAPTIKA Design System — Serif Style
+   Based on designPrompt.xml
+   ============================================================ */
+
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Typography */
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Source Sans 3', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    /* Color Tokens */
+    --color-background: #FAFAF8;
+    --color-foreground: #1A1A1A;
+    --color-muted: #F5F3F0;
+    --color-muted-foreground: #6B6B6B;
+    --color-accent: #B8860B;
+    --color-accent-secondary: #D4A84B;
+    --color-accent-foreground: #FFFFFF;
+    --color-border: #E8E4DF;
+    --color-card: #FFFFFF;
+    --color-ring: #B8860B;
+}
+
+/* ============================================================
+   Base Styles
+   ============================================================ */
+
+body {
+    background-color: #FAFAF8;
+    color: #1A1A1A;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    line-height: 1.75;
+    letter-spacing: 0.01em;
+}
+
+/* ============================================================
+   Typography Utilities
+   ============================================================ */
+
+.font-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+}
+
+.font-mono {
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+/* Small Caps — section labels, meta info */
+.small-caps {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #B8860B;
+}
+
+/* ============================================================
+   Rule Line System
+   ============================================================ */
+
+.rule-line {
+    height: 1px;
+    background-color: #E8E4DF;
+    border: none;
+}
+
+/* ============================================================
+   Paper Texture Overlay (subtle noise)
+   ============================================================ */
+
+.texture-overlay::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.3;
+}
+
+/* ============================================================
+   Form Input Styles
+   ============================================================ */
+
+.input-serif {
+    height: 3rem;
+    width: 100%;
+    border: 1px solid #E8E4DF;
+    border-radius: 0.375rem;
+    background-color: transparent;
+    padding: 0 0.875rem;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-size: 1rem;
+    color: #1A1A1A;
+    transition: all 150ms ease-out;
+    outline: none;
+}
+
+.input-serif:hover {
+    border-color: #B8860B;
+}
+
+.input-serif:focus {
+    border-color: #B8860B;
+    box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.2);
+}
+
+.input-serif::placeholder {
+    color: rgba(107, 107, 107, 0.6);
+}
+
+/* ============================================================
+   Button Styles
+   ============================================================ */
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0 1.75rem;
+    background-color: #B8860B;
+    color: #FFFFFF;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+    transition: all 200ms ease-out;
+    box-shadow: 0 1px 2px rgba(26, 26, 26, 0.04);
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    background-color: #D4A84B;
+    box-shadow: 0 4px 12px rgba(184, 134, 11, 0.25);
+}
+
+.btn-primary:active {
+    background-color: #B8860B;
+}
+
+/* ============================================================
+   Card Styles
+   ============================================================ */
+
+.card-serif {
+    background-color: #FFFFFF;
+    border: 1px solid #E8E4DF;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px rgba(26, 26, 26, 0.04);
+}
+
+.card-serif-accent {
+    border-top: 2px solid #B8860B;
+}
+
+/* ============================================================
+   Alert / Error Styles
+   ============================================================ */
+
+.alert-error {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-left: 3px solid #ef4444;
+    border-radius: 0.375rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: #b91c1c;
 }
