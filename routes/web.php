@@ -30,5 +30,6 @@ Route::middleware('guest')->group(function () {
 */
 Route::middleware('admin.auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('activities', \App\Http\Controllers\Admin\ActivityController::class);
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
