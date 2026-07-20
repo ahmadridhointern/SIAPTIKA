@@ -13,14 +13,21 @@ return new class extends Migration
     {
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->string('title');
             $table->date('activity_date');
             $table->time('time');
             $table->string('location');
             $table->text('description')->nullable();
-            $table->string('status');
+            $table->enum('status', ['scheduled', 'completed'])->default('scheduled');
             $table->timestamps();
+
+            // Database Indexes
+            $table->index('activity_date');
+            $table->index('status');
         });
     }
 

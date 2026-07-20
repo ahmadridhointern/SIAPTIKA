@@ -13,11 +13,17 @@ return new class extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('activity_id')->constrained('activities')->onDelete('cascade');
-            $table->string('document_type'); // 'Dokumen/Surat', 'Notulen', 'Dokumentasi'
+            $table->foreignId('activity_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
+            $table->enum('document_type', ['surat', 'notulen', 'dokumentasi']);
             $table->string('file_name');
             $table->string('file_url');
             $table->timestamps();
+
+            // Database Index
+            $table->index('document_type');
         });
     }
 

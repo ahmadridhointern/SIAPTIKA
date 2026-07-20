@@ -36,6 +36,7 @@ class Activity extends Model
     {
         return [
             'activity_date' => 'date',
+            'time'          => 'string', // time is stored as time string HH:MM:SS in PostgreSQL
         ];
     }
 

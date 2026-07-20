@@ -24,7 +24,7 @@ class ActivitySeeder extends Seeder
             'time'          => '10:00:00',
             'location'      => 'Ruang Rapat Bidang APTIKA',
             'description'   => 'Membahas integrasi sistem informasi dan koordinasi server terpusat Diskominfotik Riau.',
-            'status'        => 'Hari Ini',
+            'status'        => 'scheduled',
         ]);
 
         // 2. Kegiatan Mendatang
@@ -35,7 +35,7 @@ class ActivitySeeder extends Seeder
             'time'          => '14:00:00',
             'location'      => 'Aula Diskominfotik Riau',
             'description'   => 'Pelatihan dan penyuluhan kesadaran siber bagi perwakilan dinas komunikasi daerah.',
-            'status'        => 'Mendatang',
+            'status'        => 'scheduled',
         ]);
 
         // 3. Kegiatan Selesai (Masa Lalu)
@@ -46,7 +46,7 @@ class ActivitySeeder extends Seeder
             'time'          => '09:00:00',
             'location'      => 'Ruang Command Center',
             'description'   => 'Tinjauan performa server layanan publik provinsi selama sebulan terakhir.',
-            'status'         => 'Selesai',
+            'status'        => 'completed',
         ]);
     }
 }
