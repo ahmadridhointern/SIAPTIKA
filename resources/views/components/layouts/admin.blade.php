@@ -25,7 +25,7 @@
                 <span class="text-sm" style="color: #6B6B6B; font-family: 'Source Sans 3', system-ui, sans-serif;">
                     {{ Auth::guard('admin')->user()->name }}
                 </span>
-                <form id="form-logout" method="POST" action="{{ route('logout') }}">
+                <form id="form-logout" method="POST" action="{{ route('admin.logout') }}">
                     @csrf
                     <button id="btn-logout"
                             type="submit"
