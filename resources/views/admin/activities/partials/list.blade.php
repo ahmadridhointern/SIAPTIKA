@@ -77,8 +77,23 @@
                         </td>
 
                         <td class="px-6 py-4 text-sm text-[#1A1A1A] whitespace-nowrap">
-                            <div class="font-medium">{{ $activity->activity_date->isoFormat('D MMM YYYY') }}</div>
-                            <div class="text-xs text-[#6B6B6B] font-mono mt-0.5">{{ \Carbon\Carbon::parse($activity->time)->format('H:i') }} WIB</div>
+                            @php
+                                $activityDateTime = \Carbon\Carbon::parse($activity->activity_date->toDateString() . ' ' . $activity->time);
+                                if ($activityDateTime->isFuture()) {
+                                    $diffMessage = $activityDateTime->diffForHumans();
+                                } else {
+                                    $diffMessage = 'Dimulai ' . str_replace(' yang lalu', ' lalu', $activityDateTime->diffForHumans());
+                                }
+                            @endphp
+                            <div class="time-hover-wrapper">
+                                <div class="time-default-content">
+                                    <div class="font-medium">{{ $activity->activity_date->isoFormat('D MMM YYYY') }}</div>
+                                    <div class="text-xs text-[#6B6B6B] font-mono mt-0.5">{{ \Carbon\Carbon::parse($activity->time)->format('H:i') }} WIB</div>
+                                </div>
+                                <div class="time-hover-content">
+                                    <div class="text-[0.7rem] font-mono font-semibold uppercase tracking-wider text-[#B8860B]">{{ $diffMessage }}</div>
+                                </div>
+                            </div>
                         </td>
 
                         <td class="px-6 py-4 text-sm text-[#6B6B6B] max-w-[180px]">

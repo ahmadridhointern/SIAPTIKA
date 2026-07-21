@@ -466,3 +466,41 @@ body > main,
     border-color: #B8860B;
     background: rgba(184, 134, 11, 0.08);
 }
+
+/* ============================================================
+   Time Cell Hover Effect
+   ============================================================ */
+
+.time-hover-wrapper {
+    position: relative;
+    height: 2.75rem; /* ~44px */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.time-default-content {
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+.time-hover-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.time-hover-wrapper:hover .time-default-content {
+    opacity: 0;
+}
+
+.time-hover-wrapper:hover .time-hover-content {
+    opacity: 1;
+    pointer-events: auto;
+}
