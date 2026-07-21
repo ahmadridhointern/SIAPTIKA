@@ -192,23 +192,21 @@
                 overlay.setAttribute('aria-hidden', 'true');
             }
 
-            /* ── Layer 1: Direct bind to [data-page-name] header nav links
-               This is the most reliable method and guarantees the overlay
-               fires regardless of page-specific JS on any page. ── */
-            document.addEventListener('DOMContentLoaded', function () {
-                document.querySelectorAll('[data-page-name]').forEach(function (link) {
-                    link.addEventListener('click', function (e) {
-                        /* Skip if already on that page (same pathname) */
-                        var href = link.getAttribute('href') || '';
-                        var destUrl;
-                        try { destUrl = new URL(href, window.location.origin); }
-                        catch (err) { return; }
-                        var destPath = destUrl.pathname.replace(/\/$/, '');
-                        var currPath = window.location.pathname.replace(/\/$/, '');
-                        if (destPath === currPath) return;
+            /* ── Layer 1: Direct bind to [data-page-name] header nav links.
+               Script runs at end-of-body so DOM is already ready — no need
+               to wait for DOMContentLoaded. ── */
+            document.querySelectorAll('[data-page-name]').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    /* Skip if clicking the link for the page we're already on */
+                    var href = link.getAttribute('href') || '';
+                    var destUrl;
+                    try { destUrl = new URL(href, window.location.origin); }
+                    catch (err) { return; }
+                    var destPath = destUrl.pathname.replace(/\/$/, '');
+                    var currPath = window.location.pathname.replace(/\/$/, '');
+                    if (destPath === currPath) return;
 
-                        showOverlay(link.dataset.pageName);
-                    });
+                    showOverlay(link.dataset.pageName);
                 });
             });
 
