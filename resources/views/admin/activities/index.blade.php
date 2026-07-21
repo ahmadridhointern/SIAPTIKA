@@ -598,7 +598,7 @@
     function openEditModal(btn) {
         const d = btn.dataset;
         const baseUrl = document.getElementById('activities-url-base').value;
-        // Set form action to /admin/activities/{id} (PUT via @method)
+        // Set form action to /admin/activities/{id} (PUT)
         document.getElementById('edit-form').action = baseUrl + '/' + d.id;
         document.getElementById('edit-activity-id').value = d.id;
         // Populate fields
