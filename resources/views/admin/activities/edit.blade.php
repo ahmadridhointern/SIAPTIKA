@@ -16,9 +16,11 @@
                 </p>
             </div>
             <div>
-                <a href="{{ route('admin.activities.index') }}" 
-                   class="block text-xs font-mono tracking-wider font-semibold py-2.5 px-4 rounded border border-[#E8E4DF] text-[#6B6B6B] hover:text-[#B8860B] hover:border-[#B8860B] transition-all duration-200">
-                    ← Kembali
+                <a href="{{ route('admin.activities.index') }}" class="back-btn" title="Kembali ke Daftar Kegiatan">
+                    <svg class="back-btn-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
+                    </svg>
+                    <span class="back-btn-text">Kembali</span>
                 </a>
             </div>
         </div>
