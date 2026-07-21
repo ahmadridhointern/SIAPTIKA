@@ -292,9 +292,9 @@ body > main,
     position: fixed;
     inset: 0;
     z-index: 200;
-    background: rgba(26, 26, 26, 0.5);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    background: rgba(18, 18, 18, 0.7);
+    backdrop-filter: blur(8px) grayscale(100%);
+    -webkit-backdrop-filter: blur(8px) grayscale(100%);
     display: flex;
     align-items: center;
     justify-content: center;
