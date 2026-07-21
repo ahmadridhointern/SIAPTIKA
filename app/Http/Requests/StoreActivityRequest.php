@@ -20,11 +20,11 @@ class StoreActivityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'         => ['required', 'string', 'max:255'],
-            'activity_date' => ['required', 'date'],
-            'time'          => ['required'],
-            'location'      => ['required', 'string', 'max:255'],
-            'description'   => ['nullable', 'string'],
+            'title'         => ['required', 'string', 'min:5', 'max:255'],
+            'activity_date' => ['required', 'date', 'date_format:Y-m-d'],
+            'time'          => ['required', 'date_format:H:i'],
+            'location'      => ['required', 'string', 'min:3', 'max:255'],
+            'description'   => ['nullable', 'string', 'max:2000'],
             'status'        => ['required', 'in:scheduled,completed'],
         ];
     }
@@ -35,18 +35,49 @@ class StoreActivityRequest extends FormRequest
     public function messages(): array
     {
         return [
+            // Judul
             'title.required'         => 'Judul kegiatan wajib diisi.',
             'title.string'           => 'Judul kegiatan harus berupa teks.',
-            'title.max'              => 'Judul kegiatan maksimal 255 karakter.',
-            'activity_date.required' => 'Tanggal kegiatan wajib diisi.',
-            'activity_date.date'     => 'Format tanggal kegiatan tidak valid.',
-            'time.required'          => 'Waktu kegiatan wajib diisi.',
-            'location.required'      => 'Tempat kegiatan wajib diisi.',
-            'location.string'        => 'Tempat kegiatan harus berupa teks.',
-            'location.max'           => 'Tempat kegiatan maksimal 255 karakter.',
-            'description.string'     => 'Deskripsi kegiatan harus berupa teks.',
-            'status.required'        => 'Status kegiatan wajib diisi.',
-            'status.in'              => 'Status kegiatan harus berupa scheduled atau completed.',
+            'title.min'              => 'Judul kegiatan minimal :min karakter.',
+            'title.max'              => 'Judul kegiatan maksimal :max karakter.',
+
+            // Tanggal
+            'activity_date.required'    => 'Tanggal pelaksanaan wajib diisi.',
+            'activity_date.date'        => 'Format tanggal pelaksanaan tidak valid.',
+            'activity_date.date_format' => 'Format tanggal pelaksanaan harus berupa YYYY-MM-DD.',
+
+            // Waktu
+            'time.required'     => 'Waktu pelaksanaan wajib diisi.',
+            'time.date_format'  => 'Format waktu harus berupa HH:MM (contoh: 08:00).',
+
+            // Tempat
+            'location.required' => 'Tempat pelaksanaan wajib diisi.',
+            'location.string'   => 'Tempat pelaksanaan harus berupa teks.',
+            'location.min'      => 'Tempat pelaksanaan minimal :min karakter.',
+            'location.max'      => 'Tempat pelaksanaan maksimal :max karakter.',
+
+            // Deskripsi
+            'description.string' => 'Deskripsi kegiatan harus berupa teks.',
+            'description.max'    => 'Deskripsi kegiatan maksimal :max karakter.',
+
+            // Status
+            'status.required' => 'Status kegiatan wajib dipilih.',
+            'status.in'       => 'Status kegiatan hanya boleh berupa "scheduled" atau "completed".',
+        ];
+    }
+
+    /**
+     * Label nama atribut dalam Bahasa Indonesia.
+     */
+    public function attributes(): array
+    {
+        return [
+            'title'         => 'Judul Kegiatan',
+            'activity_date' => 'Tanggal Pelaksanaan',
+            'time'          => 'Waktu Pelaksanaan',
+            'location'      => 'Tempat Pelaksanaan',
+            'description'   => 'Deskripsi Kegiatan',
+            'status'        => 'Status Kegiatan',
         ];
     }
 }

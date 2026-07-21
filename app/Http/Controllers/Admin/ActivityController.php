@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreActivityRequest;
+use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -92,7 +93,7 @@ class ActivityController extends Controller
     /**
      * Perbarui data kegiatan.
      */
-    public function update(StoreActivityRequest $request, Activity $activity): RedirectResponse
+    public function update(UpdateActivityRequest $request, Activity $activity): RedirectResponse
     {
         // Aturan Bisnis: Kegiatan yang sudah lewat tidak boleh diubah
         if ($activity->activity_date->lt(today())) {
