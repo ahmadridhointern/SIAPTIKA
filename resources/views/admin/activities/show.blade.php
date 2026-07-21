@@ -190,8 +190,7 @@
                                     Ya, Hapus
                                 </button>
                                 <button type="button" onclick="document.getElementById('show-delete-modal').classList.add('hidden');document.body.style.overflow='';"
-                                        class="flex-1 text-center text-xs font-mono font-semibold py-2.5 px-4 rounded border border-[#E8E4DF] text-[#6B6B6B] hover:text-[#B8860B] hover:border-[#B8860B] transition-all duration-150 cursor-pointer"
-                                        style="background:none;">
+                                        class="btn-secondary flex-1">
                                     Batal
                                 </button>
                             </div>

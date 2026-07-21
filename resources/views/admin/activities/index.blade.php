@@ -197,8 +197,7 @@
                 <div class="flex items-center gap-4 mt-6 pt-5 border-t border-[#E8E4DF]">
                     <button type="submit" class="btn-primary">Simpan Kegiatan</button>
                     <button type="button" onclick="closeModal('create-modal')"
-                            class="text-sm font-mono text-[#6B6B6B] hover:text-[#B8860B] transition-colors"
-                            style="background:none;border:none;cursor:pointer;">Batalkan</button>
+                            class="btn-secondary">Batalkan</button>
                 </div>
             </form>
         </div>
@@ -313,8 +312,7 @@
                 <div class="flex items-center gap-4 mt-6 pt-5 border-t border-[#E8E4DF]">
                     <button type="submit" class="btn-primary">Perbarui Kegiatan</button>
                     <button type="button" onclick="closeModal('edit-modal')"
-                            class="text-sm font-mono text-[#6B6B6B] hover:text-[#B8860B] transition-colors"
-                            style="background:none;border:none;cursor:pointer;">Batalkan</button>
+                            class="btn-secondary">Batalkan</button>
                 </div>
             </form>
         </div>
@@ -351,8 +349,7 @@
                             Ya, Hapus
                         </button>
                         <button type="button" onclick="closeModal('delete-modal')"
-                                class="flex-1 text-center text-xs font-mono font-semibold py-2.5 px-4 rounded border border-[#E8E4DF] text-[#6B6B6B] hover:text-[#B8860B] hover:border-[#B8860B] transition-all duration-150 cursor-pointer"
-                                style="background:none;">
+                                class="btn-secondary flex-1">
                             Batal
                         </button>
                     </div>
