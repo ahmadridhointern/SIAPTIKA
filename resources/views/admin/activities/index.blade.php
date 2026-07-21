@@ -108,93 +108,95 @@
             </div>
 
             {{-- Form --}}
-            <form method="POST" action="{{ route('admin.activities.store') }}" novalidate class="px-8 py-6">
-                @csrf
-                <input type="hidden" name="_modal" value="create">
+            <form method="POST" action="{{ route('admin.activities.store') }}" novalidate class="flex flex-col overflow-hidden min-h-0 flex-1">
+                <div class="flex-1 overflow-y-auto px-8 py-6 space-y-5 modal-form-body">
+                    @csrf
+                    <input type="hidden" name="_modal" value="create">
 
-                {{-- Validation Errors --}}
-                @if($errors->any() && old('_modal') === 'create')
-                    <x-validation-errors class="mb-5" />
-                @endif
+                    {{-- Validation Errors --}}
+                    @if($errors->any() && old('_modal') === 'create')
+                        <x-validation-errors class="mb-5" />
+                    @endif
 
-                <div class="space-y-5">
-                    {{-- Judul --}}
-                    <div>
-                        <label for="c-title" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Judul Kegiatan <span class="text-red-500">*</span></label>
-                        <input id="c-title" type="text" name="title" value="{{ old('_modal') === 'create' ? old('title') : '' }}"
-                               maxlength="255" placeholder="Contoh: Rapat Evaluasi Smart City Semester I"
-                               class="input-serif @if($errors->has('title') && old('_modal') === 'create') border-red-400 bg-red-50 @endif"
-                               autocomplete="off">
-                        @if($errors->has('title') && old('_modal') === 'create')
-                            <p class="mt-1 text-xs text-red-600">{{ $errors->first('title') }}</p>
-                        @else
-                            <p class="mt-1 text-xs text-[#6B6B6B]">Minimal 5, maksimal 255 karakter.</p>
-                        @endif
-                    </div>
-
-                    {{-- Grid Tanggal & Waktu --}}
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-5">
+                        {{-- Judul --}}
                         <div>
-                            <label for="c-date" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Tanggal <span class="text-red-500">*</span></label>
-                            <input id="c-date" type="date" name="activity_date"
-                                   value="{{ old('_modal') === 'create' ? old('activity_date') : '' }}"
-                                   onchange="syncStatusFromDate('c-date','c-status','c-status-note')"
-                                   class="input-serif @if($errors->has('activity_date') && old('_modal') === 'create') border-red-400 bg-red-50 @endif">
-                            @if($errors->has('activity_date') && old('_modal') === 'create')
-                                <p class="mt-1 text-xs text-red-600">{{ $errors->first('activity_date') }}</p>
+                            <label for="c-title" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Judul Kegiatan <span class="text-red-500">*</span></label>
+                            <input id="c-title" type="text" name="title" value="{{ old('_modal') === 'create' ? old('title') : '' }}"
+                                   maxlength="255" placeholder="Contoh: Rapat Evaluasi Smart City Semester I"
+                                   class="input-serif @if($errors->has('title') && old('_modal') === 'create') border-red-400 bg-red-50 @endif"
+                                   autocomplete="off">
+                            @if($errors->has('title') && old('_modal') === 'create')
+                                <p class="mt-1 text-xs text-red-600">{{ $errors->first('title') }}</p>
+                            @else
+                                <p class="mt-1 text-xs text-[#6B6B6B]">Minimal 5, maksimal 255 karakter.</p>
                             @endif
                         </div>
+
+                        {{-- Grid Tanggal & Waktu --}}
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="c-date" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Tanggal <span class="text-red-500">*</span></label>
+                                <input id="c-date" type="date" name="activity_date"
+                                       value="{{ old('_modal') === 'create' ? old('activity_date') : '' }}"
+                                       onchange="syncStatusFromDate('c-date','c-status','c-status-note')"
+                                       class="input-serif @if($errors->has('activity_date') && old('_modal') === 'create') border-red-400 bg-red-50 @endif">
+                                @if($errors->has('activity_date') && old('_modal') === 'create')
+                                    <p class="mt-1 text-xs text-red-600">{{ $errors->first('activity_date') }}</p>
+                                @endif
+                            </div>
+                            <div>
+                                <label for="c-time" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Waktu <span class="text-red-500">*</span></label>
+                                <input id="c-time" type="time" name="time"
+                                       value="{{ old('_modal') === 'create' ? old('time') : '' }}"
+                                       class="input-serif @if($errors->has('time') && old('_modal') === 'create') border-red-400 bg-red-50 @endif">
+                                @if($errors->has('time') && old('_modal') === 'create')
+                                    <p class="mt-1 text-xs text-red-600">{{ $errors->first('time') }}</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Tempat --}}
                         <div>
-                            <label for="c-time" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Waktu <span class="text-red-500">*</span></label>
-                            <input id="c-time" type="time" name="time"
-                                   value="{{ old('_modal') === 'create' ? old('time') : '' }}"
-                                   class="input-serif @if($errors->has('time') && old('_modal') === 'create') border-red-400 bg-red-50 @endif">
-                            @if($errors->has('time') && old('_modal') === 'create')
-                                <p class="mt-1 text-xs text-red-600">{{ $errors->first('time') }}</p>
+                            <label for="c-location" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Tempat <span class="text-red-500">*</span></label>
+                            <input id="c-location" type="text" name="location"
+                                   value="{{ old('_modal') === 'create' ? old('location') : '' }}"
+                                   maxlength="255" placeholder="Contoh: Ruang Rapat Bidang APTIKA Lt. 3"
+                                   class="input-serif @if($errors->has('location') && old('_modal') === 'create') border-red-400 bg-red-50 @endif"
+                                   autocomplete="off">
+                            @if($errors->has('location') && old('_modal') === 'create')
+                                <p class="mt-1 text-xs text-red-600">{{ $errors->first('location') }}</p>
                             @endif
                         </div>
-                    </div>
 
-                    {{-- Tempat --}}
-                    <div>
-                        <label for="c-location" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Tempat <span class="text-red-500">*</span></label>
-                        <input id="c-location" type="text" name="location"
-                               value="{{ old('_modal') === 'create' ? old('location') : '' }}"
-                               maxlength="255" placeholder="Contoh: Ruang Rapat Bidang APTIKA Lt. 3"
-                               class="input-serif @if($errors->has('location') && old('_modal') === 'create') border-red-400 bg-red-50 @endif"
-                               autocomplete="off">
-                        @if($errors->has('location') && old('_modal') === 'create')
-                            <p class="mt-1 text-xs text-red-600">{{ $errors->first('location') }}</p>
-                        @endif
-                    </div>
+                        {{-- Status --}}
+                        <div>
+                            <label for="c-status" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Status <span class="text-red-500">*</span></label>
+                            <select id="c-status" name="status"
+                                    class="input-serif @if($errors->has('status') && old('_modal') === 'create') border-red-400 bg-red-50 @endif">
+                                <option value="scheduled" {{ (old('_modal') === 'create' && old('status') === 'scheduled') || old('_modal') !== 'create' ? 'selected' : '' }}>Direncana (Scheduled)</option>
+                                <option value="completed" {{ old('_modal') === 'create' && old('status') === 'completed' ? 'selected' : '' }}>Selesai (Completed)</option>
+                            </select>
+                            <p id="c-status-note" class="mt-1 text-xs text-[#6B6B6B] hidden"></p>
+                        </div>
 
-                    {{-- Status --}}
-                    <div>
-                        <label for="c-status" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Status <span class="text-red-500">*</span></label>
-                        <select id="c-status" name="status"
-                                class="input-serif @if($errors->has('status') && old('_modal') === 'create') border-red-400 bg-red-50 @endif">
-                            <option value="scheduled" {{ (old('_modal') === 'create' && old('status') === 'scheduled') || old('_modal') !== 'create' ? 'selected' : '' }}>Direncana (Scheduled)</option>
-                            <option value="completed" {{ old('_modal') === 'create' && old('status') === 'completed' ? 'selected' : '' }}>Selesai (Completed)</option>
-                        </select>
-                        <p id="c-status-note" class="mt-1 text-xs text-[#6B6B6B] hidden"></p>
-                    </div>
-
-                    {{-- Deskripsi --}}
-                    <div>
-                        <label for="c-description" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">
-                            Deskripsi <span class="text-xs font-normal text-[#6B6B6B]">(opsional)</span>
-                        </label>
-                        <textarea id="c-description" name="description" rows="4" maxlength="2000"
-                                  placeholder="Agenda, catatan, atau detail kegiatan..."
-                                  class="input-serif @if($errors->has('description') && old('_modal') === 'create') border-red-400 bg-red-50 @endif"
-                                  style="height: auto; padding-top: 0.75rem; padding-bottom: 0.75rem;">{{ old('_modal') === 'create' ? old('description') : '' }}</textarea>
-                        @if($errors->has('description') && old('_modal') === 'create')
-                            <p class="mt-1 text-xs text-red-600">{{ $errors->first('description') }}</p>
-                        @endif
+                        {{-- Deskripsi --}}
+                        <div>
+                            <label for="c-description" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">
+                                Deskripsi <span class="text-xs font-normal text-[#6B6B6B]">(opsional)</span>
+                            </label>
+                            <textarea id="c-description" name="description" rows="4" maxlength="2000"
+                                      placeholder="Agenda, catatan, atau detail kegiatan..."
+                                      class="input-serif @if($errors->has('description') && old('_modal') === 'create') border-red-400 bg-red-50 @endif"
+                                      style="height: auto; padding-top: 0.75rem; padding-bottom: 0.75rem;">{{ old('_modal') === 'create' ? old('description') : '' }}</textarea>
+                            @if($errors->has('description') && old('_modal') === 'create')
+                                <p class="mt-1 text-xs text-red-600">{{ $errors->first('description') }}</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-4 mt-6 pt-5 border-t border-[#E8E4DF]">
+                <div class="flex items-center gap-4 px-8 py-5 border-t border-[#E8E4DF] bg-[#FAFAF8] flex-shrink-0">
                     <button type="submit" class="btn-primary">Simpan Kegiatan</button>
                     <button type="button" onclick="closeModal('create-modal')"
                             class="btn-secondary">Batalkan</button>
@@ -227,89 +229,91 @@
                 </button>
             </div>
 
-            <form id="edit-form" method="POST" action="{{ $editFormAction }}" novalidate class="px-8 py-6">
-                @csrf
-                @method('PUT')
-                <input type="hidden" name="_modal" value="edit">
-                <input type="hidden" id="edit-activity-id" name="_activity_id" value="{{ $editModalId }}">
+            <form id="edit-form" method="POST" action="{{ $editFormAction }}" novalidate class="flex flex-col overflow-hidden min-h-0 flex-1">
+                <div class="flex-1 overflow-y-auto px-8 py-6 space-y-5 modal-form-body">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="_modal" value="edit">
+                    <input type="hidden" id="edit-activity-id" name="_activity_id" value="{{ $editModalId }}">
 
-                {{-- Validation Errors --}}
-                @if($errors->any() && old('_modal') === 'edit')
-                    <x-validation-errors class="mb-5" />
-                @endif
+                    {{-- Validation Errors --}}
+                    @if($errors->any() && old('_modal') === 'edit')
+                        <x-validation-errors class="mb-5" />
+                    @endif
 
-                <div class="space-y-5">
-                    <div>
-                        <label for="e-title" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Judul Kegiatan <span class="text-red-500">*</span></label>
-                        <input id="e-title" type="text" name="title"
-                               value="{{ old('_modal') === 'edit' ? old('title') : ($editActivity?->title ?? '') }}"
-                               maxlength="255" placeholder="Contoh: Rapat Evaluasi Smart City Semester I"
-                               class="input-serif @if($errors->has('title') && old('_modal') === 'edit') border-red-400 bg-red-50 @endif"
-                               autocomplete="off">
-                        @if($errors->has('title') && old('_modal') === 'edit')
-                            <p class="mt-1 text-xs text-red-600">{{ $errors->first('title') }}</p>
-                        @endif
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-5">
                         <div>
-                            <label for="e-date" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Tanggal <span class="text-red-500">*</span></label>
-                            <input id="e-date" type="date" name="activity_date"
-                                   value="{{ old('_modal') === 'edit' ? old('activity_date') : ($editActivity?->activity_date->toDateString() ?? '') }}"
-                                   onchange="syncStatusFromDate('e-date','e-status','e-status-note')"
-                                   class="input-serif @if($errors->has('activity_date') && old('_modal') === 'edit') border-red-400 bg-red-50 @endif">
-                            @if($errors->has('activity_date') && old('_modal') === 'edit')
-                                <p class="mt-1 text-xs text-red-600">{{ $errors->first('activity_date') }}</p>
+                            <label for="e-title" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Judul Kegiatan <span class="text-red-500">*</span></label>
+                            <input id="e-title" type="text" name="title"
+                                   value="{{ old('_modal') === 'edit' ? old('title') : ($editActivity?->title ?? '') }}"
+                                   maxlength="255" placeholder="Contoh: Rapat Evaluasi Smart City Semester I"
+                                   class="input-serif @if($errors->has('title') && old('_modal') === 'edit') border-red-400 bg-red-50 @endif"
+                                   autocomplete="off">
+                            @if($errors->has('title') && old('_modal') === 'edit')
+                                <p class="mt-1 text-xs text-red-600">{{ $errors->first('title') }}</p>
                             @endif
                         </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="e-date" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Tanggal <span class="text-red-500">*</span></label>
+                                <input id="e-date" type="date" name="activity_date"
+                                       value="{{ old('_modal') === 'edit' ? old('activity_date') : ($editActivity?->activity_date->toDateString() ?? '') }}"
+                                       onchange="syncStatusFromDate('e-date','e-status','e-status-note')"
+                                       class="input-serif @if($errors->has('activity_date') && old('_modal') === 'edit') border-red-400 bg-red-50 @endif">
+                                @if($errors->has('activity_date') && old('_modal') === 'edit')
+                                    <p class="mt-1 text-xs text-red-600">{{ $errors->first('activity_date') }}</p>
+                                @endif
+                            </div>
+                            <div>
+                                <label for="e-time" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Waktu <span class="text-red-500">*</span></label>
+                                <input id="e-time" type="time" name="time"
+                                       value="{{ old('_modal') === 'edit' ? old('time') : ($editActivity ? \Carbon\Carbon::parse($editActivity->time)->format('H:i') : '') }}"
+                                       class="input-serif @if($errors->has('time') && old('_modal') === 'edit') border-red-400 bg-red-50 @endif">
+                                @if($errors->has('time') && old('_modal') === 'edit')
+                                    <p class="mt-1 text-xs text-red-600">{{ $errors->first('time') }}</p>
+                                @endif
+                            </div>
+                        </div>
+
                         <div>
-                            <label for="e-time" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Waktu <span class="text-red-500">*</span></label>
-                            <input id="e-time" type="time" name="time"
-                                   value="{{ old('_modal') === 'edit' ? old('time') : ($editActivity ? \Carbon\Carbon::parse($editActivity->time)->format('H:i') : '') }}"
-                                   class="input-serif @if($errors->has('time') && old('_modal') === 'edit') border-red-400 bg-red-50 @endif">
-                            @if($errors->has('time') && old('_modal') === 'edit')
-                                <p class="mt-1 text-xs text-red-600">{{ $errors->first('time') }}</p>
+                            <label for="e-location" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Tempat <span class="text-red-500">*</span></label>
+                            <input id="e-location" type="text" name="location"
+                                   value="{{ old('_modal') === 'edit' ? old('location') : ($editActivity?->location ?? '') }}"
+                                   maxlength="255" placeholder="Contoh: Ruang Rapat Bidang APTIKA Lt. 3"
+                                   class="input-serif @if($errors->has('location') && old('_modal') === 'edit') border-red-400 bg-red-50 @endif"
+                                   autocomplete="off">
+                            @if($errors->has('location') && old('_modal') === 'edit')
+                                <p class="mt-1 text-xs text-red-600">{{ $errors->first('location') }}</p>
                             @endif
                         </div>
-                    </div>
 
-                    <div>
-                        <label for="e-location" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Tempat <span class="text-red-500">*</span></label>
-                        <input id="e-location" type="text" name="location"
-                               value="{{ old('_modal') === 'edit' ? old('location') : ($editActivity?->location ?? '') }}"
-                               maxlength="255" placeholder="Contoh: Ruang Rapat Bidang APTIKA Lt. 3"
-                               class="input-serif @if($errors->has('location') && old('_modal') === 'edit') border-red-400 bg-red-50 @endif"
-                               autocomplete="off">
-                        @if($errors->has('location') && old('_modal') === 'edit')
-                            <p class="mt-1 text-xs text-red-600">{{ $errors->first('location') }}</p>
-                        @endif
-                    </div>
+                        <div>
+                            <label for="e-status" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Status <span class="text-red-500">*</span></label>
+                            <select id="e-status" name="status"
+                                    class="input-serif @if($errors->has('status') && old('_modal') === 'edit') border-red-400 bg-red-50 @endif">
+                                <option value="scheduled" {{ (old('_modal') === 'edit' ? old('status') : $editActivity?->status) === 'scheduled' ? 'selected' : '' }}>Direncana (Scheduled)</option>
+                                <option value="completed" {{ (old('_modal') === 'edit' ? old('status') : $editActivity?->status) === 'completed' ? 'selected' : '' }}>Selesai (Completed)</option>
+                            </select>
+                            <p id="e-status-note" class="mt-1 text-xs text-[#6B6B6B] hidden"></p>
+                        </div>
 
-                    <div>
-                        <label for="e-status" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Status <span class="text-red-500">*</span></label>
-                        <select id="e-status" name="status"
-                                class="input-serif @if($errors->has('status') && old('_modal') === 'edit') border-red-400 bg-red-50 @endif">
-                            <option value="scheduled" {{ (old('_modal') === 'edit' ? old('status') : $editActivity?->status) === 'scheduled' ? 'selected' : '' }}>Direncana (Scheduled)</option>
-                            <option value="completed" {{ (old('_modal') === 'edit' ? old('status') : $editActivity?->status) === 'completed' ? 'selected' : '' }}>Selesai (Completed)</option>
-                        </select>
-                        <p id="e-status-note" class="mt-1 text-xs text-amber-600 hidden"></p>
-                    </div>
-
-                    <div>
-                        <label for="e-description" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">
-                            Deskripsi <span class="text-xs font-normal text-[#6B6B6B]">(opsional)</span>
-                        </label>
-                        <textarea id="e-description" name="description" rows="4" maxlength="2000"
-                                  placeholder="Agenda, catatan, atau detail kegiatan..."
-                                  class="input-serif @if($errors->has('description') && old('_modal') === 'edit') border-red-400 bg-red-50 @endif"
-                                  style="height: auto; padding-top: 0.75rem; padding-bottom: 0.75rem;">{{ old('_modal') === 'edit' ? old('description') : ($editActivity?->description ?? '') }}</textarea>
-                        @if($errors->has('description') && old('_modal') === 'edit')
-                            <p class="mt-1 text-xs text-red-600">{{ $errors->first('description') }}</p>
-                        @endif
+                        <div>
+                            <label for="e-description" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">
+                                Deskripsi <span class="text-xs font-normal text-[#6B6B6B]">(opsional)</span>
+                            </label>
+                            <textarea id="e-description" name="description" rows="4" maxlength="2000"
+                                      placeholder="Agenda, catatan, atau detail kegiatan..."
+                                      class="input-serif @if($errors->has('description') && old('_modal') === 'edit') border-red-400 bg-red-50 @endif"
+                                      style="height: auto; padding-top: 0.75rem; padding-bottom: 0.75rem;">{{ old('_modal') === 'edit' ? old('description') : ($editActivity?->description ?? '') }}</textarea>
+                            @if($errors->has('description') && old('_modal') === 'edit')
+                                <p class="mt-1 text-xs text-red-600">{{ $errors->first('description') }}</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-4 mt-6 pt-5 border-t border-[#E8E4DF]">
+                <div class="flex items-center gap-4 px-8 py-5 border-t border-[#E8E4DF] bg-[#FAFAF8] flex-shrink-0">
                     <button type="submit" class="btn-primary">Perbarui Kegiatan</button>
                     <button type="button" onclick="closeModal('edit-modal')"
                             class="btn-secondary">Batalkan</button>

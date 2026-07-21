@@ -540,3 +540,16 @@ body > main,
     opacity: 1;
     pointer-events: auto;
 }
+
+/* ============================================================
+   Modal Form Body Scrollable Area (Hiding scrollbars)
+   ============================================================ */
+
+.modal-form-body {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+.modal-form-body::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Opera */
+}
