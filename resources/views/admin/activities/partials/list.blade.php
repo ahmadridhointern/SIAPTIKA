@@ -117,17 +117,17 @@
                                 </div>
                                 <div class="time-hover-content flex flex-col justify-center">
                                     @if($isFuture)
-                                        <div class="text-[0.78rem] leading-none font-mono font-semibold uppercase tracking-wider text-[#B8860B]">
+                                        <div class="text-[0.7rem] leading-none font-mono font-bold uppercase tracking-wider text-[#B8860B]">
                                             {{ $n }} {{ $unit }}
                                         </div>
-                                        <div class="text-[0.58rem] leading-none font-mono text-[#6B6B6B] uppercase tracking-wider mt-1">
+                                        <div class="text-[0.52rem] leading-none font-mono text-[#6B6B6B] uppercase tracking-wider mt-1">
                                             DARI SEKARANG
                                         </div>
                                     @else
-                                        <div class="text-[0.58rem] leading-none font-mono text-[#6B6B6B] uppercase tracking-wider">
+                                        <div class="text-[0.52rem] leading-none font-mono text-[#6B6B6B] uppercase tracking-wider">
                                             DIMULAI
                                         </div>
-                                        <div class="text-[0.78rem] leading-none font-mono font-semibold uppercase tracking-wider text-[#B8860B] mt-1">
+                                        <div class="text-[0.7rem] leading-none font-mono font-bold uppercase tracking-wider text-[#B8860B] mt-1">
                                             {{ $n }} {{ $unit }} LALU
                                         </div>
                                     @endif
