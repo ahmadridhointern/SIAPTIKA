@@ -9,6 +9,41 @@
 </head>
 <body style="background-color: #FAFAF8; min-height: 100vh;">
 
+    {{-- ─── Page Transition: global function defined EARLY so onclick attrs can call it ─── --}}
+    <script>
+        /**
+         * __goPage(href, name)
+         * Shows the transition overlay then navigates after 280 ms.
+         * Called directly from onclick="" attributes on nav links.
+         */
+        function __goPage(href, name) {
+            var overlay = document.getElementById('page-transition-overlay');
+            var label   = document.getElementById('page-transition-label');
+
+            /* Resolve full URL */
+            var dest;
+            try { dest = new URL(href, window.location.origin); }
+            catch (_) { window.location.href = href; return; }
+
+            /* Skip if already on that page */
+            var destPath = dest.pathname.replace(/\/$/, '');
+            var currPath = window.location.pathname.replace(/\/$/, '');
+            if (destPath === currPath && dest.search === window.location.search) return;
+
+            /* Show overlay */
+            if (overlay && label) {
+                label.textContent = 'Mengarahkan ke Halaman ' + (name || 'Halaman Berikutnya');
+                overlay.setAttribute('aria-hidden', 'false');
+                overlay.classList.add('active');
+            }
+
+            /* Navigate after the CSS fade-in transition completes */
+            setTimeout(function () {
+                window.location.href = dest.href;
+            }, 280);
+        }
+    </script>
+
     <div id="app-content" class="transition-all duration-300">
         {{-- ============================================================
              FIXED HEADER
@@ -27,7 +62,8 @@
             <nav class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
 
                 {{-- Brand --}}
-                <a href="{{ route('admin.dashboard') }}" data-page-name="Dashboard"
+                <a href="{{ route('admin.dashboard') }}"
+                   onclick="__goPage(this.href,'Dashboard'); return false;"
                    class="flex items-center gap-3" style="text-decoration: none;">
                     <span class="font-serif text-xl" style="color: #1A1A1A; letter-spacing: -0.01em;">SIAPTIKA</span>
                     <span class="h-4 w-px" style="background-color: #E8E4DF;"></span>
@@ -39,12 +75,14 @@
 
                     {{-- Navigation Links --}}
                     <nav class="hidden sm:flex items-center gap-1">
-                        <a href="{{ route('admin.dashboard') }}" data-page-name="Dashboard"
+                        <a href="{{ route('admin.dashboard') }}"
+                           onclick="__goPage(this.href,'Dashboard'); return false;"
                            class="px-3 py-1.5 rounded text-xs font-mono font-medium transition-colors duration-150"
                            style="color: {{ request()->routeIs('admin.dashboard') ? '#B8860B' : '#6B6B6B' }}; background: {{ request()->routeIs('admin.dashboard') ? 'rgba(184,134,11,0.08)' : 'transparent' }};">
                             Dashboard
                         </a>
-                        <a href="{{ route('admin.activities.index') }}" data-page-name="Kegiatan"
+                        <a href="{{ route('admin.activities.index') }}"
+                           onclick="__goPage(this.href,'Kegiatan'); return false;"
                            class="px-3 py-1.5 rounded text-xs font-mono font-medium transition-colors duration-150"
                            style="color: {{ request()->routeIs('admin.activities.*') ? '#B8860B' : '#6B6B6B' }}; background: {{ request()->routeIs('admin.activities.*') ? 'rgba(184,134,11,0.08)' : 'transparent' }};">
                             Kegiatan
@@ -147,20 +185,10 @@
         }
     </script>
 
-    {{-- ─── Page Transition Interceptor ─────────────────────────── --}}
-    {{--
-        Strategy: preventDefault on nav-link click → show overlay → wait 250ms
-        (enough for the CSS opacity transition to render) → navigate via
-        window.location.href.  This guarantees the overlay is visible even
-        when the destination page loads very fast (e.g. localhost dashboard).
-    --}}
+    {{-- ─── Other internal links interceptor (back btn, row detail, etc.) ── --}}
     <script>
         (function () {
-            var overlay = document.getElementById('page-transition-overlay');
-            var label   = document.getElementById('page-transition-label');
-
-            /* ── Helpers ─────────────────────────────────────────────── */
-            function pageName(pathname) {
+            function getPageName(pathname) {
                 var p = pathname.replace(/\/$/, '');
                 if (p === '/admin/dashboard')                    return 'Dashboard';
                 if (/^\/admin\/activities\/\d+\/edit$/.test(p)) return 'Edit Kegiatan';
@@ -170,69 +198,17 @@
                 return 'Halaman Berikutnya';
             }
 
-            function showOverlay(name) {
-                if (!overlay || !label) return;
-                label.textContent = 'Mengarahkan ke Halaman ' + name;
-                overlay.setAttribute('aria-hidden', 'false');
-                overlay.classList.add('active');
-            }
-
-            function hideOverlay() {
-                if (!overlay) return;
-                overlay.classList.remove('active');
-                overlay.setAttribute('aria-hidden', 'true');
-            }
-
-            /**
-             * Core routine used by both layers.
-             * Prevents default navigation, shows overlay, then navigates after
-             * 250 ms so the fade-in transition is visible before page unloads.
-             */
-            function goWithOverlay(e, href, name) {
-                var destUrl;
-                try { destUrl = new URL(href, window.location.origin); }
-                catch (_) { return; }
-
-                /* Skip if already on the destination */
-                var destPath = destUrl.pathname.replace(/\/$/, '');
-                var currPath = window.location.pathname.replace(/\/$/, '');
-                if (destPath === currPath && destUrl.search === window.location.search) return;
-
-                /* Block the native navigation */
-                e.preventDefault();
-                e.stopImmediatePropagation();   /* stop any other listeners */
-
-                showOverlay(name || pageName(destPath));
-
-                /* Navigate after overlay has faded in */
-                setTimeout(function () {
-                    window.location.href = destUrl.href;
-                }, 250);
-            }
-
-            /* ── Layer 1: Directly-bound nav links (most reliable) ─── */
-            /* Script is at end-of-body; DOM is fully ready here.       */
-            document.querySelectorAll('[data-page-name]').forEach(function (link) {
-                link.addEventListener('click', function (e) {
-                    goWithOverlay(e, link.getAttribute('href') || '', link.dataset.pageName);
-                });
-            });
-
-            /* ── Layer 2: Catch-all for other internal links ─────────
-               (back buttons, activity-row detail links, etc.)          */
             document.addEventListener('click', function (e) {
-                /* Skip if already handled by Layer 1 */
-                var link = e.target.closest('[data-page-name]');
-                if (link) return;
-
-                link = e.target.closest('a[href]');
+                var link = e.target.closest('a[href]');
                 if (!link) return;
+
+                /* Already handled by inline onclick on nav links */
+                if (link.hasAttribute('onclick')) return;
 
                 var rawHref = link.getAttribute('href') || '';
                 if (!rawHref || rawHref === '#' || rawHref.startsWith('javascript:')) return;
                 if (link.target === '_blank') return;
 
-                /* Skip external origins */
                 var destUrl;
                 try { destUrl = new URL(rawHref, window.location.origin); }
                 catch (_) { return; }
@@ -242,14 +218,23 @@
                 var ajaxEl = document.getElementById('activities-container');
                 if (ajaxEl && ajaxEl.contains(link)) return;
 
-                /* Skip modal openers */
-                if (link.hasAttribute('onclick')) return;
+                /* Skip when already on same destination */
+                var destPath = destUrl.pathname.replace(/\/$/, '');
+                var currPath = window.location.pathname.replace(/\/$/, '');
+                if (destPath === currPath && destUrl.search === window.location.search) return;
 
-                goWithOverlay(e, rawHref, null);
+                e.preventDefault();
+                __goPage(rawHref, getPageName(destPath));
             }, true);
 
-            /* ── Hide on Back/Forward bfcache restore ────────────────── */
-            window.addEventListener('pageshow', function () { hideOverlay(); });
+            /* Hide overlay on Back/Forward bfcache restore */
+            window.addEventListener('pageshow', function () {
+                var overlay = document.getElementById('page-transition-overlay');
+                if (overlay) {
+                    overlay.classList.remove('active');
+                    overlay.setAttribute('aria-hidden', 'true');
+                }
+            });
         })();
     </script>
 </body>
