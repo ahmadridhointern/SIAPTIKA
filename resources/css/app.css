@@ -33,14 +33,18 @@
    Base Styles
    ============================================================ */
 
-html, body {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
+html,
+body {
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
 }
 
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
-    display: none; /* Chrome/Safari/Opera */
+    display: none;
+    /* Chrome/Safari/Opera */
 }
 
 body {
@@ -215,7 +219,7 @@ body {
 }
 
 /* Compensate for fixed header */
-body > main,
+body>main,
 .page-main {
     padding-top: calc(var(--header-height) + 2.5rem);
 }
@@ -225,12 +229,27 @@ body > main,
    ============================================================ */
 
 @keyframes toastSlideIn {
-    from { opacity: 0; transform: translateY(-0.75rem) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
+    from {
+        opacity: 0;
+        transform: translateY(-0.75rem) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
+
 @keyframes toastSlideOut {
-    from { opacity: 1; transform: translateY(0) scale(1); }
-    to   { opacity: 0; transform: translateY(-0.5rem) scale(0.96); }
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-0.5rem) scale(0.96);
+    }
 }
 
 .toast-container {
@@ -284,17 +303,24 @@ body > main,
    ============================================================ */
 
 @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.96) translateY(-10px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 .modal-backdrop {
     position: fixed !important;
     inset: 0 !important;
     z-index: 200 !important;
-    background: rgba(10, 10, 10, 0.8) !important;
-    backdrop-filter: blur(12px) grayscale(100%) !important;
-    -webkit-backdrop-filter: blur(12px) grayscale(100%) !important;
+    background: rgba(10, 10, 10, 0.55) !important;
+    backdrop-filter: blur(6px) grayscale(100%) !important;
+    -webkit-backdrop-filter: blur(6px) grayscale(100%) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -320,7 +346,8 @@ body > main,
 }
 
 .modal-box::-webkit-scrollbar {
-    display: none; /* Chrome/Safari/Opera */
+    display: none;
+    /* Chrome/Safari/Opera */
 }
 
 .modal-box-sm {
@@ -510,7 +537,7 @@ body > main,
     background: rgba(184, 134, 11, 0.03);
 }
 
-.hidden-radio:checked + .status-radio-label {
+.hidden-radio:checked+.status-radio-label {
     color: #B8860B;
     border-color: #B8860B;
     background: rgba(184, 134, 11, 0.08);
@@ -522,7 +549,8 @@ body > main,
 
 .time-hover-wrapper {
     position: relative;
-    height: 2.75rem; /* ~44px */
+    height: 2.75rem;
+    /* ~44px */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -559,12 +587,15 @@ body > main,
    ============================================================ */
 
 .modal-form-body {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
 }
 
 .modal-form-body::-webkit-scrollbar {
-    display: none; /* Chrome/Safari/Opera */
+    display: none;
+    /* Chrome/Safari/Opera */
 }
 
 /* ============================================================
@@ -572,6 +603,6 @@ body > main,
    ============================================================ */
 
 .modal-open-filter {
-    filter: blur(8px) grayscale(100%) !important;
+    filter: grayscale(100%) !important;
     transition: filter 0.3s ease-in-out;
 }
