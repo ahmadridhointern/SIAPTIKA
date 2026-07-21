@@ -139,7 +139,7 @@
                                 <label for="c-date" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Tanggal <span class="text-red-500">*</span></label>
                                 <input id="c-date" type="date" name="activity_date"
                                        value="{{ old('_modal') === 'create' ? old('activity_date') : '' }}"
-                                       onchange="syncStatusFromDate('c-date','c-status','c-status-note')"
+                                        onchange="syncStatusFromDate('c-date','c-status','c-status-display')"
                                        class="input-serif @if($errors->has('activity_date') && old('_modal') === 'create') border-red-400 bg-red-50 @endif">
                                 @if($errors->has('activity_date') && old('_modal') === 'create')
                                     <p class="mt-1 text-xs text-red-600">{{ $errors->first('activity_date') }}</p>
@@ -171,13 +171,12 @@
 
                         {{-- Status --}}
                         <div>
-                            <label for="c-status" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Status <span class="text-red-500">*</span></label>
-                            <select id="c-status" name="status"
-                                    class="input-serif @if($errors->has('status') && old('_modal') === 'create') border-red-400 bg-red-50 @endif">
-                                <option value="scheduled" {{ (old('_modal') === 'create' && old('status') === 'scheduled') || old('_modal') !== 'create' ? 'selected' : '' }}>Direncana (Scheduled)</option>
-                                <option value="completed" {{ old('_modal') === 'create' && old('status') === 'completed' ? 'selected' : '' }}>Selesai (Completed)</option>
-                            </select>
-                            <p id="c-status-note" class="mt-1 text-xs text-[#6B6B6B] hidden"></p>
+                            <label class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Status <span class="text-red-500">*</span></label>
+                            <input type="hidden" id="c-status" name="status" value="{{ old('_modal') === 'create' ? old('status') : '' }}">
+                            <div id="c-status-display" class="input-serif bg-[#F5F3F0] text-[#6B6B6B] flex items-center px-4"
+                                 style="min-height: 3rem; pointer-events: none; cursor: not-allowed; user-select: none;">
+                                Silakan masukkan tanggal kegiatan terlebih dahulu
+                            </div>
                         </div>
 
                         {{-- Deskripsi --}}
@@ -259,7 +258,7 @@
                                 <label for="e-date" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Tanggal <span class="text-red-500">*</span></label>
                                 <input id="e-date" type="date" name="activity_date"
                                        value="{{ old('_modal') === 'edit' ? old('activity_date') : ($editActivity?->activity_date->toDateString() ?? '') }}"
-                                       onchange="syncStatusFromDate('e-date','e-status','e-status-note')"
+                                        onchange="syncStatusFromDate('e-date','e-status','e-status-display')"
                                        class="input-serif @if($errors->has('activity_date') && old('_modal') === 'edit') border-red-400 bg-red-50 @endif">
                                 @if($errors->has('activity_date') && old('_modal') === 'edit')
                                     <p class="mt-1 text-xs text-red-600">{{ $errors->first('activity_date') }}</p>
@@ -289,13 +288,12 @@
                         </div>
 
                         <div>
-                            <label for="e-status" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Status <span class="text-red-500">*</span></label>
-                            <select id="e-status" name="status"
-                                    class="input-serif @if($errors->has('status') && old('_modal') === 'edit') border-red-400 bg-red-50 @endif">
-                                <option value="scheduled" {{ (old('_modal') === 'edit' ? old('status') : $editActivity?->status) === 'scheduled' ? 'selected' : '' }}>Direncana (Scheduled)</option>
-                                <option value="completed" {{ (old('_modal') === 'edit' ? old('status') : $editActivity?->status) === 'completed' ? 'selected' : '' }}>Selesai (Completed)</option>
-                            </select>
-                            <p id="e-status-note" class="mt-1 text-xs text-[#6B6B6B] hidden"></p>
+                            <label class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Status <span class="text-red-500">*</span></label>
+                            <input type="hidden" id="e-status" name="status" value="{{ old('_modal') === 'edit' ? old('status') : ($editActivity?->status ?? '') }}">
+                            <div id="e-status-display" class="input-serif bg-[#F5F3F0] text-[#6B6B6B] flex items-center px-4"
+                                 style="min-height: 3rem; pointer-events: none; cursor: not-allowed; user-select: none;">
+                                Silakan masukkan tanggal kegiatan terlebih dahulu
+                            </div>
                         </div>
 
                         <div>
@@ -403,7 +401,7 @@
         document.getElementById('e-description').value = d.description;
         document.getElementById('e-status').value      = d.status;
         // Sync status lock
-        syncStatusFromDate('e-date', 'e-status', 'e-status-note');
+        syncStatusFromDate('e-date', 'e-status', 'e-status-display');
         openModal('edit-modal');
     }
 
@@ -415,24 +413,33 @@
         openModal('delete-modal');
     }
 
-    // ── Auto-set Status when Past Date (#8) ──────────────────────────
-    function syncStatusFromDate(dateId, statusId, noteId) {
+    // ── Auto-set Status when Past/Future Date ───────────────────────
+    function syncStatusFromDate(dateId, statusId, displayId) {
         const dateEl   = document.getElementById(dateId);
         const statusEl = document.getElementById(statusId);
-        const noteEl   = document.getElementById(noteId);
-        if (!dateEl || !statusEl) return;
-        const selected = dateEl.value ? new Date(dateEl.value + 'T00:00:00') : null;
+        const displayEl = document.getElementById(displayId);
+        if (!dateEl || !statusEl || !displayEl) return;
+
+        if (!dateEl.value) {
+            statusEl.value = '';
+            displayEl.textContent = 'Silakan masukkan tanggal kegiatan terlebih dahulu';
+            displayEl.classList.add('text-red-600');
+            displayEl.classList.remove('text-[#6B6B6B]');
+            return;
+        }
+
+        displayEl.classList.remove('text-red-600');
+        displayEl.classList.add('text-[#6B6B6B]');
+
+        const selected = new Date(dateEl.value + 'T00:00:00');
         const today    = new Date(); today.setHours(0, 0, 0, 0);
-        if (selected && selected < today) {
-            statusEl.value = 'completed';
-            statusEl.classList.add('status-locked');
-            if (noteEl) {
-                noteEl.textContent = '⚠ Status dikunci otomatis karena tanggal sudah lewat.';
-                noteEl.classList.remove('hidden');
-            }
+
+        if (selected < today) {
+            statusEl.value = 'scheduled';
+            displayEl.textContent = 'Direncana (Tanggal sebelum hari ini)';
         } else {
-            statusEl.classList.remove('status-locked');
-            if (noteEl) noteEl.classList.add('hidden');
+            statusEl.value = 'completed';
+            displayEl.textContent = 'Selesai (Tanggal hari ini / setelah hari ini)';
         }
     }
 
@@ -555,19 +562,19 @@
         @if($errors->any() && old('_modal') === 'create')
             openModal('create-modal');
             // Sync date lock on re-open
-            syncStatusFromDate('c-date', 'c-status', 'c-status-note');
+            syncStatusFromDate('c-date', 'c-status', 'c-status-display');
         @endif
 
         @if($errors->any() && old('_modal') === 'edit')
             // Edit modal - form already has old() values from PHP, just open it
             openModal('edit-modal');
-            syncStatusFromDate('e-date', 'e-status', 'e-status-note');
+            syncStatusFromDate('e-date', 'e-status', 'e-status-display');
         @endif
 
         @if($editActivity)
             // Triggered from show page ?edit=id link
             openModal('edit-modal');
-            syncStatusFromDate('e-date', 'e-status', 'e-status-note');
+            syncStatusFromDate('e-date', 'e-status', 'e-status-display');
         @endif
 
         @if(request()->has('create'))
@@ -575,8 +582,8 @@
         @endif
 
         // Apply initial date lock check for any open modals
-        syncStatusFromDate('c-date', 'c-status', 'c-status-note');
-        syncStatusFromDate('e-date', 'e-status', 'e-status-note');
+        syncStatusFromDate('c-date', 'c-status', 'c-status-display');
+        syncStatusFromDate('e-date', 'e-status', 'e-status-display');
     });
     </script>
 
