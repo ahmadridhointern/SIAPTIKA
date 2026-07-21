@@ -289,20 +289,20 @@ body > main,
 }
 
 .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    background: rgba(18, 18, 18, 0.7);
-    backdrop-filter: blur(8px) grayscale(100%);
-    -webkit-backdrop-filter: blur(8px) grayscale(100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 200 !important;
+    background: rgba(10, 10, 10, 0.8) !important;
+    backdrop-filter: blur(12px) grayscale(100%) !important;
+    -webkit-backdrop-filter: blur(12px) grayscale(100%) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 1rem !important;
 }
 
 .modal-backdrop.hidden {
-    display: none;
+    display: none !important;
 }
 
 .modal-box {
