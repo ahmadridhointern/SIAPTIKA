@@ -1,15 +1,19 @@
 <x-layouts.admin title="Daftar Kegiatan">
 
     {{-- Page Header --}}
-    <div class="mb-8">
+    <div class="mb-10">
         <div class="flex items-center gap-4 mb-4">
             <span class="small-caps">Administrasi APTIKA</span>
             <span class="h-px flex-1 bg-[#E8E4DF]"></span>
         </div>
-        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-                <h1 class="font-serif text-4xl text-[#1A1A1A] tracking-tight">Jadwal Kegiatan</h1>
-                <p class="mt-2 text-sm text-[#6B6B6B]">Kelola, pantau, dan publikasikan seluruh kegiatan Bidang APTIKA.</p>
+                <h1 class="font-serif text-4xl md:text-5xl text-[#1A1A1A] tracking-tight">
+                    Jadwal Kegiatan
+                </h1>
+                <p class="mt-2 text-sm text-[#6B6B6B]">
+                    Kelola, pantau, dan publikasikan seluruh kegiatan Bidang APTIKA.
+                </p>
             </div>
             <div class="flex-shrink-0">
                 <button onclick="openModal('create-modal')" class="btn-primary">

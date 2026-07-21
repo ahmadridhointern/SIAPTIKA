@@ -16,8 +16,7 @@
                 </p>
             </div>
             {{-- Waktu Sistem Card --}}
-            <div class="card-serif p-5 bg-[#FFFFFF] min-w-[220px] self-start md:self-center shadow-sm">
-                <span class="small-caps text-[0.65rem] block mb-1">Waktu Sistem</span>
+            <div class="card-serif p-5 bg-[#FFFFFF]  self-start md:self-center shadow-sm">
                 <div id="live-clock-date" class="text-[#1A1A1A] font-medium text-base leading-snug">
                     {{ now()->isoFormat('dddd, D MMMM YYYY') }}
                 </div>
