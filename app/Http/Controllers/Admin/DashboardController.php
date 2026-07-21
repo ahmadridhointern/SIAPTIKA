@@ -21,10 +21,10 @@ class DashboardController extends Controller
         $kegiatanMendatang = Activity::whereDate('activity_date', '>', $today)->count();
         $kegiatanSelesai = Activity::whereDate('activity_date', '<', $today)->count();
 
-        // Ambil 5 kegiatan terbaru berdasarkan tanggal pelaksanaan terbaru
+        // Ambil 10 kegiatan terbaru berdasarkan tanggal pelaksanaan terbaru
         $kegiatanTerbaru = Activity::orderBy('activity_date', 'desc')
             ->orderBy('time', 'desc')
-            ->take(5)
+            ->take(10)
             ->get();
 
         return view('admin.dashboard', compact(
