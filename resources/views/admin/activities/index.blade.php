@@ -41,7 +41,16 @@
                     </span>
                     <input id="search" type="text" name="search" value="{{ request('search') }}"
                            placeholder="Judul atau tempat kegiatan..."
-                           class="input-serif" style="padding-left: 2.5rem;" autocomplete="off">
+                           class="input-serif" style="padding-left: 2.5rem; padding-right: 2.5rem;" autocomplete="off">
+                    
+                    {{-- Clear Search Button --}}
+                    <button type="button" id="clear-search" onclick="clearSearchInput()"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-[#6B6B6B] hover:text-[#B8860B] transition-colors {{ request('search') ? '' : 'hidden' }}"
+                            style="background:none; border:none; cursor:pointer;">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
 
@@ -69,15 +78,6 @@
                     </label>
 
                 </div>
-            </div>
-
-            {{-- Reset Button --}}
-            <div id="reset-container" class="flex-shrink-0 {{ (!request()->filled('search') && request()->filled('status')) ? '' : 'hidden' }}">
-                <button type="button" onclick="resetFilters()"
-                   class="inline-flex items-center justify-center px-5 rounded border border-[#E8E4DF] text-xs font-mono font-semibold text-[#6B6B6B] hover:text-[#B8860B] hover:border-[#B8860B] transition-all duration-200 w-full md:w-auto whitespace-nowrap"
-                   style="min-height: 3rem; background: transparent; cursor: pointer;">
-                    ✕ Reset
-                </button>
             </div>
         </form>
     </div>
@@ -491,31 +491,24 @@
         .catch(err => console.error('Error fetching activities:', err));
     }
 
-    function toggleResetButton() {
-        const searchInput  = document.getElementById('search');
-        const resetContainer = document.getElementById('reset-container');
-        if (!resetContainer) return;
-
-        const searchHasValue = searchInput && searchInput.value.trim() !== '';
-        const statusHasValue = getSelectedStatus() !== '';
-
-        if (searchHasValue || !statusHasValue) {
-            resetContainer.classList.add('hidden');
+    function toggleClearSearchButton() {
+        const searchInput = document.getElementById('search');
+        const clearBtn = document.getElementById('clear-search');
+        if (!clearBtn) return;
+        if (searchInput && searchInput.value.trim() !== '') {
+            clearBtn.classList.remove('hidden');
         } else {
-            resetContainer.classList.remove('hidden');
+            clearBtn.classList.add('hidden');
         }
     }
 
-    function resetFilters() {
-        const searchInput  = document.getElementById('search');
-        if (searchInput) searchInput.value = '';
-        
-        // Reset radio button to default ("")
-        const defaultRadio = document.querySelector('input[name="status"][value=""]');
-        if (defaultRadio) defaultRadio.checked = true;
-
-        toggleResetButton();
-        fetchActivities();
+    function clearSearchInput() {
+        const searchInput = document.getElementById('search');
+        if (searchInput) {
+            searchInput.value = '';
+            toggleClearSearchButton();
+            fetchActivities();
+        }
     }
 
     // Set up listeners for live input and status select
@@ -525,7 +518,7 @@
         if (searchInput) {
             searchInput.addEventListener('input', function () {
                 clearTimeout(searchTimer);
-                toggleResetButton();
+                toggleClearSearchButton();
                 searchTimer = setTimeout(function () {
                     fetchActivities();
                 }, 600);
@@ -536,7 +529,6 @@
         const statusRadios = document.querySelectorAll('input[name="status"]');
         statusRadios.forEach(radio => {
             radio.addEventListener('change', function () {
-                toggleResetButton();
                 fetchActivities();
             });
         });
