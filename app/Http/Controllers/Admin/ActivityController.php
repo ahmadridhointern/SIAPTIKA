@@ -18,19 +18,19 @@ class ActivityController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Activity::query();
+        $query = Activity::withCount('documents');
 
         // Pencarian berdasarkan judul atau tempat
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('location', 'like', "%{$search}%");
+                $q->where('title', 'ilike', "%{$search}%")
+                  ->orWhere('location', 'ilike', "%{$search}%");
             });
         }
 
         // Filter berdasarkan status
-        if ($request->filled('status')) {
+        if ($request->filled('status') && in_array($request->input('status'), ['scheduled', 'completed'])) {
             $query->where('status', $request->input('status'));
         }
 
