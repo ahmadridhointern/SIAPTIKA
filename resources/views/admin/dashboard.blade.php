@@ -15,8 +15,12 @@
                     Pantau jadwal kegiatan dan administrasi Bidang APTIKA secara real-time.
                 </p>
             </div>
-            <div class="text-xs font-mono text-[#6B6B6B] border border-[#E8E4DF] rounded-md px-3 py-1.5 bg-[#FFFFFF] shadow-sm">
-                Hari ini: <span class="text-[#B8860B] font-medium">{{ now()->isoFormat('dddd, D MMMM YYYY') }}</span>
+            <div class="flex items-center gap-2 px-3 py-1.5 border border-[#E8E4DF] rounded-md bg-[#FFFFFF] shadow-sm text-xs font-mono text-[#6B6B6B] self-start md:self-end">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#B8860B] animate-pulse"></span>
+                <span>Waktu:</span>
+                <span id="live-clock" class="font-semibold text-[#1A1A1A]">
+                    {{ now()->isoFormat('dddd, D MMMM YYYY') }} — {{ now()->format('H:i:s') }} WIB
+                </span>
             </div>
         </div>
     </div>
@@ -152,5 +156,38 @@
             @endif
         </div>
     </div>
+
+    {{-- Live Clock Script --}}
+    <script>
+        (function () {
+            const clockEl = document.getElementById('live-clock');
+            if (!clockEl) return;
+
+            // Mapping hari dan bulan Indonesia untuk akurasi penuh
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+
+            function updateClock() {
+                const now = new Date();
+                const dayName = days[now.getDay()];
+                const day = now.getDate();
+                const monthName = months[now.getMonth()];
+                const year = now.getFullYear();
+
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+
+                clockEl.textContent = `${dayName}, ${day} ${monthName} ${year} — ${hours}:${minutes}:${seconds} WIB`;
+            }
+
+            setInterval(updateClock, 1000);
+            // Panggil sekali untuk sinkronisasi instan saat load halaman
+            updateClock();
+        })();
+    </script>
 
 </x-layouts.admin>
