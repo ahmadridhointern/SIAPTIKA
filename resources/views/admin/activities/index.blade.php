@@ -45,25 +45,29 @@
                 </div>
             </div>
 
-            {{-- Status Filter (Radio Buttons) --}}
+            {{-- Status Filter (Segmented Radio Buttons) --}}
             <div class="w-full md:w-auto flex-shrink-0">
                 <span class="block mb-2 text-xs font-mono uppercase tracking-wider text-[#6B6B6B]">Status</span>
-                <div class="flex items-center gap-4 py-2" style="min-height: 3rem;">
-                    <label class="inline-flex items-center gap-2 text-sm text-[#1A1A1A] cursor-pointer font-mono font-medium">
-                        <input type="radio" name="status" value="" {{ request('status') === null || request('status') === '' ? 'checked' : '' }}
-                               class="w-4 h-4 accent-[#B8860B] cursor-pointer">
-                        <span>Semua</span>
+                <div class="flex items-center gap-2" style="min-height: 3rem;">
+                    
+                    {{-- Semua --}}
+                    <label class="status-radio-btn flex items-center justify-center cursor-pointer select-none">
+                        <input type="radio" name="status" value="" {{ request('status') === null || request('status') === '' ? 'checked' : '' }} class="hidden-radio">
+                        <span class="status-radio-label">Semua</span>
                     </label>
-                    <label class="inline-flex items-center gap-2 text-sm text-[#1A1A1A] cursor-pointer font-mono font-medium">
-                        <input type="radio" name="status" value="scheduled" {{ request('status') === 'scheduled' ? 'checked' : '' }}
-                               class="w-4 h-4 accent-[#B8860B] cursor-pointer">
-                        <span>Direncana</span>
+
+                    {{-- Direncana --}}
+                    <label class="status-radio-btn flex items-center justify-center cursor-pointer select-none">
+                        <input type="radio" name="status" value="scheduled" {{ request('status') === 'scheduled' ? 'checked' : '' }} class="hidden-radio">
+                        <span class="status-radio-label">Direncana</span>
                     </label>
-                    <label class="inline-flex items-center gap-2 text-sm text-[#1A1A1A] cursor-pointer font-mono font-medium">
-                        <input type="radio" name="status" value="completed" {{ request('status') === 'completed' ? 'checked' : '' }}
-                               class="w-4 h-4 accent-[#B8860B] cursor-pointer">
-                        <span>Selesai</span>
+
+                    {{-- Selesai --}}
+                    <label class="status-radio-btn flex items-center justify-center cursor-pointer select-none">
+                        <input type="radio" name="status" value="completed" {{ request('status') === 'completed' ? 'checked' : '' }} class="hidden-radio">
+                        <span class="status-radio-label">Selesai</span>
                     </label>
+
                 </div>
             </div>
 
