@@ -121,10 +121,62 @@
                                             {{ $kegiatan->description }}
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-[#1A1A1A]">
-                                        <div>{{ $kegiatan->activity_date->isoFormat('D MMM YYYY') }}</div>
-                                        <div class="text-xs text-[#6B6B6B] font-mono mt-0.5">
-                                            {{ \Carbon\Carbon::parse($kegiatan->time)->format('H:i') }} WIB
+                                    <td class="px-6 py-4 text-sm text-[#1A1A1A] whitespace-nowrap">
+                                        @php
+                                            $activityDateTime = \Carbon\Carbon::parse($kegiatan->activity_date->toDateString() . ' ' . $kegiatan->time);
+                                            $now = now();
+                                            $diffInSeconds = $now->diffInSeconds($activityDateTime, false);
+                                            $isFuture = $diffInSeconds > 0;
+                                            $absSeconds = abs($diffInSeconds);
+
+                                            $n = 0;
+                                            $unit = '';
+
+                                            if ($absSeconds < 60) {
+                                                $n = $absSeconds;
+                                                $unit = 'DETIK';
+                                            } elseif ($absSeconds < 3600) {
+                                                $n = floor($absSeconds / 60);
+                                                $unit = 'MENIT';
+                                            } elseif ($absSeconds < 86400) {
+                                                $n = floor($absSeconds / 3600);
+                                                $unit = 'JAM';
+                                            } elseif ($absSeconds < 604800) {
+                                                $n = floor($absSeconds / 86400);
+                                                $unit = 'HARI';
+                                            } elseif ($absSeconds < 2592000) {
+                                                $n = floor($absSeconds / 604800);
+                                                $unit = 'MINGGU';
+                                            } elseif ($absSeconds < 31536000) {
+                                                $n = floor($absSeconds / 2592000);
+                                                $unit = 'BULAN';
+                                            } else {
+                                                $n = floor($absSeconds / 31536000);
+                                                $unit = 'TAHUN';
+                                            }
+                                        @endphp
+                                        <div class="time-hover-wrapper">
+                                            <div class="time-default-content">
+                                                <div class="font-medium">{{ $kegiatan->activity_date->isoFormat('D MMM YYYY') }}</div>
+                                                <div class="text-xs text-[#6B6B6B] font-mono mt-0.5">{{ \Carbon\Carbon::parse($kegiatan->time)->format('H:i') }} WIB</div>
+                                            </div>
+                                            <div class="time-hover-content flex flex-col justify-center">
+                                                @if($isFuture)
+                                                    <div class="text-[0.7rem] leading-none font-mono font-bold uppercase tracking-wider text-[#B8860B]">
+                                                        {{ $n }} {{ $unit }}
+                                                    </div>
+                                                    <div class="text-[0.52rem] leading-none font-mono text-[#6B6B6B] uppercase tracking-wider mt-1">
+                                                        DARI SEKARANG
+                                                    </div>
+                                                @else
+                                                    <div class="text-[0.7rem] leading-none font-mono font-bold uppercase tracking-wider text-[#B8860B]">
+                                                        {{ $n }} {{ $unit }} LALU
+                                                    </div>
+                                                    <div class="text-[0.52rem] leading-none font-mono text-[#6B6B6B] uppercase tracking-wider mt-1">
+                                                        DIMULAI
+                                                    </div>
+                                                @endif
+                                            </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-[#6B6B6B]">
