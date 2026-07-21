@@ -15,11 +15,15 @@
                     Pantau jadwal kegiatan dan administrasi Bidang APTIKA secara real-time.
                 </p>
             </div>
-            <div class="text-xs font-mono text-[#6B6B6B] self-start md:self-end flex items-center gap-2 pb-1">
-                <span class="small-caps text-[0.68rem] text-[#B8860B]">Waktu Sistem:</span>
-                <span id="live-clock" class="text-[#1A1A1A] font-medium">
-                    {{ now()->isoFormat('dddd, D MMMM YYYY') }} — {{ now()->format('H:i:s') }} WIB
-                </span>
+            {{-- Waktu Sistem Card --}}
+            <div class="card-serif p-5 bg-[#FFFFFF] min-w-[220px] self-start md:self-center shadow-sm">
+                <span class="small-caps text-[0.65rem] block mb-1">Waktu Sistem</span>
+                <div id="live-clock-date" class="text-[#1A1A1A] font-medium text-base leading-snug">
+                    {{ now()->isoFormat('dddd, D MMMM YYYY') }}
+                </div>
+                <div id="live-clock-time" class="text-[#6B6B6B] text-xs font-mono mt-1">
+                    Pukul {{ now()->format('H:i:s') }} WIB
+                </div>
             </div>
         </div>
     </div>
@@ -159,10 +163,10 @@
     {{-- Live Clock Script --}}
     <script>
         (function () {
-            const clockEl = document.getElementById('live-clock');
-            if (!clockEl) return;
+            const dateEl = document.getElementById('live-clock-date');
+            const timeEl = document.getElementById('live-clock-time');
+            if (!dateEl || !timeEl) return;
 
-            // Mapping hari dan bulan Indonesia untuk akurasi penuh
             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const months = [
                 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -180,11 +184,11 @@
                 const minutes = String(now.getMinutes()).padStart(2, '0');
                 const seconds = String(now.getSeconds()).padStart(2, '0');
 
-                clockEl.textContent = `${dayName}, ${day} ${monthName} ${year} — ${hours}:${minutes}:${seconds} WIB`;
+                dateEl.textContent = `${dayName}, ${day} ${monthName} ${year}`;
+                timeEl.textContent = `Pukul ${hours}:${minutes}:${seconds} WIB`;
             }
 
             setInterval(updateClock, 1000);
-            // Panggil sekali untuk sinkronisasi instan saat load halaman
             updateClock();
         })();
     </script>
