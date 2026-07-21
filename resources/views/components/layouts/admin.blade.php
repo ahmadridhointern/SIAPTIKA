@@ -111,16 +111,13 @@
         <p class="page-transition-label" id="page-transition-label">Mengarahkan...</p>
     </div>
 
-    {{-- Toast Auto-Dismiss Script --}}
+    {{-- ─── Toast Auto-Dismiss ───────────────────────────────────── --}}
     <script>
         (function () {
-            const toasts = document.querySelectorAll('.toast');
-            toasts.forEach(function (toast) {
+            document.querySelectorAll('.toast').forEach(function (toast) {
                 setTimeout(function () {
                     toast.classList.add('hiding');
-                    setTimeout(function () {
-                        toast.remove();
-                    }, 320);
+                    setTimeout(function () { toast.remove(); }, 320);
                 }, 3600);
             });
         })();
@@ -128,27 +125,15 @@
 
     {{-- ─── Global Button Loading Utility ──────────────────────────── --}}
     <script>
-        /**
-         * setButtonLoading(btn, loading)
-         *
-         * Switches a button to a fixed-size spinner state and back.
-         * Stores the original width so the button never changes size.
-         *
-         * @param {HTMLElement} btn
-         * @param {boolean}     loading
-         */
         function setButtonLoading(btn, loading) {
             if (!btn) return;
             if (loading) {
-                // Lock the current pixel dimensions so the button won't shrink
-                const rect = btn.getBoundingClientRect();
+                var rect = btn.getBoundingClientRect();
                 btn.style.width  = rect.width  + 'px';
                 btn.style.height = rect.height + 'px';
-                // Cache original content
                 btn.dataset.originalContent = btn.innerHTML;
                 btn.dataset.loading = 'true';
                 btn.disabled = true;
-                // Replace text with centred spinner
                 btn.innerHTML = '<span class="btn-spinner"></span>';
             } else {
                 btn.style.width  = '';
@@ -163,13 +148,19 @@
     </script>
 
     {{-- ─── Page Transition Interceptor ─────────────────────────── --}}
+    {{--
+        Strategy: preventDefault on nav-link click → show overlay → wait 250ms
+        (enough for the CSS opacity transition to render) → navigate via
+        window.location.href.  This guarantees the overlay is visible even
+        when the destination page loads very fast (e.g. localhost dashboard).
+    --}}
     <script>
         (function () {
             var overlay = document.getElementById('page-transition-overlay');
             var label   = document.getElementById('page-transition-label');
 
-            /* Map a resolved pathname to a friendly Indonesian page name */
-            function getPageName(pathname) {
+            /* ── Helpers ─────────────────────────────────────────────── */
+            function pageName(pathname) {
                 var p = pathname.replace(/\/$/, '');
                 if (p === '/admin/dashboard')                    return 'Dashboard';
                 if (/^\/admin\/activities\/\d+\/edit$/.test(p)) return 'Edit Kegiatan';
@@ -179,9 +170,9 @@
                 return 'Halaman Berikutnya';
             }
 
-            function showOverlay(pageName) {
+            function showOverlay(name) {
                 if (!overlay || !label) return;
-                label.textContent = 'Mengarahkan ke Halaman ' + pageName;
+                label.textContent = 'Mengarahkan ke Halaman ' + name;
                 overlay.setAttribute('aria-hidden', 'false');
                 overlay.classList.add('active');
             }
@@ -192,66 +183,73 @@
                 overlay.setAttribute('aria-hidden', 'true');
             }
 
-            /* ── Layer 1: Direct bind to [data-page-name] header nav links.
-               Script runs at end-of-body so DOM is already ready — no need
-               to wait for DOMContentLoaded. ── */
-            document.querySelectorAll('[data-page-name]').forEach(function (link) {
-                link.addEventListener('click', function () {
-                    /* Skip if clicking the link for the page we're already on */
-                    var href = link.getAttribute('href') || '';
-                    var destUrl;
-                    try { destUrl = new URL(href, window.location.origin); }
-                    catch (err) { return; }
-                    var destPath = destUrl.pathname.replace(/\/$/, '');
-                    var currPath = window.location.pathname.replace(/\/$/, '');
-                    if (destPath === currPath) return;
-
-                    showOverlay(link.dataset.pageName);
-                });
-            });
-
-            /* ── Layer 2: General document click interceptor as a backup
-               Catches other internal navigating links (back buttons,
-               "Detail Kegiatan" row links, etc.) ── */
-            document.addEventListener('click', function (e) {
-                var link = e.target.closest('a[href]');
-                if (!link) return;
-
-                /* Already handled by direct bind above */
-                if (link.dataset.pageName) return;
-
-                var rawHref = link.getAttribute('href') || '';
-
-                /* Skip anchor-only, blank-href, javascript: and new-tab links */
-                if (!rawHref || rawHref === '#' || rawHref.startsWith('javascript:')) return;
-                if (link.target === '_blank') return;
-
-                /* Resolve to absolute URL; skip external origins */
+            /**
+             * Core routine used by both layers.
+             * Prevents default navigation, shows overlay, then navigates after
+             * 250 ms so the fade-in transition is visible before page unloads.
+             */
+            function goWithOverlay(e, href, name) {
                 var destUrl;
-                try {
-                    destUrl = new URL(rawHref, window.location.origin);
-                } catch (err) { return; }
-                if (destUrl.origin !== window.location.origin) return;
+                try { destUrl = new URL(href, window.location.origin); }
+                catch (_) { return; }
 
-                /* Skip AJAX pagination links inside the activities list */
-                var ajaxContainer = document.getElementById('activities-container');
-                if (ajaxContainer && ajaxContainer.contains(link)) return;
-
-                /* Skip links that open modals (they carry onclick attributes) */
-                if (link.hasAttribute('onclick')) return;
-
-                /* Skip when already on the same destination */
+                /* Skip if already on the destination */
                 var destPath = destUrl.pathname.replace(/\/$/, '');
                 var currPath = window.location.pathname.replace(/\/$/, '');
                 if (destPath === currPath && destUrl.search === window.location.search) return;
 
-                showOverlay(getPageName(destPath));
-            }, true /* capture phase */);
+                /* Block the native navigation */
+                e.preventDefault();
+                e.stopImmediatePropagation();   /* stop any other listeners */
 
-            /* ── Hide overlay on Back / Forward (bfcache pageshow) ── */
-            window.addEventListener('pageshow', function () {
-                hideOverlay();
+                showOverlay(name || pageName(destPath));
+
+                /* Navigate after overlay has faded in */
+                setTimeout(function () {
+                    window.location.href = destUrl.href;
+                }, 250);
+            }
+
+            /* ── Layer 1: Directly-bound nav links (most reliable) ─── */
+            /* Script is at end-of-body; DOM is fully ready here.       */
+            document.querySelectorAll('[data-page-name]').forEach(function (link) {
+                link.addEventListener('click', function (e) {
+                    goWithOverlay(e, link.getAttribute('href') || '', link.dataset.pageName);
+                });
             });
+
+            /* ── Layer 2: Catch-all for other internal links ─────────
+               (back buttons, activity-row detail links, etc.)          */
+            document.addEventListener('click', function (e) {
+                /* Skip if already handled by Layer 1 */
+                var link = e.target.closest('[data-page-name]');
+                if (link) return;
+
+                link = e.target.closest('a[href]');
+                if (!link) return;
+
+                var rawHref = link.getAttribute('href') || '';
+                if (!rawHref || rawHref === '#' || rawHref.startsWith('javascript:')) return;
+                if (link.target === '_blank') return;
+
+                /* Skip external origins */
+                var destUrl;
+                try { destUrl = new URL(rawHref, window.location.origin); }
+                catch (_) { return; }
+                if (destUrl.origin !== window.location.origin) return;
+
+                /* Skip AJAX pagination inside the activities container */
+                var ajaxEl = document.getElementById('activities-container');
+                if (ajaxEl && ajaxEl.contains(link)) return;
+
+                /* Skip modal openers */
+                if (link.hasAttribute('onclick')) return;
+
+                goWithOverlay(e, rawHref, null);
+            }, true);
+
+            /* ── Hide on Back/Forward bfcache restore ────────────────── */
+            window.addEventListener('pageshow', function () { hideOverlay(); });
         })();
     </script>
 </body>
