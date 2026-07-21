@@ -93,4 +93,22 @@
         Hanya Administrator yang dapat mengakses sistem ini.
     </p>
 
+    <script>
+        (function () {
+            /* Spinner on login submit — inline because auth layout has no shared JS block */
+            var form = document.getElementById('form-login');
+            var btn  = document.getElementById('btn-login');
+            if (form && btn) {
+                form.addEventListener('submit', function () {
+                    var rect = btn.getBoundingClientRect();
+                    btn.style.width  = rect.width  + 'px';
+                    btn.style.height = rect.height + 'px';
+                    btn.disabled = true;
+                    btn.dataset.loading = 'true';
+                    btn.innerHTML = '<span style="display:inline-block;width:1em;height:1em;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:btnSpin 0.65s linear infinite;"></span>';
+                });
+            }
+        })();
+    </script>
+
 </x-layouts.auth>

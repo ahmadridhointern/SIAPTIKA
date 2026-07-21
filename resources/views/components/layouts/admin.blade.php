@@ -119,5 +119,40 @@
         })();
     </script>
 
+    {{-- ─── Global Button Loading Utility ──────────────────────────── --}}
+    <script>
+        /**
+         * setButtonLoading(btn, loading)
+         *
+         * Switches a button to a fixed-size spinner state and back.
+         * Stores the original width so the button never changes size.
+         *
+         * @param {HTMLElement} btn
+         * @param {boolean}     loading
+         */
+        function setButtonLoading(btn, loading) {
+            if (!btn) return;
+            if (loading) {
+                // Lock the current pixel dimensions so the button won't shrink
+                const rect = btn.getBoundingClientRect();
+                btn.style.width  = rect.width  + 'px';
+                btn.style.height = rect.height + 'px';
+                // Cache original content
+                btn.dataset.originalContent = btn.innerHTML;
+                btn.dataset.loading = 'true';
+                btn.disabled = true;
+                // Replace text with centred spinner
+                btn.innerHTML = '<span class="btn-spinner"></span>';
+            } else {
+                btn.style.width  = '';
+                btn.style.height = '';
+                btn.dataset.loading = 'false';
+                btn.disabled = false;
+                if (btn.dataset.originalContent) {
+                    btn.innerHTML = btn.dataset.originalContent;
+                }
+            }
+        }
+    </script>
 </body>
 </html>

@@ -197,7 +197,7 @@
                 </div>
 
                 <div class="flex items-center gap-4 px-8 py-5 border-t border-[#E8E4DF] bg-[#FAFAF8] flex-shrink-0">
-                    <button type="submit" class="btn-primary">Simpan Kegiatan</button>
+                    <button id="btn-create-submit" type="submit" class="btn-primary">Simpan Kegiatan</button>
                     <button type="button" onclick="closeModal('create-modal')"
                             class="btn-secondary">Batalkan</button>
                 </div>
@@ -313,7 +313,7 @@
                 </div>
 
                 <div class="flex items-center gap-4 px-8 py-5 border-t border-[#E8E4DF] bg-[#FAFAF8] flex-shrink-0">
-                    <button type="submit" class="btn-primary">Perbarui Kegiatan</button>
+                    <button id="btn-edit-submit" type="submit" class="btn-primary">Perbarui Kegiatan</button>
                     <button type="button" onclick="closeModal('edit-modal')"
                             class="btn-secondary">Batalkan</button>
                 </div>
@@ -347,10 +347,10 @@
                     @csrf
                     @method('DELETE')
                     <div class="flex items-center gap-3">
-                        <button type="submit"
-                                class="flex-1 text-center text-xs font-mono font-semibold py-2.5 px-4 rounded border border-red-300 text-red-600 bg-red-50 hover:bg-red-100 transition-all duration-150 cursor-pointer">
-                            Ya, Hapus
-                        </button>
+                    <button id="btn-delete-submit" type="submit"
+                            class="flex-1 text-center text-xs font-mono font-semibold py-2.5 px-4 rounded border border-red-300 text-red-600 bg-red-50 hover:bg-red-100 transition-all duration-150 cursor-pointer">
+                        Ya, Hapus
+                    </button>
                         <button type="button" onclick="closeModal('delete-modal')"
                                 class="btn-secondary flex-1">
                             Batal
@@ -498,6 +498,11 @@
         // Update browser URL without reload
         window.history.pushState({}, '', url);
 
+        // Show a subtle skeleton loading state on the container
+        container.style.opacity = '0.45';
+        container.style.pointerEvents = 'none';
+        container.style.transition = 'opacity 0.15s ease';
+
         // Fetch partial view HTML
         fetch(url, {
             headers: {
@@ -507,8 +512,14 @@
         .then(response => response.text())
         .then(html => {
             container.innerHTML = html;
+            container.style.opacity = '';
+            container.style.pointerEvents = '';
         })
-        .catch(err => console.error('Error fetching activities:', err));
+        .catch(err => {
+            console.error('Error fetching activities:', err);
+            container.style.opacity = '';
+            container.style.pointerEvents = '';
+        });
     }
 
     function toggleClearSearchButton() {
@@ -566,6 +577,33 @@
                     // Smooth scroll to top of index content
                     container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
+            });
+        }
+    });
+
+    // ── Form Submit Loading Spinners ───────────────────────────────────
+    document.addEventListener('DOMContentLoaded', function () {
+        // Create form
+        const createForm = document.getElementById('create-form');
+        if (createForm) {
+            createForm.addEventListener('submit', function () {
+                setButtonLoading(document.getElementById('btn-create-submit'), true);
+            });
+        }
+
+        // Edit form
+        const editForm = document.getElementById('edit-form');
+        if (editForm) {
+            editForm.addEventListener('submit', function () {
+                setButtonLoading(document.getElementById('btn-edit-submit'), true);
+            });
+        }
+
+        // Delete form
+        const deleteForm = document.getElementById('delete-form');
+        if (deleteForm) {
+            deleteForm.addEventListener('submit', function () {
+                setButtonLoading(document.getElementById('btn-delete-submit'), true);
             });
         }
     });
