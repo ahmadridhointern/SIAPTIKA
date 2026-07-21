@@ -167,77 +167,67 @@
             var overlay = document.getElementById('page-transition-overlay');
             var label   = document.getElementById('page-transition-label');
 
-            /**
-             * Map a URL pathname to a human-readable Indonesian page name.
-             */
-            function getPageName(href) {
-                try {
-                    var path = new URL(href, window.location.origin).pathname
-                                   .replace(/\/$/, '');
-                    if (path === '/admin/dashboard')        return 'Dashboard';
-                    if (/^\/admin\/activities\/\d+\/edit$/.test(path)) return 'Edit Kegiatan';
-                    if (/^\/admin\/activities\/\d+$/.test(path))       return 'Detail Kegiatan';
-                    if (/^\/admin\/activities/.test(path))              return 'Kegiatan';
-                    if (/^\/admin/.test(path))                          return 'Dashboard';
-                    return 'Halaman Berikutnya';
-                } catch (e) {
-                    return 'Halaman Berikutnya';
-                }
+            /* Map a resolved pathname to a friendly Indonesian page name */
+            function getPageName(pathname) {
+                var p = pathname.replace(/\/$/, '');
+                if (p === '/admin/dashboard')                    return 'Dashboard';
+                if (/^\/admin\/activities\/\d+\/edit$/.test(p)) return 'Edit Kegiatan';
+                if (/^\/admin\/activities\/\d+$/.test(p))       return 'Detail Kegiatan';
+                if (/^\/admin\/activities/.test(p))              return 'Kegiatan';
+                if (/^\/admin/.test(p))                         return 'Dashboard';
+                return 'Halaman Berikutnya';
             }
 
-            function showTransitionOverlay(href) {
+            function showOverlay(pageName) {
                 if (!overlay || !label) return;
-                var name = getPageName(href);
-                label.textContent = 'Mengarahkan ke Halaman ' + name;
+                label.textContent = 'Mengarahkan ke Halaman ' + pageName;
                 overlay.setAttribute('aria-hidden', 'false');
                 overlay.classList.add('active');
             }
 
-            function hideTransitionOverlay() {
+            function hideOverlay() {
                 if (!overlay) return;
                 overlay.classList.remove('active');
                 overlay.setAttribute('aria-hidden', 'true');
             }
 
-            /* Intercept every <a href> click inside the page */
+            /* Intercept every <a href> click on the page */
             document.addEventListener('click', function (e) {
                 var link = e.target.closest('a[href]');
                 if (!link) return;
 
-                var href = link.getAttribute('href');
+                var rawHref = link.getAttribute('href') || '';
 
-                // Ignore empty, anchor-only, or JS links
-                if (!href || href === '#' || href.startsWith('javascript:')) return;
-
-                // Ignore external links and new-tab links
+                /* Skip anchor-only, blank-href, javascript: and new-tab links */
+                if (!rawHref || rawHref === '#' || rawHref.startsWith('javascript:')) return;
                 if (link.target === '_blank') return;
-                try {
-                    var dest = new URL(href, window.location.origin);
-                    if (dest.origin !== window.location.origin) return;
-                } catch (err) { return; }
 
-                // Ignore AJAX pagination links inside the activities container
+                /* Resolve to absolute URL; skip external origins */
+                var destUrl;
+                try {
+                    destUrl = new URL(rawHref, window.location.origin);
+                } catch (err) { return; }
+                if (destUrl.origin !== window.location.origin) return;
+
+                /* Skip AJAX pagination links inside the activities list */
                 var ajaxContainer = document.getElementById('activities-container');
                 if (ajaxContainer && ajaxContainer.contains(link)) return;
 
-                // Ignore if the link also has an onclick that suggests it opens a modal
-                // (modal-opening links have onclick attributes)
+                /* Skip links that open modals (they carry onclick attributes) */
                 if (link.hasAttribute('onclick')) return;
 
-                // Ignore if destination is exactly the current URL (no navigation)
-                var destUrl  = new URL(href, window.location.origin);
+                /* Skip when already on the same destination */
+                var destPath = destUrl.pathname.replace(/\/$/, '');
                 var currPath = window.location.pathname.replace(/\/$/, '');
-                if (destUrl.pathname.replace(/\/$/, '') === currPath
-                    && destUrl.search === window.location.search) return;
+                if (destPath === currPath && destUrl.search === window.location.search) return;
 
-                // All checks passed — show overlay before browser navigates
-                showTransitionOverlay(href);
-            }, true /* capture phase so it fires before onclick handlers cancel it */);
+                /* All checks passed — show the overlay */
+                showOverlay(getPageName(destPath));
+            }, true /* capture phase, fires before onclick can cancel it */);
 
-            /* Hide the overlay when the user presses Back / Forward
-               (pageshow fires even for bfcache restores). */
-            window.addEventListener('pageshow', function (e) {
-                hideTransitionOverlay();
+            /* Hide the overlay when Back / Forward restores the page (bfcache) */
+            window.addEventListener('pageshow', function () {
+                hideOverlay();
             });
         })();
     </script>
