@@ -56,7 +56,7 @@
             </div>
 
             {{-- Reset Button --}}
-            <div id="reset-container" class="flex-shrink-0 {{ request()->anyFilled(['search', 'status']) ? '' : 'hidden' }}">
+            <div id="reset-container" class="flex-shrink-0 {{ (!request()->filled('search') && request()->filled('status')) ? '' : 'hidden' }}">
                 <button type="button" onclick="resetFilters()"
                    class="inline-flex items-center justify-center px-5 rounded border border-[#E8E4DF] text-xs font-mono font-semibold text-[#6B6B6B] hover:text-[#B8860B] hover:border-[#B8860B] transition-all duration-200 w-full md:w-auto whitespace-nowrap"
                    style="min-height: 3rem; background: transparent; cursor: pointer;">
@@ -464,11 +464,13 @@
         const resetContainer = document.getElementById('reset-container');
         if (!resetContainer) return;
 
-        const hasValues = (searchInput && searchInput.value.trim() !== '') || (statusSelect && statusSelect.value !== '');
-        if (hasValues) {
-            resetContainer.classList.remove('hidden');
-        } else {
+        const searchHasValue = searchInput && searchInput.value.trim() !== '';
+        const statusHasValue = statusSelect && statusSelect.value !== '';
+
+        if (searchHasValue || !statusHasValue) {
             resetContainer.classList.add('hidden');
+        } else {
+            resetContainer.classList.remove('hidden');
         }
     }
 
