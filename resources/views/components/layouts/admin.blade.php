@@ -104,6 +104,12 @@
 
     @stack('modals')
 
+    {{-- ─── Page Transition Overlay ──────────────────────────────── --}}
+    <div id="page-transition-overlay" aria-hidden="true" aria-live="assertive">
+        <div class="page-transition-spinner"></div>
+        <p class="page-transition-label" id="page-transition-label">Mengarahkan...</p>
+    </div>
+
     {{-- Toast Auto-Dismiss Script --}}
     <script>
         (function () {
@@ -153,6 +159,87 @@
                 }
             }
         }
+    </script>
+
+    {{-- ─── Page Transition Interceptor ─────────────────────────── --}}
+    <script>
+        (function () {
+            var overlay = document.getElementById('page-transition-overlay');
+            var label   = document.getElementById('page-transition-label');
+
+            /**
+             * Map a URL pathname to a human-readable Indonesian page name.
+             */
+            function getPageName(href) {
+                try {
+                    var path = new URL(href, window.location.origin).pathname
+                                   .replace(/\/$/, '');
+                    if (path === '/admin/dashboard')        return 'Dashboard';
+                    if (/^\/admin\/activities\/\d+\/edit$/.test(path)) return 'Edit Kegiatan';
+                    if (/^\/admin\/activities\/\d+$/.test(path))       return 'Detail Kegiatan';
+                    if (/^\/admin\/activities/.test(path))              return 'Kegiatan';
+                    if (/^\/admin/.test(path))                          return 'Dashboard';
+                    return 'Halaman Berikutnya';
+                } catch (e) {
+                    return 'Halaman Berikutnya';
+                }
+            }
+
+            function showTransitionOverlay(href) {
+                if (!overlay || !label) return;
+                var name = getPageName(href);
+                label.textContent = 'Mengarahkan ke Halaman ' + name;
+                overlay.setAttribute('aria-hidden', 'false');
+                overlay.classList.add('active');
+            }
+
+            function hideTransitionOverlay() {
+                if (!overlay) return;
+                overlay.classList.remove('active');
+                overlay.setAttribute('aria-hidden', 'true');
+            }
+
+            /* Intercept every <a href> click inside the page */
+            document.addEventListener('click', function (e) {
+                var link = e.target.closest('a[href]');
+                if (!link) return;
+
+                var href = link.getAttribute('href');
+
+                // Ignore empty, anchor-only, or JS links
+                if (!href || href === '#' || href.startsWith('javascript:')) return;
+
+                // Ignore external links and new-tab links
+                if (link.target === '_blank') return;
+                try {
+                    var dest = new URL(href, window.location.origin);
+                    if (dest.origin !== window.location.origin) return;
+                } catch (err) { return; }
+
+                // Ignore AJAX pagination links inside the activities container
+                var ajaxContainer = document.getElementById('activities-container');
+                if (ajaxContainer && ajaxContainer.contains(link)) return;
+
+                // Ignore if the link also has an onclick that suggests it opens a modal
+                // (modal-opening links have onclick attributes)
+                if (link.hasAttribute('onclick')) return;
+
+                // Ignore if destination is exactly the current URL (no navigation)
+                var destUrl  = new URL(href, window.location.origin);
+                var currPath = window.location.pathname.replace(/\/$/, '');
+                if (destUrl.pathname.replace(/\/$/, '') === currPath
+                    && destUrl.search === window.location.search) return;
+
+                // All checks passed — show overlay before browser navigates
+                showTransitionOverlay(href);
+            }, true /* capture phase so it fires before onclick handlers cancel it */);
+
+            /* Hide the overlay when the user presses Back / Forward
+               (pageshow fires even for bfcache restores). */
+            window.addEventListener('pageshow', function (e) {
+                hideTransitionOverlay();
+            });
+        })();
     </script>
 </body>
 </html>

@@ -633,3 +633,50 @@ body>main,
     opacity: 0.75 !important;
     cursor: not-allowed !important;
 }
+
+/* ============================================================
+   Page Transition Overlay
+   ============================================================ */
+
+#page-transition-overlay {
+    position: fixed;
+    /* Sit flush below the fixed header */
+    top: var(--header-height, 4rem);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 90;
+    /* Slightly warm-grey wash consistent with the site palette */
+    background: rgba(240, 238, 235, 0.92);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    /* Hidden by default; JS toggles .active */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+}
+
+#page-transition-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.page-transition-spinner {
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 3px solid rgba(184, 134, 11, 0.25);
+    border-top-color: #B8860B;
+    border-radius: 50%;
+    animation: btnSpin 0.75s linear infinite;
+}
+
+.page-transition-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: #888888;
+    text-align: center;
+}
