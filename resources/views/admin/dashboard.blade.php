@@ -15,10 +15,9 @@
                     Pantau jadwal kegiatan dan administrasi Bidang APTIKA secara real-time.
                 </p>
             </div>
-            <div class="flex items-center gap-2 px-3 py-1.5 border border-[#E8E4DF] rounded-md bg-[#FFFFFF] shadow-sm text-xs font-mono text-[#6B6B6B] self-start md:self-end">
-                <span class="w-1.5 h-1.5 rounded-full bg-[#B8860B] animate-pulse"></span>
-                <span>Waktu:</span>
-                <span id="live-clock" class="font-semibold text-[#1A1A1A]">
+            <div class="text-xs font-mono text-[#6B6B6B] self-start md:self-end flex items-center gap-2 pb-1">
+                <span class="small-caps text-[0.68rem] text-[#B8860B]">Waktu Sistem:</span>
+                <span id="live-clock" class="text-[#1A1A1A] font-medium">
                     {{ now()->isoFormat('dddd, D MMMM YYYY') }} — {{ now()->format('H:i:s') }} WIB
                 </span>
             </div>
