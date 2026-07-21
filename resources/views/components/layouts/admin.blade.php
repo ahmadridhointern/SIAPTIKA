@@ -27,7 +27,8 @@
             <nav class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
 
                 {{-- Brand --}}
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3" style="text-decoration: none;">
+                <a href="{{ route('admin.dashboard') }}" data-page-name="Dashboard"
+                   class="flex items-center gap-3" style="text-decoration: none;">
                     <span class="font-serif text-xl" style="color: #1A1A1A; letter-spacing: -0.01em;">SIAPTIKA</span>
                     <span class="h-4 w-px" style="background-color: #E8E4DF;"></span>
                     <span class="small-caps" style="font-size: 0.65rem;">Panel Admin</span>
@@ -38,12 +39,12 @@
 
                     {{-- Navigation Links --}}
                     <nav class="hidden sm:flex items-center gap-1">
-                        <a href="{{ route('admin.dashboard') }}"
+                        <a href="{{ route('admin.dashboard') }}" data-page-name="Dashboard"
                            class="px-3 py-1.5 rounded text-xs font-mono font-medium transition-colors duration-150"
                            style="color: {{ request()->routeIs('admin.dashboard') ? '#B8860B' : '#6B6B6B' }}; background: {{ request()->routeIs('admin.dashboard') ? 'rgba(184,134,11,0.08)' : 'transparent' }};">
                             Dashboard
                         </a>
-                        <a href="{{ route('admin.activities.index') }}"
+                        <a href="{{ route('admin.activities.index') }}" data-page-name="Kegiatan"
                            class="px-3 py-1.5 rounded text-xs font-mono font-medium transition-colors duration-150"
                            style="color: {{ request()->routeIs('admin.activities.*') ? '#B8860B' : '#6B6B6B' }}; background: {{ request()->routeIs('admin.activities.*') ? 'rgba(184,134,11,0.08)' : 'transparent' }};">
                             Kegiatan
@@ -191,10 +192,35 @@
                 overlay.setAttribute('aria-hidden', 'true');
             }
 
-            /* Intercept every <a href> click on the page */
+            /* ── Layer 1: Direct bind to [data-page-name] header nav links
+               This is the most reliable method and guarantees the overlay
+               fires regardless of page-specific JS on any page. ── */
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('[data-page-name]').forEach(function (link) {
+                    link.addEventListener('click', function (e) {
+                        /* Skip if already on that page (same pathname) */
+                        var href = link.getAttribute('href') || '';
+                        var destUrl;
+                        try { destUrl = new URL(href, window.location.origin); }
+                        catch (err) { return; }
+                        var destPath = destUrl.pathname.replace(/\/$/, '');
+                        var currPath = window.location.pathname.replace(/\/$/, '');
+                        if (destPath === currPath) return;
+
+                        showOverlay(link.dataset.pageName);
+                    });
+                });
+            });
+
+            /* ── Layer 2: General document click interceptor as a backup
+               Catches other internal navigating links (back buttons,
+               "Detail Kegiatan" row links, etc.) ── */
             document.addEventListener('click', function (e) {
                 var link = e.target.closest('a[href]');
                 if (!link) return;
+
+                /* Already handled by direct bind above */
+                if (link.dataset.pageName) return;
 
                 var rawHref = link.getAttribute('href') || '';
 
@@ -221,11 +247,10 @@
                 var currPath = window.location.pathname.replace(/\/$/, '');
                 if (destPath === currPath && destUrl.search === window.location.search) return;
 
-                /* All checks passed — show the overlay */
                 showOverlay(getPageName(destPath));
-            }, true /* capture phase, fires before onclick can cancel it */);
+            }, true /* capture phase */);
 
-            /* Hide the overlay when Back / Forward restores the page (bfcache) */
+            /* ── Hide overlay on Back / Forward (bfcache pageshow) ── */
             window.addEventListener('pageshow', function () {
                 hideOverlay();
             });
