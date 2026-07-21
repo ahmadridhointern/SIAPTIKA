@@ -45,14 +45,26 @@
                 </div>
             </div>
 
-            {{-- Status Filter --}}
-            <div class="w-full md:w-52">
-                <label for="status" class="block mb-1.5 text-xs font-mono uppercase tracking-wider text-[#6B6B6B]">Status</label>
-                <select id="status" name="status" class="input-serif">
-                    <option value="">Semua Status</option>
-                    <option value="scheduled" {{ request('status') === 'scheduled' ? 'selected' : '' }}>Direncana</option>
-                    <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Selesai</option>
-                </select>
+            {{-- Status Filter (Radio Buttons) --}}
+            <div class="w-full md:w-auto flex-shrink-0">
+                <span class="block mb-2 text-xs font-mono uppercase tracking-wider text-[#6B6B6B]">Status</span>
+                <div class="flex items-center gap-4 py-2" style="min-height: 3rem;">
+                    <label class="inline-flex items-center gap-2 text-sm text-[#1A1A1A] cursor-pointer font-mono font-medium">
+                        <input type="radio" name="status" value="" {{ request('status') === null || request('status') === '' ? 'checked' : '' }}
+                               class="w-4 h-4 accent-[#B8860B] cursor-pointer">
+                        <span>Semua</span>
+                    </label>
+                    <label class="inline-flex items-center gap-2 text-sm text-[#1A1A1A] cursor-pointer font-mono font-medium">
+                        <input type="radio" name="status" value="scheduled" {{ request('status') === 'scheduled' ? 'checked' : '' }}
+                               class="w-4 h-4 accent-[#B8860B] cursor-pointer">
+                        <span>Direncana</span>
+                    </label>
+                    <label class="inline-flex items-center gap-2 text-sm text-[#1A1A1A] cursor-pointer font-mono font-medium">
+                        <input type="radio" name="status" value="completed" {{ request('status') === 'completed' ? 'checked' : '' }}
+                               class="w-4 h-4 accent-[#B8860B] cursor-pointer">
+                        <span>Selesai</span>
+                    </label>
+                </div>
             </div>
 
             {{-- Reset Button --}}
@@ -422,9 +434,14 @@
     // ── AJAX Live Search, Filter, and Pagination ───────────────────
     let searchTimer;
 
+    // Helper to get checked radio value
+    function getSelectedStatus() {
+        const checkedRadio = document.querySelector('input[name="status"]:checked');
+        return checkedRadio ? checkedRadio.value : '';
+    }
+
     function fetchActivities(page = null) {
         const searchInput  = document.getElementById('search');
-        const statusSelect = document.getElementById('status');
         const container    = document.getElementById('activities-container');
         if (!container) return;
 
@@ -436,8 +453,10 @@
         if (searchInput && searchInput.value.trim() !== '') {
             params.append('search', searchInput.value.trim());
         }
-        if (statusSelect && statusSelect.value !== '') {
-            params.append('status', statusSelect.value);
+        
+        const statusVal = getSelectedStatus();
+        if (statusVal !== '') {
+            params.append('status', statusVal);
         }
 
         const url = '{{ route("admin.activities.index") }}?' + params.toString();
@@ -460,12 +479,11 @@
 
     function toggleResetButton() {
         const searchInput  = document.getElementById('search');
-        const statusSelect = document.getElementById('status');
         const resetContainer = document.getElementById('reset-container');
         if (!resetContainer) return;
 
         const searchHasValue = searchInput && searchInput.value.trim() !== '';
-        const statusHasValue = statusSelect && statusSelect.value !== '';
+        const statusHasValue = getSelectedStatus() !== '';
 
         if (searchHasValue || !statusHasValue) {
             resetContainer.classList.add('hidden');
@@ -476,9 +494,12 @@
 
     function resetFilters() {
         const searchInput  = document.getElementById('search');
-        const statusSelect = document.getElementById('status');
         if (searchInput) searchInput.value = '';
-        if (statusSelect) statusSelect.value = '';
+        
+        // Reset radio button to default ("")
+        const defaultRadio = document.querySelector('input[name="status"][value=""]');
+        if (defaultRadio) defaultRadio.checked = true;
+
         toggleResetButton();
         fetchActivities();
     }
@@ -486,7 +507,6 @@
     // Set up listeners for live input and status select
     document.addEventListener('DOMContentLoaded', function () {
         const searchInput  = document.getElementById('search');
-        const statusSelect = document.getElementById('status');
 
         if (searchInput) {
             searchInput.addEventListener('input', function () {
@@ -498,12 +518,14 @@
             });
         }
 
-        if (statusSelect) {
-            statusSelect.addEventListener('change', function () {
+        // Listen for change on status radio buttons
+        const statusRadios = document.querySelectorAll('input[name="status"]');
+        statusRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
                 toggleResetButton();
                 fetchActivities();
             });
-        }
+        });
 
         // Handle AJAX Pagination clicks
         const container = document.getElementById('activities-container');
