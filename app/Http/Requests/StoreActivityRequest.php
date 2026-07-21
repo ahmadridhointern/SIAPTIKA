@@ -15,6 +15,15 @@ class StoreActivityRequest extends FormRequest
     }
 
     /**
+     * Arahkan redirect validasi gagal ke halaman daftar kegiatan (modal ada di sana).
+     */
+    protected function redirectTo(): string
+    {
+        return route('admin.activities.index');
+    }
+
+
+    /**
      * Aturan validasi untuk data Kegiatan.
      */
     public function rules(): array

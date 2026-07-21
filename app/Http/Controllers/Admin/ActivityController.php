@@ -40,15 +40,25 @@ class ActivityController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('admin.activities.index', compact('activities'));
+        // Mendukung auto-buka edit modal dari halaman detail (link ?edit=id)
+        $editActivity = null;
+        if ($request->filled('edit') && is_numeric($request->input('edit'))) {
+            $editActivity = Activity::find($request->integer('edit'));
+            // Hanya kegiatan yang belum lewat boleh diubah
+            if ($editActivity && $editActivity->activity_date->lt(today())) {
+                $editActivity = null;
+            }
+        }
+
+        return view('admin.activities.index', compact('activities', 'editActivity'));
     }
 
     /**
-     * Tampilkan form tambah kegiatan.
+     * Redirect ke index (form tambah ada di modal pada index).
      */
-    public function create(): View
+    public function create(): RedirectResponse
     {
-        return view('admin.activities.create');
+        return redirect()->route('admin.activities.index', ['create' => 1]);
     }
 
     /**
@@ -77,9 +87,9 @@ class ActivityController extends Controller
     }
 
     /**
-     * Tampilkan form edit kegiatan.
+     * Redirect ke index dengan query ?edit=id sehingga modal edit terbuka otomatis.
      */
-    public function edit(Activity $activity): View|RedirectResponse
+    public function edit(Activity $activity): RedirectResponse
     {
         // Aturan Bisnis: Kegiatan yang sudah lewat tidak boleh diubah
         if ($activity->activity_date->lt(today())) {
@@ -87,7 +97,7 @@ class ActivityController extends Controller
                 ->with('error', 'Kegiatan yang sudah lewat tidak dapat diubah.');
         }
 
-        return view('admin.activities.edit', compact('activity'));
+        return redirect()->route('admin.activities.index', ['edit' => $activity->id]);
     }
 
     /**

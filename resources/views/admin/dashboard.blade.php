@@ -171,10 +171,12 @@
                     </p>
                     <hr class="rule-line my-4">
                     <div class="space-y-3">
-                        <a href="#" class="btn-primary w-full text-center text-xs justify-center opacity-50 cursor-not-allowed" onclick="event.preventDefault()">
+                        <a href="{{ route('admin.activities.index', ['create' => 1]) }}"
+                           class="btn-primary w-full text-center text-xs justify-center">
                             + Tambah Kegiatan Baru
                         </a>
-                        <a href="#" class="block text-center text-xs font-mono tracking-wider font-semibold py-2.5 px-4 rounded border border-[#E8E4DF] text-[#6B6B6B] hover:text-[#B8860B] hover:border-[#B8860B] transition-all duration-200" onclick="event.preventDefault()">
+                        <a href="{{ route('admin.activities.index') }}"
+                           class="block text-center text-xs font-mono tracking-wider font-semibold py-2.5 px-4 rounded border border-[#E8E4DF] text-[#6B6B6B] hover:text-[#B8860B] hover:border-[#B8860B] transition-all duration-200">
                             Lihat Semua Jadwal
                         </a>
                     </div>
