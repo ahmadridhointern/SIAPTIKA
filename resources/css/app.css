@@ -603,6 +603,6 @@ body>main,
    ============================================================ */
 
 .modal-open-filter {
-    filter: grayscale(100%) !important;
+    filter: blur(4px) grayscale(100%) !important;
     transition: filter 0.3s ease-in-out;
 }
