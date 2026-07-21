@@ -174,10 +174,9 @@
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Status</label>
                             <input type="hidden" id="c-status" name="status" value="{{ old('_modal') === 'create' ? old('status') : '' }}">
-                            <div id="c-status-display" class="input-serif bg-gray-50 text-[#888888] flex items-center px-4 opacity-60 border border-[#E8E4DF] cursor-not-allowed"
-                                 style="min-height: 3rem; pointer-events: none; user-select: none;">
-                                Silakan masukkan tanggal dan waktu kegiatan terlebih dahulu
-                            </div>
+                            <input type="text" id="c-status-display" class="input-serif cursor-not-allowed" disabled readonly
+                                   value="Silakan masukkan tanggal dan waktu kegiatan terlebih dahulu"
+                                   style="min-height: 3rem; background-color: #F5F3F0 !important; color: #888888; opacity: 1; user-select: none;">
                         </div>
 
                         {{-- Deskripsi --}}
@@ -292,10 +291,9 @@
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">Status</label>
                             <input type="hidden" id="e-status" name="status" value="{{ old('_modal') === 'edit' ? old('status') : ($editActivity?->status ?? '') }}">
-                            <div id="e-status-display" class="input-serif bg-gray-50 text-[#888888] flex items-center px-4 opacity-60 border border-[#E8E4DF] cursor-not-allowed"
-                                 style="min-height: 3rem; pointer-events: none; user-select: none;">
-                                Silakan masukkan tanggal dan waktu kegiatan terlebih dahulu
-                            </div>
+                            <input type="text" id="e-status-display" class="input-serif cursor-not-allowed" disabled readonly
+                                   value="Silakan masukkan tanggal dan waktu kegiatan terlebih dahulu"
+                                   style="min-height: 3rem; background-color: #F5F3F0 !important; color: #888888; opacity: 1; user-select: none;">
                         </div>
 
                         <div>
@@ -425,7 +423,7 @@
 
         if (!dateEl.value || !timeEl.value) {
             statusEl.value = '';
-            displayEl.textContent = 'Silakan masukkan tanggal dan waktu kegiatan terlebih dahulu';
+            displayEl.value = 'Silakan masukkan tanggal dan waktu kegiatan terlebih dahulu';
             displayEl.classList.add('text-red-600');
             displayEl.classList.remove('text-[#888888]');
             return;
@@ -434,15 +432,16 @@
         displayEl.classList.remove('text-red-600');
         displayEl.classList.add('text-[#888888]');
 
-        const selected = new Date(dateEl.value + 'T00:00:00');
-        const today    = new Date(); today.setHours(0, 0, 0, 0);
+        // Compare full datetime (including hour/minute)
+        const selected = new Date(dateEl.value + 'T' + timeEl.value);
+        const now      = new Date();
 
-        if (selected < today) {
+        if (selected > now) {
             statusEl.value = 'scheduled';
-            displayEl.textContent = 'Direncana (Tanggal sebelum hari ini)';
+            displayEl.value = 'Direncana (Waktu kegiatan belum mulai)';
         } else {
             statusEl.value = 'completed';
-            displayEl.textContent = 'Selesai (Tanggal hari ini / setelah hari ini)';
+            displayEl.value = 'Selesai (Waktu kegiatan sudah lewat)';
         }
     }
 
