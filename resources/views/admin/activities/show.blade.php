@@ -21,7 +21,7 @@
                     <span class="back-btn-text">Kembali</span>
                 </a>
                 @if(!$activity->activity_date->lt(today()))
-                    <a href="{{ route('admin.activities.index', ['edit' => $activity->id]) }}" class="btn-primary" style="padding-top: 0.6rem; padding-bottom: 0.6rem;">
+                    <a href="{{ route('admin.activities.index', ['edit' => $activity->id]) }}" class="btn-primary">
                         Ubah Kegiatan
                     </a>
                 @endif
