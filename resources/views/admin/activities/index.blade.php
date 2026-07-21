@@ -45,7 +45,7 @@
                     
                     {{-- Clear Search Button --}}
                     <button type="button" id="clear-search" onclick="clearSearchInput()"
-                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-[#6B6B6B] hover:text-[#B8860B] transition-colors {{ request('search') ? '' : 'hidden' }}"
+                            class="absolute inset-y-0 right-0 flex items-center pr-4.5 text-[#6B6B6B] hover:text-[#B8860B] transition-colors {{ request('search') ? '' : 'hidden' }}"
                             style="background:none; border:none; cursor:pointer;">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
