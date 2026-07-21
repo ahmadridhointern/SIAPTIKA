@@ -51,7 +51,7 @@ class ActivityController extends Controller
         }
 
         if ($request->ajax()) {
-            return response(view('admin.activities.partials.list', compact('activities', 'editActivity'))->render());
+            return view('admin.activities.partials.list', compact('activities', 'editActivity'));
         }
 
         return view('admin.activities.index', compact('activities', 'editActivity'));
