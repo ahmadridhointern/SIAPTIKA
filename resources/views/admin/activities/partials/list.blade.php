@@ -79,10 +79,35 @@
                         <td class="px-6 py-4 text-sm text-[#1A1A1A] whitespace-nowrap">
                             @php
                                 $activityDateTime = \Carbon\Carbon::parse($activity->activity_date->toDateString() . ' ' . $activity->time);
-                                if ($activityDateTime->isFuture()) {
-                                    $diffMessage = $activityDateTime->diffForHumans();
+                                $now = now();
+                                $diffInSeconds = $now->diffInSeconds($activityDateTime, false);
+                                $isFuture = $diffInSeconds > 0;
+                                $absSeconds = abs($diffInSeconds);
+
+                                $n = 0;
+                                $unit = '';
+
+                                if ($absSeconds < 60) {
+                                    $n = $absSeconds;
+                                    $unit = 'DETIK';
+                                } elseif ($absSeconds < 3600) {
+                                    $n = floor($absSeconds / 60);
+                                    $unit = 'MENIT';
+                                } elseif ($absSeconds < 86400) {
+                                    $n = floor($absSeconds / 3600);
+                                    $unit = 'JAM';
+                                } elseif ($absSeconds < 604800) {
+                                    $n = floor($absSeconds / 86400);
+                                    $unit = 'HARI';
+                                } elseif ($absSeconds < 2592000) {
+                                    $n = floor($absSeconds / 604800);
+                                    $unit = 'MINGGU';
+                                } elseif ($absSeconds < 31536000) {
+                                    $n = floor($absSeconds / 2592000);
+                                    $unit = 'BULAN';
                                 } else {
-                                    $diffMessage = 'Dimulai ' . str_replace(' yang lalu', ' lalu', $activityDateTime->diffForHumans());
+                                    $n = floor($absSeconds / 31536000);
+                                    $unit = 'TAHUN';
                                 }
                             @endphp
                             <div class="time-hover-wrapper">
@@ -90,8 +115,22 @@
                                     <div class="font-medium">{{ $activity->activity_date->isoFormat('D MMM YYYY') }}</div>
                                     <div class="text-xs text-[#6B6B6B] font-mono mt-0.5">{{ \Carbon\Carbon::parse($activity->time)->format('H:i') }} WIB</div>
                                 </div>
-                                <div class="time-hover-content">
-                                    <div class="text-[0.7rem] font-mono font-semibold uppercase tracking-wider text-[#B8860B]">{{ $diffMessage }}</div>
+                                <div class="time-hover-content flex flex-col justify-center">
+                                    @if($isFuture)
+                                        <div class="text-[0.78rem] leading-none font-mono font-semibold uppercase tracking-wider text-[#B8860B]">
+                                            {{ $n }} {{ $unit }}
+                                        </div>
+                                        <div class="text-[0.58rem] leading-none font-mono text-[#6B6B6B] uppercase tracking-wider mt-1">
+                                            DARI SEKARANG
+                                        </div>
+                                    @else
+                                        <div class="text-[0.58rem] leading-none font-mono text-[#6B6B6B] uppercase tracking-wider">
+                                            DIMULAI
+                                        </div>
+                                        <div class="text-[0.78rem] leading-none font-mono font-semibold uppercase tracking-wider text-[#B8860B] mt-1">
+                                            {{ $n }} {{ $unit }} LALU
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </td>
