@@ -566,3 +566,12 @@ body > main,
 .modal-form-body::-webkit-scrollbar {
     display: none; /* Chrome/Safari/Opera */
 }
+
+/* ============================================================
+   Page Blur and Grayscale Filter when Modal Open
+   ============================================================ */
+
+.modal-open-filter {
+    filter: blur(8px) grayscale(100%) !important;
+    transition: filter 0.3s ease-in-out;
+}

@@ -87,6 +87,7 @@
         @include('admin.activities.partials.list')
     </div>
 
+    @push('modals')
     {{-- ================================================================
          CREATE MODAL
          ================================================================ --}}
@@ -357,8 +358,8 @@
                     </div>
                 </form>
             </div>
-        </div>
     </div>
+    @endpush
 
     {{-- Helper: URL base for JS --}}
     <input type="hidden" id="activities-url-base" value="{{ url('/admin/activities') }}">
@@ -369,12 +370,31 @@
     <script>
     // ── Helpers ────────────────────────────────────────────────────────
     function openModal(id) {
-        document.getElementById(id).classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            const appContent = document.getElementById('app-content');
+            if (appContent) {
+                appContent.classList.add('modal-open-filter');
+            }
+        }
     }
     function closeModal(id) {
-        document.getElementById(id).classList.add('hidden');
-        document.body.style.overflow = '';
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.add('hidden');
+            
+            // Check if any other modal is still open
+            const anyOpen = Array.from(document.querySelectorAll('.modal-backdrop')).some(m => !m.classList.contains('hidden'));
+            if (!anyOpen) {
+                document.body.style.overflow = '';
+                const appContent = document.getElementById('app-content');
+                if (appContent) {
+                    appContent.classList.remove('modal-open-filter');
+                }
+            }
+        }
     }
     function handleBackdropClick(e, id) {
         if (e.target === e.currentTarget) closeModal(id);
