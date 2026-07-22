@@ -9,17 +9,18 @@
 </head>
 <body style="background-color: #FAFAF8; min-height: 100vh;">
 
-    {{-- ─── Global Navigation Function ──────────────────────────── --}}
+    {{-- ─── Nav-link loading spinner helper ─────────────────────── --}}
     {{--
-        __goPage(href, name) — dipakai oleh onclick di nav links.
-        Menyimpan flag ke sessionStorage agar halaman tujuan tahu
-        bahwa overlay "departing" sudah ditangani di sini.
+        __navGo(el, href)
+        Mengunci ukuran elemen, mengganti isinya dengan spinner,
+        lalu langsung navigasi — spinner tetap tampil hingga halaman baru render.
     --}}
     <script>
-        function __goPage(href, name) {
-            var overlay = document.getElementById('page-transition-overlay');
-            var label   = document.getElementById('page-transition-label');
+        function __navGo(el, href) {
+            /* Jangan proses jika sudah dalam mode loading */
+            if (el.dataset.loading === 'true') return;
 
+            /* Resolusi URL dan lewati jika sudah di halaman yang sama */
             var dest;
             try { dest = new URL(href, window.location.origin); }
             catch (_) { window.location.href = href; return; }
@@ -28,23 +29,29 @@
             var currPath = window.location.pathname.replace(/\/$/, '');
             if (destPath === currPath && dest.search === window.location.search) return;
 
-            /* Beri sinyal ke halaman tujuan bahwa transisi sudah ditangani */
-            try { sessionStorage.setItem('_nav_handled', '1'); } catch (_) {}
+            /* Kunci dimensi agar ukuran tidak berubah saat teks diganti spinner */
+            var rect = el.getBoundingClientRect();
+            el.style.width          = rect.width  + 'px';
+            el.style.height         = rect.height + 'px';
+            el.style.display        = 'inline-flex';
+            el.style.alignItems     = 'center';
+            el.style.justifyContent = 'center';
+            el.style.pointerEvents  = 'none';   /* Cegah double-klik */
+            el.dataset.loading      = 'true';
 
-            /* Tampilkan overlay pada halaman ini (departing) */
-            if (overlay && label) {
-                label.textContent = 'Mengarahkan ke Halaman ' + (name || 'Berikutnya');
-                overlay.style.transition = 'none';
-                overlay.style.opacity    = '1';
-                overlay.style.pointerEvents = 'all';
-                overlay.setAttribute('aria-hidden', 'false');
-                overlay.classList.add('active');
-            }
+            /* Ganti teks dengan spinner kecil berwarna emas */
+            el.innerHTML =
+                '<span style="' +
+                    'display:inline-block;' +
+                    'width:0.8rem;height:0.8rem;' +
+                    'border:2px solid rgba(184,134,11,0.25);' +
+                    'border-top-color:#B8860B;' +
+                    'border-radius:50%;' +
+                    'animation:btnSpin 0.65s linear infinite;' +
+                '"></span>';
 
-            /* Navigasi setelah overlay terlihat */
-            setTimeout(function () {
-                window.location.href = dest.href;
-            }, 280);
+            /* Navigasi langsung — spinner tetap tampil hingga halaman baru tiba */
+            window.location.href = dest.href;
         }
     </script>
 
@@ -65,9 +72,9 @@
         ">
             <nav class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
 
-                {{-- Brand --}}
+                {{-- Brand (spinner saat diklik) --}}
                 <a href="{{ route('admin.dashboard') }}"
-                   onclick="__goPage(this.href,'Dashboard'); return false;"
+                   onclick="__navGo(this, this.href); return false;"
                    class="flex items-center gap-3" style="text-decoration: none;">
                     <span class="font-serif text-xl" style="color: #1A1A1A; letter-spacing: -0.01em;">SIAPTIKA</span>
                     <span class="h-4 w-px" style="background-color: #E8E4DF;"></span>
@@ -79,14 +86,14 @@
 
                     {{-- Navigation Links --}}
                     <nav class="hidden sm:flex items-center gap-1">
-                        <a href="{{ route('admin.dashboard') }}"
-                           onclick="__goPage(this.href,'Dashboard'); return false;"
+                        <a id="nav-dashboard" href="{{ route('admin.dashboard') }}"
+                           onclick="__navGo(this, this.href); return false;"
                            class="px-3 py-1.5 rounded text-xs font-mono font-medium transition-colors duration-150"
                            style="color: {{ request()->routeIs('admin.dashboard') ? '#B8860B' : '#6B6B6B' }}; background: {{ request()->routeIs('admin.dashboard') ? 'rgba(184,134,11,0.08)' : 'transparent' }};">
                             Dashboard
                         </a>
-                        <a href="{{ route('admin.activities.index') }}"
-                           onclick="__goPage(this.href,'Kegiatan'); return false;"
+                        <a id="nav-kegiatan" href="{{ route('admin.activities.index') }}"
+                           onclick="__navGo(this, this.href); return false;"
                            class="px-3 py-1.5 rounded text-xs font-mono font-medium transition-colors duration-150"
                            style="color: {{ request()->routeIs('admin.activities.*') ? '#B8860B' : '#6B6B6B' }}; background: {{ request()->routeIs('admin.activities.*') ? 'rgba(184,134,11,0.08)' : 'transparent' }};">
                             Kegiatan
@@ -147,12 +154,6 @@
 
     @stack('modals')
 
-    {{-- ─── Page Transition Overlay ──────────────────────────────── --}}
-    <div id="page-transition-overlay" aria-hidden="true" aria-live="assertive">
-        <div class="page-transition-spinner"></div>
-        <p class="page-transition-label" id="page-transition-label">Memuat...</p>
-    </div>
-
     {{-- ─── Toast Auto-Dismiss ───────────────────────────────────── --}}
     <script>
         (function () {
@@ -189,81 +190,5 @@
         }
     </script>
 
-    {{-- ─── Entry Reveal Animation (PENDEKATAN BARU) ─────────────── --}}
-    {{--
-        Strategi: Tampilkan overlay di halaman yang BARU DIMUAT, bukan di
-        halaman yang ditinggalkan. Ini 100% reliable karena berjalan saat
-        DOM sudah tersedia, tidak bergantung pada event listener apapun.
-
-        Alur:
-          1. Halaman dimuat → script ini langsung menampilkan overlay
-          2. Jika halaman sebelumnya sudah menangani overlay via __goPage
-             (Dashboard → Kegiatan), flag sessionStorage mengindikasikan
-             bahwa entry reveal perlu dilewati.
-          3. Setelah 500ms → overlay fade-out halus
-    --}}
-    <script>
-        (function () {
-            var overlay = document.getElementById('page-transition-overlay');
-            var label   = document.getElementById('page-transition-label');
-            if (!overlay || !label) return;
-
-            /* Jika halaman lama SUDAH menampilkan overlay via __goPage,
-               lewati entry reveal agar tidak double. */
-            var handled = false;
-            try {
-                handled = sessionStorage.getItem('_nav_handled') === '1';
-                sessionStorage.removeItem('_nav_handled');
-            } catch (_) {}
-
-            if (handled) {
-                /* Halaman lama sudah urus overlay. Pastikan overlay bersih. */
-                overlay.style.cssText = '';
-                overlay.classList.remove('active');
-                overlay.setAttribute('aria-hidden', 'true');
-                return;
-            }
-
-            /* ── Entry Reveal ─────────────────────────────────────────── */
-            /* Tentukan nama halaman saat ini dari URL */
-            function currentPageName() {
-                var p = window.location.pathname.replace(/\/$/, '');
-                if (p === '/admin/dashboard')                    return 'Dashboard';
-                if (/^\/admin\/activities\/\d+\/edit$/.test(p)) return 'Edit Kegiatan';
-                if (/^\/admin\/activities\/\d+$/.test(p))       return 'Detail Kegiatan';
-                if (/^\/admin\/activities/.test(p))              return 'Kegiatan';
-                return 'Halaman Ini';
-            }
-
-            label.textContent = 'Mengarahkan ke Halaman ' + currentPageName();
-
-            /* Tampilkan overlay SEGERA, tanpa transisi (inline style) */
-            overlay.style.transition    = 'none';
-            overlay.style.opacity       = '1';
-            overlay.style.pointerEvents = 'all';
-            overlay.setAttribute('aria-hidden', 'false');
-
-            /* Setelah 500ms, fade-out halus lalu bersihkan */
-            setTimeout(function () {
-                overlay.style.transition = 'opacity 0.35s ease';
-                overlay.style.opacity    = '0';
-
-                setTimeout(function () {
-                    overlay.style.cssText = '';
-                    overlay.classList.remove('active');
-                    overlay.setAttribute('aria-hidden', 'true');
-                }, 360);
-            }, 500);
-
-            /* Batalkan entry reveal jika user menekan Back/Forward */
-            window.addEventListener('pageshow', function (e) {
-                if (e.persisted) {
-                    overlay.style.cssText = '';
-                    overlay.classList.remove('active');
-                    overlay.setAttribute('aria-hidden', 'true');
-                }
-            });
-        })();
-    </script>
 </body>
 </html>
