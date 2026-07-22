@@ -9,35 +9,39 @@
 </head>
 <body style="background-color: #FAFAF8; min-height: 100vh;">
 
-    {{-- ─── Page Transition: global function defined EARLY so onclick attrs can call it ─── --}}
+    {{-- ─── Global Navigation Function ──────────────────────────── --}}
+    {{--
+        __goPage(href, name) — dipakai oleh onclick di nav links.
+        Menyimpan flag ke sessionStorage agar halaman tujuan tahu
+        bahwa overlay "departing" sudah ditangani di sini.
+    --}}
     <script>
-        /**
-         * __goPage(href, name)
-         * Shows the transition overlay then navigates after 280 ms.
-         * Called directly from onclick="" attributes on nav links.
-         */
         function __goPage(href, name) {
             var overlay = document.getElementById('page-transition-overlay');
             var label   = document.getElementById('page-transition-label');
 
-            /* Resolve full URL */
             var dest;
             try { dest = new URL(href, window.location.origin); }
             catch (_) { window.location.href = href; return; }
 
-            /* Skip if already on that page */
             var destPath = dest.pathname.replace(/\/$/, '');
             var currPath = window.location.pathname.replace(/\/$/, '');
             if (destPath === currPath && dest.search === window.location.search) return;
 
-            /* Show overlay */
+            /* Beri sinyal ke halaman tujuan bahwa transisi sudah ditangani */
+            try { sessionStorage.setItem('_nav_handled', '1'); } catch (_) {}
+
+            /* Tampilkan overlay pada halaman ini (departing) */
             if (overlay && label) {
-                label.textContent = 'Mengarahkan ke Halaman ' + (name || 'Halaman Berikutnya');
+                label.textContent = 'Mengarahkan ke Halaman ' + (name || 'Berikutnya');
+                overlay.style.transition = 'none';
+                overlay.style.opacity    = '1';
+                overlay.style.pointerEvents = 'all';
                 overlay.setAttribute('aria-hidden', 'false');
                 overlay.classList.add('active');
             }
 
-            /* Navigate after the CSS fade-in transition completes */
+            /* Navigasi setelah overlay terlihat */
             setTimeout(function () {
                 window.location.href = dest.href;
             }, 280);
@@ -91,12 +95,12 @@
 
                     <span class="h-4 w-px hidden sm:block" style="background-color: #E8E4DF;"></span>
 
-                    {{-- User name (hidden on mobile) --}}
+                    {{-- User name --}}
                     <span class="text-xs hidden md:block" style="color: #6B6B6B; font-family: 'Source Sans 3', system-ui, sans-serif;">
                         {{ Auth::user()->name }}
                     </span>
 
-                    {{-- Logout Button — Distinct pill style --}}
+                    {{-- Logout Button --}}
                     <form id="form-logout" method="POST" action="{{ route('admin.logout') }}">
                         @csrf
                         <button id="btn-logout" type="submit" class="logout-btn" title="Keluar dari Akun">
@@ -134,7 +138,7 @@
         </div>
 
         {{-- ============================================================
-             MAIN CONTENT (with top padding for fixed header)
+             MAIN CONTENT
              ============================================================ --}}
         <main class="page-main max-w-7xl mx-auto px-6 pb-12">
             {{ $slot }}
@@ -146,7 +150,7 @@
     {{-- ─── Page Transition Overlay ──────────────────────────────── --}}
     <div id="page-transition-overlay" aria-hidden="true" aria-live="assertive">
         <div class="page-transition-spinner"></div>
-        <p class="page-transition-label" id="page-transition-label">Mengarahkan...</p>
+        <p class="page-transition-label" id="page-transition-label">Memuat...</p>
     </div>
 
     {{-- ─── Toast Auto-Dismiss ───────────────────────────────────── --}}
@@ -185,52 +189,76 @@
         }
     </script>
 
-    {{-- ─── Other internal links interceptor (back btn, row detail, etc.) ── --}}
+    {{-- ─── Entry Reveal Animation (PENDEKATAN BARU) ─────────────── --}}
+    {{--
+        Strategi: Tampilkan overlay di halaman yang BARU DIMUAT, bukan di
+        halaman yang ditinggalkan. Ini 100% reliable karena berjalan saat
+        DOM sudah tersedia, tidak bergantung pada event listener apapun.
+
+        Alur:
+          1. Halaman dimuat → script ini langsung menampilkan overlay
+          2. Jika halaman sebelumnya sudah menangani overlay via __goPage
+             (Dashboard → Kegiatan), flag sessionStorage mengindikasikan
+             bahwa entry reveal perlu dilewati.
+          3. Setelah 500ms → overlay fade-out halus
+    --}}
     <script>
         (function () {
-            function getPageName(pathname) {
-                var p = pathname.replace(/\/$/, '');
+            var overlay = document.getElementById('page-transition-overlay');
+            var label   = document.getElementById('page-transition-label');
+            if (!overlay || !label) return;
+
+            /* Jika halaman lama SUDAH menampilkan overlay via __goPage,
+               lewati entry reveal agar tidak double. */
+            var handled = false;
+            try {
+                handled = sessionStorage.getItem('_nav_handled') === '1';
+                sessionStorage.removeItem('_nav_handled');
+            } catch (_) {}
+
+            if (handled) {
+                /* Halaman lama sudah urus overlay. Pastikan overlay bersih. */
+                overlay.style.cssText = '';
+                overlay.classList.remove('active');
+                overlay.setAttribute('aria-hidden', 'true');
+                return;
+            }
+
+            /* ── Entry Reveal ─────────────────────────────────────────── */
+            /* Tentukan nama halaman saat ini dari URL */
+            function currentPageName() {
+                var p = window.location.pathname.replace(/\/$/, '');
                 if (p === '/admin/dashboard')                    return 'Dashboard';
                 if (/^\/admin\/activities\/\d+\/edit$/.test(p)) return 'Edit Kegiatan';
                 if (/^\/admin\/activities\/\d+$/.test(p))       return 'Detail Kegiatan';
                 if (/^\/admin\/activities/.test(p))              return 'Kegiatan';
-                if (/^\/admin/.test(p))                         return 'Dashboard';
-                return 'Halaman Berikutnya';
+                return 'Halaman Ini';
             }
 
-            document.addEventListener('click', function (e) {
-                var link = e.target.closest('a[href]');
-                if (!link) return;
+            label.textContent = 'Mengarahkan ke Halaman ' + currentPageName();
 
-                /* Already handled by inline onclick on nav links */
-                if (link.hasAttribute('onclick')) return;
+            /* Tampilkan overlay SEGERA, tanpa transisi (inline style) */
+            overlay.style.transition    = 'none';
+            overlay.style.opacity       = '1';
+            overlay.style.pointerEvents = 'all';
+            overlay.setAttribute('aria-hidden', 'false');
 
-                var rawHref = link.getAttribute('href') || '';
-                if (!rawHref || rawHref === '#' || rawHref.startsWith('javascript:')) return;
-                if (link.target === '_blank') return;
+            /* Setelah 500ms, fade-out halus lalu bersihkan */
+            setTimeout(function () {
+                overlay.style.transition = 'opacity 0.35s ease';
+                overlay.style.opacity    = '0';
 
-                var destUrl;
-                try { destUrl = new URL(rawHref, window.location.origin); }
-                catch (_) { return; }
-                if (destUrl.origin !== window.location.origin) return;
+                setTimeout(function () {
+                    overlay.style.cssText = '';
+                    overlay.classList.remove('active');
+                    overlay.setAttribute('aria-hidden', 'true');
+                }, 360);
+            }, 500);
 
-                /* Skip AJAX pagination inside the activities container */
-                var ajaxEl = document.getElementById('activities-container');
-                if (ajaxEl && ajaxEl.contains(link)) return;
-
-                /* Skip when already on same destination */
-                var destPath = destUrl.pathname.replace(/\/$/, '');
-                var currPath = window.location.pathname.replace(/\/$/, '');
-                if (destPath === currPath && destUrl.search === window.location.search) return;
-
-                e.preventDefault();
-                __goPage(rawHref, getPageName(destPath));
-            }, true);
-
-            /* Hide overlay on Back/Forward bfcache restore */
-            window.addEventListener('pageshow', function () {
-                var overlay = document.getElementById('page-transition-overlay');
-                if (overlay) {
+            /* Batalkan entry reveal jika user menekan Back/Forward */
+            window.addEventListener('pageshow', function (e) {
+                if (e.persisted) {
+                    overlay.style.cssText = '';
                     overlay.classList.remove('active');
                     overlay.setAttribute('aria-hidden', 'true');
                 }
