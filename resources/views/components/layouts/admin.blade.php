@@ -88,14 +88,12 @@
                     <nav class="hidden sm:flex items-center gap-1">
                         <a id="nav-dashboard" href="{{ route('admin.dashboard') }}"
                            onclick="__navGo(this, this.href); return false;"
-                           class="px-3 py-1.5 rounded text-xs font-mono font-medium transition-colors duration-150"
-                           style="color: {{ request()->routeIs('admin.dashboard') ? '#B8860B' : '#6B6B6B' }}; background: {{ request()->routeIs('admin.dashboard') ? 'rgba(184,134,11,0.08)' : 'transparent' }};">
+                           class="nav-link-item {{ request()->routeIs('admin.dashboard') ? 'nav-active' : '' }}">
                             Dashboard
                         </a>
                         <a id="nav-kegiatan" href="{{ route('admin.activities.index') }}"
                            onclick="__navGo(this, this.href); return false;"
-                           class="px-3 py-1.5 rounded text-xs font-mono font-medium transition-colors duration-150"
-                           style="color: {{ request()->routeIs('admin.activities.*') ? '#B8860B' : '#6B6B6B' }}; background: {{ request()->routeIs('admin.activities.*') ? 'rgba(184,134,11,0.08)' : 'transparent' }};">
+                           class="nav-link-item {{ request()->routeIs('admin.activities.*') ? 'nav-active' : '' }}">
                             Kegiatan
                         </a>
                     </nav>
