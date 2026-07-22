@@ -91,11 +91,11 @@ body {
    Header — Nav Link Items
    ============================================================
 
-   Tiga state visual:
-   1. Default (halaman tidak aktif) : teks abu, tanpa border
-   2. Hover                         : border emas muncul, teks emas
-   3. Active (halaman saat ini)     : border emas + fill emas tipis
-   4. Loading (data-loading="true") : pertahankan border emas
+   State visual:
+   1. Default (halaman tidak aktif) : teks abu, tanpa border, tanpa fill
+   2. Hover (non-aktif)             : border fill-color muncul
+   3. Active (halaman saat ini)     : HANYA fill emas tipis, tanpa border
+   4. Loading (data-loading="true") : pertahankan border fill-color
    ============================================================ */
 
 .nav-link-item {
@@ -109,7 +109,7 @@ body {
     font-weight: 500;
     color: #6B6B6B;
     background: transparent;
-    /* Inset border selalu ada tapi transparan — cegah layout shift saat hover */
+    /* Inset border selalu ada tapi transparan — cegah layout shift */
     box-shadow: inset 0 0 0 1.5px transparent;
     text-decoration: none;
     transition: color 150ms ease, background 150ms ease, box-shadow 150ms ease;
@@ -117,22 +117,22 @@ body {
     cursor: pointer;
 }
 
-/* Hover — border emas muncul, teks berubah emas */
-.nav-link-item:hover {
+/* Hover non-aktif — border muncul dengan warna fill (bukan warna teks) */
+.nav-link-item:not(.nav-active):hover {
     color: #B8860B;
-    box-shadow: inset 0 0 0 1.5px #B8860B;
+    box-shadow: inset 0 0 0 1.5px rgba(184, 134, 11, 0.45);
 }
 
-/* Aktif — border emas + fill emas tipis */
+/* Aktif — hanya fill emas tipis, tanpa border */
 .nav-link-item.nav-active {
     color: #B8860B;
     background: rgba(184, 134, 11, 0.09);
-    box-shadow: inset 0 0 0 1.5px #B8860B;
+    box-shadow: none;
 }
 
-/* Loading — pertahankan border emas meski isi diganti spinner */
-.nav-link-item[data-loading="true"] {
-    box-shadow: inset 0 0 0 1.5px #B8860B;
+/* Loading non-aktif — pertahankan border fill-color */
+.nav-link-item:not(.nav-active)[data-loading="true"] {
+    box-shadow: inset 0 0 0 1.5px rgba(184, 134, 11, 0.45);
 }
 
 /* ============================================================
