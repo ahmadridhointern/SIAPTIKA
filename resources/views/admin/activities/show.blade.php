@@ -37,9 +37,20 @@
             {{-- Detail Card --}}
             <div class="card-serif p-8 bg-[#FFFFFF] space-y-6">
 
-                {{-- Meta: Tanggal · Tempat · Status --}}
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pb-6 border-b border-[#F5F3F0]">
+                {{-- Meta Grid: Pembuat · Waktu · Tempat · Status --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pb-6 border-b border-[#F5F3F0]">
 
+                    {{-- Pembuat & Dibuat (style sebelumnya: font-mono text-xs) --}}
+                    <div>
+                        <div class="text-xs text-[#6B6B6B] font-mono">
+                            Pembuat: <span class="text-[#1A1A1A] font-medium">{{ $activity->user->name }}</span>
+                        </div>
+                        <div class="text-xs text-[#6B6B6B] font-mono mt-1">
+                            Dibuat: <span class="text-[#1A1A1A]">{{ $activity->created_at->isoFormat('D MMM YYYY, H:i') }} WIB</span>
+                        </div>
+                    </div>
+
+                    {{-- Waktu Pelaksanaan --}}
                     <div>
                         <span class="small-caps text-[0.65rem] block mb-1">Waktu Pelaksanaan</span>
                         <div class="text-[#1A1A1A] font-medium text-base">
@@ -50,12 +61,14 @@
                         </div>
                     </div>
 
+                    {{-- Tempat / Ruangan --}}
                     <div>
                         <span class="small-caps text-[0.65rem] block mb-1">Tempat / Ruangan</span>
                         <div class="text-[#1A1A1A] font-medium text-base">{{ $activity->location }}</div>
                         <div class="text-[#6B6B6B] text-xs mt-0.5">Bidang APTIKA Diskominfotik Riau</div>
                     </div>
 
+                    {{-- Status --}}
                     <div>
                         <span class="small-caps text-[0.65rem] block mb-1">Status</span>
                         @if($activity->status === 'completed')
@@ -69,6 +82,7 @@
 
                 </div>
 
+
                 {{-- Deskripsi --}}
                 <div>
                     <span class="small-caps text-[0.65rem] block mb-2">Deskripsi & Agenda</span>
@@ -77,13 +91,7 @@
                     </div>
                 </div>
 
-                {{-- Footer info --}}
-                <div class="pt-4 border-t border-[#F5F3F0] flex flex-wrap gap-x-6 gap-y-1">
-                    <span class="text-xs text-[#6B6B6B] font-mono">Pembuat: <span class="text-[#1A1A1A]">{{ $activity->user->name }}</span></span>
-                    <span class="text-xs text-[#6B6B6B] font-mono">Dibuat: <span class="text-[#1A1A1A]">{{ $activity->created_at->isoFormat('D MMMM YYYY, H:i') }} WIB</span></span>
-                </div>
-
-            </div>
+            </div>{{-- /card-serif --}}
 
             {{-- Danger Zone --}}
             @if(!$activity->activity_date->lt(today()) && $activity->documents->count() === 0)
@@ -108,7 +116,7 @@
 
             {{-- ① Unggah Dokumen — kompak --}}
             <div class="card-serif bg-[#FFFFFF]">
-                <div class="px-5 pt-4 pb-3 border-b border-[#F5F3F0]">
+                <div class="px-5 py-4 pt-4 pb-4 border-b border-[#F5F3F0]">
                     <span class="small-caps text-[0.65rem]">Unggah Dokumen</span>
                 </div>
 
