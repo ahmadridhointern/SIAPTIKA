@@ -60,6 +60,32 @@ return [
             'report' => false,
         ],
 
+        /*
+        |----------------------------------------------------------------------
+        | Supabase Storage Disk
+        |----------------------------------------------------------------------
+        |
+        | Supabase Storage menggunakan protokol S3-compatible.
+        | Endpoint diarahkan ke project Supabase masing-masing.
+        |
+        | Bucket "documents" harus dibuat terlebih dahulu secara manual
+        | di Supabase Dashboard → Storage → New Bucket.
+        |
+        | use_path_style_endpoint WAJIB true untuk Supabase S3.
+        |
+        */
+        'supabase' => [
+            'driver'                  => 's3',
+            'key'                     => env('SUPABASE_STORAGE_KEY'),
+            'secret'                  => env('SUPABASE_STORAGE_SECRET'),
+            'region'                  => env('SUPABASE_STORAGE_REGION', 'ap-southeast-1'),
+            'bucket'                  => env('SUPABASE_STORAGE_BUCKET', 'documents'),
+            'endpoint'                => env('SUPABASE_STORAGE_URL'),
+            'use_path_style_endpoint' => true,
+            'throw'                   => true,  // Lempar exception agar error mudah di-debug
+            'report'                  => true,
+        ],
+
     ],
 
     /*
