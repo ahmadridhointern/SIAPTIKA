@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DocumentController;
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,5 +32,12 @@ Route::middleware('guest')->group(function () {
 Route::middleware('admin.auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('activities', \App\Http\Controllers\Admin\ActivityController::class);
+
+    // Upload dokumen arsip — nested di bawah kegiatan
+    Route::post(
+        'activities/{activity}/documents',
+        [DocumentController::class, 'store']
+    )->name('activities.documents.store');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

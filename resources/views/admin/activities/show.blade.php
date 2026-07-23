@@ -149,6 +149,92 @@
                 </div>
             </div>
 
+            {{-- ─── Panel: Unggah Dokumen ───────────────────────────── --}}
+            <div class="card-serif p-6 bg-[#FFFFFF] space-y-4">
+                <span class="small-caps text-[0.65rem] block">Unggah Dokumen</span>
+
+                {{-- Validation errors for upload --}}
+                @if($errors->any())
+                    <div class="rounded p-3 bg-red-50 border border-red-200 space-y-1">
+                        @foreach($errors->all() as $error)
+                            <p class="text-xs text-red-600 font-mono">{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
+
+                <form id="form-upload-doc"
+                      method="POST"
+                      action="{{ route('admin.activities.documents.store', $activity) }}"
+                      enctype="multipart/form-data"
+                      class="space-y-4">
+                    @csrf
+
+                    {{-- Jenis Dokumen --}}
+                    <div>
+                        <label for="document_type"
+                               class="small-caps text-[0.6rem] block mb-1.5">
+                            Jenis Dokumen <span class="text-red-400">*</span>
+                        </label>
+                        <select id="document_type"
+                                name="document_type"
+                                class="input-serif text-sm h-10 pr-8 appearance-none cursor-pointer
+                                       {{ $errors->has('document_type') ? 'border-red-400' : '' }}"
+                                style="background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B6B6B' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\");
+                                         background-repeat: no-repeat;
+                                         background-position: right 0.625rem center;
+                                         background-size: 0.875rem;">
+                            <option value="" disabled {{ old('document_type') ? '' : 'selected' }}>
+                                — Pilih jenis —
+                            </option>
+                            <option value="surat"        {{ old('document_type') === 'surat'        ? 'selected' : '' }}>Surat / Dokumen</option>
+                            <option value="notulen"      {{ old('document_type') === 'notulen'      ? 'selected' : '' }}>Notulen</option>
+                            <option value="dokumentasi"  {{ old('document_type') === 'dokumentasi'  ? 'selected' : '' }}>Dokumentasi</option>
+                        </select>
+                    </div>
+
+                    {{-- File Input --}}
+                    <div>
+                        <label for="upload_file"
+                               class="small-caps text-[0.6rem] block mb-1.5">
+                            Pilih Berkas <span class="text-red-400">*</span>
+                        </label>
+
+                        {{-- Custom file input area --}}
+                        <label for="upload_file"
+                               id="upload-file-label"
+                               class="flex flex-col items-center justify-center gap-2 w-full
+                                      border border-dashed rounded p-4 cursor-pointer
+                                      transition-colors duration-150
+                                      {{ $errors->has('file') ? 'border-red-400 bg-red-50' : 'border-[#E8E4DF] hover:border-[#B8860B] hover:bg-[#FAFAF8]' }}">
+                            <svg class="w-6 h-6 text-[#B8860B]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                            </svg>
+                            <span id="upload-file-name"
+                                  class="text-xs font-mono text-[#6B6B6B] text-center leading-snug">
+                                Klik untuk pilih berkas<br>
+                                <span class="text-[0.6rem] opacity-70">PDF, Word, JPG, PNG, MP4 — Maks. 10 MB</span>
+                            </span>
+                        </label>
+                        <input id="upload_file"
+                               name="file"
+                               type="file"
+                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4"
+                               class="sr-only"
+                               onchange="updateFileName(this)">
+                    </div>
+
+                    {{-- Submit Button --}}
+                    <button id="btn-upload-doc"
+                            type="submit"
+                            class="btn-primary w-full justify-center">
+                        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                        </svg>
+                        Unggah Dokumen
+                    </button>
+                </form>
+            </div>
+
             {{-- Danger Zone (Hapus via Modal) --}}
             @if(!$activity->activity_date->lt(today()) && $activity->documents->count() === 0)
                 <div class="card-serif p-6 bg-[#FFFFFF] border-red-200">
@@ -225,5 +311,55 @@
         </div>
 
     </div>
+    {{-- ─── Upload: Filename Display & Loading Spinner ─────── --}}
+    <script>
+        /**
+         * Tampilkan nama file yang dipilih di area drag-drop.
+         * Dipanggil via onchange pada <input type="file">.
+         */
+        function updateFileName(input) {
+            var label = document.getElementById('upload-file-name');
+            if (!label) return;
+
+            if (input.files && input.files.length > 0) {
+                var file = input.files[0];
+                var sizeMB = (file.size / 1024 / 1024).toFixed(2);
+                label.innerHTML =
+                    '<span class="font-semibold text-[#1A1A1A]">' +
+                        escHtml(file.name) +
+                    '</span><br>' +
+                    '<span class="text-[0.6rem] opacity-70">' + sizeMB + ' MB</span>';
+            } else {
+                label.innerHTML =
+                    'Klik untuk pilih berkas<br>' +
+                    '<span class="text-[0.6rem] opacity-70">PDF, Word, JPG, PNG, MP4 — Maks. 10 MB</span>';
+            }
+        }
+
+        /** Escape HTML untuk nama file yang ditampilkan. */
+        function escHtml(str) {
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        /**
+         * Aktifkan loading spinner pada tombol upload saat form disubmit.
+         * Menggunakan setButtonLoading() yang sudah ada di admin.blade.php.
+         */
+        (function () {
+            var form = document.getElementById('form-upload-doc');
+            var btn  = document.getElementById('btn-upload-doc');
+            if (!form || !btn) return;
+
+            form.addEventListener('submit', function () {
+                if (typeof setButtonLoading === 'function') {
+                    setButtonLoading(btn, true);
+                }
+            });
+        })();
+    </script>
 
 </x-layouts.admin>
