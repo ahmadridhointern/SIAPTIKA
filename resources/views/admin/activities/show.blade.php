@@ -28,21 +28,18 @@
         </div>
     </div>
 
-    {{-- Detail Layout Grid (Asymmetric 2/3 — 1/3) --}}
+    {{-- Grid 2/3 — 1/3 --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        {{-- ══════════════════════════════════════
-             LEFT COL (2/3) — Info Kegiatan
-        ══════════════════════════════════════ --}}
-        <div class="lg:col-span-2 space-y-8">
+        {{-- ══ KIRI (2/3) — Informasi Kegiatan ══ --}}
+        <div class="lg:col-span-2 space-y-6">
 
             {{-- Detail Card --}}
             <div class="card-serif p-8 bg-[#FFFFFF] space-y-6">
 
-                {{-- Metadata Grid: Tanggal, Tempat, Status --}}
+                {{-- Meta: Tanggal · Tempat · Status --}}
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pb-6 border-b border-[#F5F3F0]">
 
-                    {{-- Waktu & Tanggal --}}
                     <div>
                         <span class="small-caps text-[0.65rem] block mb-1">Waktu Pelaksanaan</span>
                         <div class="text-[#1A1A1A] font-medium text-base">
@@ -53,38 +50,26 @@
                         </div>
                     </div>
 
-                    {{-- Lokasi / Tempat --}}
                     <div>
                         <span class="small-caps text-[0.65rem] block mb-1">Tempat / Ruangan</span>
-                        <div class="text-[#1A1A1A] font-medium text-base">
-                            {{ $activity->location }}
-                        </div>
-                        <div class="text-[#6B6B6B] text-xs mt-0.5">
-                            Bidang APTIKA Diskominfotik Riau
-                        </div>
+                        <div class="text-[#1A1A1A] font-medium text-base">{{ $activity->location }}</div>
+                        <div class="text-[#6B6B6B] text-xs mt-0.5">Bidang APTIKA Diskominfotik Riau</div>
                     </div>
 
-                    {{-- Status Kegiatan (dipindahkan ke sini) --}}
                     <div>
                         <span class="small-caps text-[0.65rem] block mb-1">Status</span>
                         @if($activity->status === 'completed')
-                            <div class="inline-flex items-center px-2.5 py-1 rounded text-xs font-mono font-medium uppercase tracking-wider bg-gray-50 text-gray-500 border border-gray-200">
-                                Selesai
-                            </div>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-mono font-medium uppercase tracking-wider bg-gray-50 text-gray-500 border border-gray-200">Selesai</span>
                         @elseif($activity->activity_date->isToday())
-                            <div class="inline-flex items-center px-2.5 py-1 rounded text-xs font-mono font-medium uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
-                                Hari Ini
-                            </div>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-mono font-medium uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">Hari Ini</span>
                         @else
-                            <div class="inline-flex items-center px-2.5 py-1 rounded text-xs font-mono font-medium uppercase tracking-wider bg-blue-50 text-blue-800 border border-blue-200">
-                                Terjadwal
-                            </div>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-mono font-medium uppercase tracking-wider bg-blue-50 text-blue-800 border border-blue-200">Terjadwal</span>
                         @endif
                     </div>
 
                 </div>
 
-                {{-- Deskripsi & Agenda --}}
+                {{-- Deskripsi --}}
                 <div>
                     <span class="small-caps text-[0.65rem] block mb-2">Deskripsi & Agenda</span>
                     <div class="text-sm text-[#1A1A1A] leading-relaxed whitespace-pre-line" style="font-family: 'Source Sans 3', system-ui, sans-serif;">
@@ -92,24 +77,20 @@
                     </div>
                 </div>
 
-                {{-- Metadata Pembuat --}}
+                {{-- Footer info --}}
                 <div class="pt-4 border-t border-[#F5F3F0] flex flex-wrap gap-x-6 gap-y-1">
-                    <span class="text-xs text-[#6B6B6B] font-mono">
-                        Pembuat: <span class="text-[#1A1A1A]">{{ $activity->user->name }}</span>
-                    </span>
-                    <span class="text-xs text-[#6B6B6B] font-mono">
-                        Dibuat: <span class="text-[#1A1A1A]">{{ $activity->created_at->isoFormat('D MMMM YYYY, H:i') }} WIB</span>
-                    </span>
+                    <span class="text-xs text-[#6B6B6B] font-mono">Pembuat: <span class="text-[#1A1A1A]">{{ $activity->user->name }}</span></span>
+                    <span class="text-xs text-[#6B6B6B] font-mono">Dibuat: <span class="text-[#1A1A1A]">{{ $activity->created_at->isoFormat('D MMMM YYYY, H:i') }} WIB</span></span>
                 </div>
 
             </div>
 
-            {{-- Danger Zone (hanya muncul jika kegiatan belum lewat & belum ada dokumen) --}}
+            {{-- Danger Zone --}}
             @if(!$activity->activity_date->lt(today()) && $activity->documents->count() === 0)
                 <div class="card-serif p-6 bg-[#FFFFFF] border-red-200">
                     <span class="small-caps text-[0.65rem] text-red-600 block mb-2">Zona Bahaya</span>
                     <p class="text-xs text-[#6B6B6B] leading-relaxed mb-4">
-                        Tindakan penghapusan kegiatan bersifat permanen dan tidak dapat dibatalkan.
+                        Penghapusan kegiatan bersifat permanen dan tidak dapat dibatalkan.
                     </p>
                     <button type="button"
                             onclick="openDeleteModalShow({{ $activity->id }}, '{{ addslashes($activity->title) }}')"
@@ -122,22 +103,17 @@
 
         </div>
 
-        {{-- ══════════════════════════════════════
-             RIGHT COL (1/3) — Dokumen & Upload
-        ══════════════════════════════════════ --}}
-        <div class="space-y-6">
+        {{-- ══ KANAN (1/3) — Upload + Dokumen ══ --}}
+        <div class="space-y-5">
 
-            {{-- ── ATAS: Unggah Dokumen (drag & drop) ── --}}
-            <div class="card-serif bg-[#FFFFFF] overflow-hidden">
-
-                {{-- Card Header --}}
-                <div class="px-6 pt-5 pb-4 border-b border-[#F5F3F0]">
+            {{-- ① Unggah Dokumen — kompak --}}
+            <div class="card-serif bg-[#FFFFFF]">
+                <div class="px-5 pt-4 pb-3 border-b border-[#F5F3F0]">
                     <span class="small-caps text-[0.65rem]">Unggah Dokumen</span>
                 </div>
 
-                {{-- Validation errors --}}
                 @if($errors->any())
-                    <div class="mx-6 mt-4 rounded p-3 bg-red-50 border border-red-200 space-y-1">
+                    <div class="mx-5 mt-3 p-3 bg-red-50 border border-red-200 rounded space-y-0.5">
                         @foreach($errors->all() as $error)
                             <p class="text-xs text-red-600 font-mono leading-snug">{{ $error }}</p>
                         @endforeach
@@ -148,108 +124,86 @@
                       method="POST"
                       action="{{ route('admin.activities.documents.store', $activity) }}"
                       enctype="multipart/form-data"
-                      class="p-6 space-y-4">
+                      class="p-5 space-y-3">
                     @csrf
 
                     {{-- Jenis Dokumen --}}
-                    <select id="document_type"
-                            name="document_type"
-                            class="input-serif text-sm h-10 pr-8 appearance-none cursor-pointer
+                    <select id="document_type" name="document_type"
+                            class="input-serif text-sm pr-8 appearance-none cursor-pointer
                                    {{ $errors->has('document_type') ? 'border-red-400' : '' }}"
-                            style="background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B6B6B' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\");
-                                     background-repeat: no-repeat;
-                                     background-position: right 0.625rem center;
-                                     background-size: 0.875rem;">
-                        <option value="" disabled {{ old('document_type') ? '' : 'selected' }}>— Pilih jenis dokumen —</option>
+                            style="height:2.5rem;
+                                   background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B6B6B' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\");
+                                   background-repeat:no-repeat;
+                                   background-position:right 0.625rem center;
+                                   background-size:0.875rem;">
+                        <option value="" disabled {{ old('document_type') ? '' : 'selected' }}>— Pilih jenis —</option>
                         <option value="surat"       {{ old('document_type') === 'surat'       ? 'selected' : '' }}>Surat / Dokumen</option>
                         <option value="notulen"     {{ old('document_type') === 'notulen'     ? 'selected' : '' }}>Notulen</option>
                         <option value="dokumentasi" {{ old('document_type') === 'dokumentasi' ? 'selected' : '' }}>Dokumentasi</option>
                     </select>
 
-                    {{-- Drop Zone (drag & drop + klik) --}}
+                    {{-- Drop Zone --}}
                     <div id="drop-zone"
-                         class="relative flex flex-col items-center justify-center gap-2
-                                border-2 border-dashed rounded-lg py-7 px-4
-                                cursor-pointer select-none
-                                transition-all duration-200
-                                {{ $errors->has('file') ? 'border-red-400 bg-red-50' : 'border-[#E8E4DF] hover:border-[#B8860B] hover:bg-[#FAFAF8]' }}"
+                         class="flex items-center gap-3 w-full border border-dashed rounded-md px-4 py-3
+                                cursor-pointer transition-all duration-150
+                                {{ $errors->has('file') ? 'border-red-300 bg-red-50' : 'border-[#E8E4DF] hover:border-[#B8860B] hover:bg-[#FAFAF8]' }}"
                          onclick="document.getElementById('upload_file').click()">
 
-                        {{-- Upload icon --}}
-                        <svg id="drop-icon" class="w-7 h-7 text-[#C9C0B5] transition-colors duration-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <svg id="drop-icon" class="w-5 h-5 flex-shrink-0 text-[#C9C0B5] transition-colors duration-150" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
                         </svg>
 
-                        {{-- Label teks --}}
-                        <div id="drop-label" class="text-center pointer-events-none">
-                            <p class="text-xs font-mono text-[#6B6B6B] leading-snug">
-                                Seret & lepas berkas di sini<br>
-                                <span class="text-[0.6rem] opacity-60">atau klik untuk memilih</span>
+                        <div class="min-w-0 flex-1">
+                            <p id="drop-placeholder" class="text-xs font-mono text-[#6B6B6B]">
+                                Seret atau klik untuk memilih berkas
                             </p>
-                        </div>
-
-                        {{-- Nama file terpilih (tersembunyi awalnya) --}}
-                        <div id="drop-file-info" class="hidden text-center pointer-events-none">
-                            <p id="drop-file-name" class="text-xs font-semibold text-[#1A1A1A] font-mono truncate max-w-[180px]"></p>
-                            <p id="drop-file-size" class="text-[0.6rem] text-[#6B6B6B] font-mono mt-0.5"></p>
-                        </div>
-
-                        {{-- Overlay saat drag-over --}}
-                        <div id="drop-overlay"
-                             class="hidden absolute inset-0 rounded-lg bg-[#B8860B]/5 border-2 border-[#B8860B] pointer-events-none">
+                            <p id="drop-file-name" class="hidden text-xs font-semibold text-[#1A1A1A] font-mono truncate"></p>
+                            <p class="text-[0.6rem] text-[#B8860B]/70 font-mono mt-0.5">PDF · Word · JPG · PNG · MP4 · Maks. 10 MB</p>
                         </div>
                     </div>
 
-                    <input id="upload_file"
-                           name="file"
-                           type="file"
+                    <input id="upload_file" name="file" type="file"
                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4"
                            class="sr-only">
 
-                    {{-- Hint --}}
-                    <p class="text-[0.6rem] text-[#6B6B6B] font-mono text-center -mt-1">
-                        PDF, Word, JPG, PNG, MP4 · Maks. 10 MB
-                    </p>
-
-                    {{-- Submit --}}
-                    <button id="btn-upload-doc"
-                            type="submit"
-                            class="btn-primary w-full justify-center">
+                    <button id="btn-upload-doc" type="submit"
+                            class="btn-primary w-full justify-center"
+                            style="min-height:2.5rem;">
                         <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
                         </svg>
-                        Unggah Dokumen
+                        Unggah
                     </button>
                 </form>
             </div>
 
-            {{-- ── BAWAH: Daftar Dokumen & Lampiran ── --}}
-            <div class="card-serif bg-[#FFFFFF] overflow-hidden">
-
-                {{-- Card Header --}}
-                <div class="px-6 pt-5 pb-4 border-b border-[#F5F3F0] flex items-center justify-between">
+            {{-- ② Daftar Dokumen & Lampiran — lebih tinggi --}}
+            <div class="card-serif bg-[#FFFFFF]">
+                <div class="px-5 pt-4 pb-3 border-b border-[#F5F3F0] flex items-center justify-between">
                     <span class="small-caps text-[0.65rem]">Dokumen & Lampiran</span>
-                    <span class="text-[0.6rem] font-mono text-[#6B6B6B]">{{ $activity->documents->count() }} berkas</span>
+                    <span class="text-[0.6rem] font-mono text-[#6B6B6B]">
+                        {{ $activity->documents->count() }} berkas
+                    </span>
                 </div>
 
-                {{-- List --}}
                 <div class="divide-y divide-[#F5F3F0]">
                     @if($activity->documents->isEmpty())
-                        <div class="py-10 flex flex-col items-center justify-center gap-2 text-center">
+                        <div class="py-12 flex flex-col items-center gap-2 text-center">
                             <svg class="w-8 h-8 text-[#E8E4DF]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
                             </svg>
-                            <p class="text-xs text-[#6B6B6B] font-mono">Belum ada dokumen</p>
+                            <p class="text-xs font-mono text-[#6B6B6B]">Belum ada dokumen</p>
+                            <p class="text-[0.6rem] text-[#6B6B6B]/60 font-mono">Unggah dokumen menggunakan form di atas</p>
                         </div>
                     @else
                         @foreach($activity->documents as $doc)
-                            <div class="px-6 py-4 flex items-start justify-between gap-3 hover:bg-[#FAFAF8] transition-colors duration-150">
+                            <div class="px-5 py-4 flex items-start justify-between gap-3 hover:bg-[#FAFAF8] transition-colors duration-150">
                                 <div class="min-w-0 flex-1">
-                                    <div class="text-xs font-semibold text-[#1A1A1A] truncate">
+                                    <div class="text-xs font-semibold text-[#1A1A1A] truncate leading-snug">
                                         {{ $doc->file_name }}
                                     </div>
-                                    <div class="flex items-center gap-2 mt-1">
-                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[0.55rem] font-mono font-medium uppercase tracking-wider text-[#B8860B] border border-amber-200" style="background-color: #FAFAF8;">
+                                    <div class="flex items-center gap-2 mt-1.5">
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[0.55rem] font-mono font-medium uppercase tracking-wider text-[#B8860B] border border-amber-200" style="background-color:#FAFAF8;">
                                             {{ $doc->document_type }}
                                         </span>
                                         <span class="text-[0.6rem] text-[#6B6B6B] font-mono">
@@ -258,7 +212,7 @@
                                     </div>
                                 </div>
                                 <a href="{{ $doc->file_url }}" target="_blank"
-                                   class="flex-shrink-0 text-[0.6rem] font-mono font-semibold text-[#B8860B] hover:text-[#D4A84B] transition-colors duration-150 mt-0.5">
+                                   class="flex-shrink-0 mt-0.5 text-[0.65rem] font-mono font-semibold text-[#B8860B] hover:text-[#D4A84B] transition-colors duration-150">
                                     Buka ↗
                                 </a>
                             </div>
@@ -273,7 +227,8 @@
 
     {{-- ── Delete Modal ── --}}
     @push('modals')
-    <div id="show-delete-modal" class="modal-backdrop hidden" onclick="if(event.target===event.currentTarget) closeDeleteModalShow()">
+    <div id="show-delete-modal" class="modal-backdrop hidden"
+         onclick="if(event.target===event.currentTarget) closeDeleteModalShow()">
         <div class="modal-box modal-box-sm">
             <div class="px-8 pt-7 pb-6">
                 <div class="flex items-start gap-4 mb-5">
@@ -293,7 +248,8 @@
                     @csrf
                     @method('DELETE')
                     <div class="flex items-center gap-3">
-                        <button type="submit" class="flex-1 text-center text-xs font-mono font-semibold py-2.5 px-4 rounded border border-red-300 text-red-600 bg-red-50 hover:bg-red-100 transition-all duration-150 cursor-pointer">
+                        <button type="submit"
+                                class="flex-1 text-center text-xs font-mono font-semibold py-2.5 px-4 rounded border border-red-300 text-red-600 bg-red-50 hover:bg-red-100 transition-all duration-150 cursor-pointer">
                             Ya, Hapus
                         </button>
                         <button type="button" onclick="closeDeleteModalShow()" class="btn-secondary flex-1">
@@ -308,7 +264,7 @@
 
     {{-- ── Scripts ── --}}
     <script>
-    // ── Delete Modal ──────────────────────────────────────────────────
+    // Delete Modal
     function openDeleteModalShow(id, title) {
         document.getElementById('show-delete-name').textContent = '"' + title + '"';
         document.getElementById('show-delete-modal').classList.remove('hidden');
@@ -326,44 +282,35 @@
         if (e.key === 'Escape') closeDeleteModalShow();
     });
 
-    // ── Drag & Drop Upload ────────────────────────────────────────────
+    // Drag & Drop + File picker
     (function () {
-        var zone    = document.getElementById('drop-zone');
-        var input   = document.getElementById('upload_file');
-        var overlay = document.getElementById('drop-overlay');
-        var label   = document.getElementById('drop-label');
-        var info    = document.getElementById('drop-file-info');
-        var fname   = document.getElementById('drop-file-name');
-        var fsize   = document.getElementById('drop-file-size');
-        var icon    = document.getElementById('drop-icon');
-        var form    = document.getElementById('form-upload-doc');
-        var btn     = document.getElementById('btn-upload-doc');
+        var zone  = document.getElementById('drop-zone');
+        var input = document.getElementById('upload_file');
+        var icon  = document.getElementById('drop-icon');
+        var ph    = document.getElementById('drop-placeholder');
+        var fn    = document.getElementById('drop-file-name');
+        var form  = document.getElementById('form-upload-doc');
+        var btn   = document.getElementById('btn-upload-doc');
 
         if (!zone || !input) return;
 
-        // Pilih file via klik (sudah di-handle lewat onclick di zone)
-        input.addEventListener('change', function () {
-            applyFile(this.files[0] || null);
-        });
+        // File selected via click
+        input.addEventListener('change', function () { applyFile(this.files[0]); });
 
         // Drag events
         zone.addEventListener('dragover', function (e) {
             e.preventDefault();
             zone.classList.add('border-[#B8860B]', 'bg-[#FAFAF8]');
             zone.classList.remove('border-[#E8E4DF]');
-            overlay.classList.remove('hidden');
         });
         zone.addEventListener('dragleave', function (e) {
-            if (!zone.contains(e.relatedTarget)) {
-                resetZoneStyle();
-            }
+            if (!zone.contains(e.relatedTarget)) resetZone();
         });
         zone.addEventListener('drop', function (e) {
             e.preventDefault();
-            resetZoneStyle();
-            var file = e.dataTransfer.files[0] || null;
+            resetZone();
+            var file = e.dataTransfer.files[0];
             if (file) {
-                // Transfer file ke input agar ikut saat submit
                 var dt = new DataTransfer();
                 dt.items.add(file);
                 input.files = dt.files;
@@ -371,33 +318,25 @@
             }
         });
 
-        // Form submit → loading spinner
+        // Loading spinner on submit
         if (form && btn) {
             form.addEventListener('submit', function () {
                 if (typeof setButtonLoading === 'function') setButtonLoading(btn, true);
             });
         }
 
-        // ── helpers ──
         function applyFile(file) {
             if (!file) return;
-            var sizeMB = (file.size / 1024 / 1024).toFixed(2);
-            fname.textContent = file.name;
-            fsize.textContent = sizeMB + ' MB';
-            label.classList.add('hidden');
-            info.classList.remove('hidden');
+            fn.textContent = file.name;
+            fn.classList.remove('hidden');
+            ph.classList.add('hidden');
             icon.classList.remove('text-[#C9C0B5]');
             icon.classList.add('text-[#B8860B]');
         }
 
-        function resetZoneStyle() {
+        function resetZone() {
             zone.classList.remove('border-[#B8860B]', 'bg-[#FAFAF8]');
             zone.classList.add('border-[#E8E4DF]');
-            overlay.classList.add('hidden');
-        }
-
-        function escHtml(s) {
-            return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
         }
     })();
     </script>
