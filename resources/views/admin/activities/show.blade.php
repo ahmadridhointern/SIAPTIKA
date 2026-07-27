@@ -455,17 +455,21 @@
                     </div>
 
                     {{-- Daftar Berkas Terpilih (Antrean Upload) --}}
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-semibold text-[#1A1A1A]">Daftar Berkas Siap Diunggah</span>
-                            <span id="queue-total-badge" class="text-xs font-mono text-[#6B6B6B]">0 berkas terpilih</span>
+                    <div class="space-y-3 pt-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-[#1A1A1A] font-serif tracking-wide uppercase">Daftar Berkas Siap Diunggah</span>
+                            <span id="queue-total-badge" class="px-2.5 py-0.5 rounded-full bg-[#F5F3F0] text-[#B8860B] font-mono text-[0.68rem] font-medium border border-[#E8E4DF]">0 berkas terpilih</span>
                         </div>
 
-                        <div id="queue-empty-state" class="p-6 border border-dashed border-[#E8E4DF] rounded-xl text-center bg-[#FAFAF8]">
-                            <p class="text-xs text-[#6B6B6B] font-mono">Belum ada berkas yang dipilih. Silakan klik atau seret berkas ke salah satu kotak di atas.</p>
+                        <div id="queue-empty-state" class="p-6 border border-dashed border-[#E8E4DF] rounded-xl text-center bg-[#FAFAF8] flex flex-col items-center justify-center space-y-1.5">
+                            <svg class="w-6 h-6 text-[#C9C0B5]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                            </svg>
+                            <p class="text-xs font-medium text-[#6B6B6B]">Belum ada berkas yang dipilih</p>
+                            <p class="text-[0.68rem] text-[#9A948D]">Pilih atau seret berkas ke salah satu kotak di atas untuk menambahkan ke antrean unggah.</p>
                         </div>
 
-                        <div id="queue-file-list" class="space-y-2 max-h-56 overflow-y-auto pr-1 hidden">
+                        <div id="queue-file-list" class="space-y-2.5 max-h-60 overflow-y-auto pr-1 hidden">
                             {{-- Items dynamically rendered via JS --}}
                         </div>
                     </div>
@@ -695,22 +699,31 @@
                 var ext = item.file.name.split('.').pop().toUpperCase();
                 if (ext.length > 4) ext = 'FILE';
                 var sizeMb = (item.file.size / (1024 * 1024)).toFixed(2) + ' MB';
-                var typeLabel = item.type === 'surat' ? 'Surat' : (item.type === 'notulen' ? 'Notulen' : 'Dokumentasi');
+                
+                var typeBadgeClass = 'bg-amber-50 text-[#B8860B] border-amber-200';
+                var typeLabel = 'Surat';
+                if (item.type === 'notulen') {
+                    typeBadgeClass = 'bg-blue-50 text-blue-700 border-blue-200';
+                    typeLabel = 'Notulen';
+                } else if (item.type === 'dokumentasi') {
+                    typeBadgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                    typeLabel = 'Dokumentasi';
+                }
 
-                html += '<div class="p-3 border border-[#E8E4DF] rounded-lg bg-[#FFFFFF] flex items-center justify-between gap-3 shadow-xs">' +
+                html += '<div class="p-3 border border-[#E8E4DF] rounded-xl bg-[#FFFFFF] flex items-center justify-between gap-3 shadow-2xs hover:border-[#B8860B] transition-all group">' +
                             '<div class="flex items-center gap-3 min-w-0 flex-1">' +
-                                '<div class="w-8 h-8 rounded bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase">' +
+                                '<div class="w-9 h-9 rounded-lg bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase shadow-2xs group-hover:border-[#B8860B] transition-colors">' +
                                     ext +
                                 '</div>' +
                                 '<div class="min-w-0 flex-1">' +
-                                    '<p class="text-xs font-semibold text-[#1A1A1A] font-mono truncate" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</p>' +
-                                    '<div class="flex items-center gap-2 mt-0.5">' +
-                                        '<span class="inline-flex items-center px-1.5 py-0.2 rounded text-[0.55rem] font-mono font-medium uppercase bg-amber-50 text-[#B8860B] border border-amber-200">' + typeLabel + '</span>' +
+                                    '<p class="text-xs font-semibold text-[#1A1A1A] truncate" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</p>' +
+                                    '<div class="flex items-center gap-2 mt-1">' +
+                                        '<span class="inline-flex items-center px-2 py-0.5 rounded text-[0.6rem] font-mono font-medium uppercase border ' + typeBadgeClass + '">' + typeLabel + '</span>' +
                                         '<span class="text-[0.65rem] text-[#6B6B6B] font-mono">' + sizeMb + '</span>' +
                                     '</div>' +
                                 '</div>' +
                             '</div>' +
-                            '<button type="button" onclick="removeQueuedFile(\'' + item.id + '\')" class="p-1 text-[#6B6B6B] hover:text-red-600 transition-colors" title="Hapus dari antrean">' +
+                            '<button type="button" onclick="removeQueuedFile(\'' + item.id + '\')" class="w-7 h-7 rounded-lg text-[#9A948D] hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors flex-shrink-0" title="Hapus dari antrean">' +
                                 '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
                                     '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>' +
                                 '</svg>' +
@@ -754,14 +767,31 @@
 
         var html = '';
         queuedUploadFiles.forEach(function(item) {
-            var typeLabel = item.type === 'surat' ? 'Surat' : (item.type === 'notulen' ? 'Notulen' : 'Dokumentasi');
-            html += '<div id="prog-item-' + item.id + '" class="p-3 border border-[#E8E4DF] rounded-lg bg-[#FFFFFF] space-y-2">' +
-                        '<div class="flex items-center justify-between gap-2">' +
-                            '<div class="min-w-0 flex-1">' +
-                                '<p class="text-xs font-semibold text-[#1A1A1A] font-mono truncate" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</p>' +
-                                '<span class="text-[0.6rem] text-[#B8860B] font-mono">' + typeLabel + '</span>' +
+            var ext = item.file.name.split('.').pop().toUpperCase();
+            if (ext.length > 4) ext = 'FILE';
+            
+            var typeBadgeClass = 'bg-amber-50 text-[#B8860B] border-amber-200';
+            var typeLabel = 'Surat';
+            if (item.type === 'notulen') {
+                typeBadgeClass = 'bg-blue-50 text-blue-700 border-blue-200';
+                typeLabel = 'Notulen';
+            } else if (item.type === 'dokumentasi') {
+                typeBadgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                typeLabel = 'Dokumentasi';
+            }
+
+            html += '<div id="prog-item-' + item.id + '" class="p-3.5 border border-[#E8E4DF] rounded-xl bg-[#FFFFFF] space-y-2.5 shadow-2xs">' +
+                        '<div class="flex items-center justify-between gap-3">' +
+                            '<div class="flex items-center gap-3 min-w-0 flex-1">' +
+                                '<div class="w-8 h-8 rounded-lg bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase">' +
+                                    ext +
+                                '</div>' +
+                                '<div class="min-w-0 flex-1">' +
+                                    '<p class="text-xs font-semibold text-[#1A1A1A] truncate" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</p>' +
+                                    '<span class="inline-flex items-center px-1.5 py-0.2 rounded text-[0.55rem] font-mono font-medium uppercase border ' + typeBadgeClass + ' mt-0.5">' + typeLabel + '</span>' +
+                                '</div>' +
                             '</div>' +
-                            '<span id="prog-badge-' + item.id + '" class="text-xs font-mono text-[#6B6B6B]">0%</span>' +
+                            '<span id="prog-badge-' + item.id + '" class="text-xs font-mono text-[#6B6B6B] font-medium flex-shrink-0">0%</span>' +
                         '</div>' +
                         '<div class="w-full h-2 rounded-full bg-[#E8E4DF] overflow-hidden">' +
                             '<div id="prog-bar-' + item.id + '" class="h-full bg-[#B8860B] transition-all duration-150 rounded-full" style="width:0%;"></div>' +
