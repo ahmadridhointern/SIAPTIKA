@@ -401,6 +401,7 @@
                                 <p class="text-[0.6rem] text-[#9A948D] mt-2 font-mono">PDF, Word, JPG (Maks. 10MB)</p>
                                 <input id="input_file_surat" type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                       style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;"
                                        onchange="handleFileInputChange('surat', this)">
                             </div>
                         </div>
@@ -424,6 +425,7 @@
                                 <p class="text-[0.6rem] text-[#9A948D] mt-2 font-mono">PDF, Word, JPG (Maks. 10MB)</p>
                                 <input id="input_file_notulen" type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                       style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;"
                                        onchange="handleFileInputChange('notulen', this)">
                             </div>
                         </div>
@@ -448,6 +450,7 @@
                                 <p class="text-[0.6rem] text-[#9A948D] mt-2 font-mono">JPG, PNG, MP4 (Maks. 10MB)</p>
                                 <input id="input_file_dokumentasi" type="file" multiple accept=".jpg,.jpeg,.png,.mp4"
                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                       style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;"
                                        onchange="handleFileInputChange('dokumentasi', this)">
                             </div>
                         </div>
