@@ -713,9 +713,9 @@
                     typeLabel = 'Dokumentasi';
                 }
 
-                html += '<div class="border border-[#E8E4DF] rounded-xl bg-[#FFFFFF] flex items-center justify-between gap-4 shadow-2xs hover:border-[#B8860B] transition-all group" style="padding: 0.85rem 1rem; margin-bottom: 0.75rem;">' +
-                            '<div class="flex items-center gap-3.5 min-w-0 flex-1">' +
-                                '<div class="rounded-lg bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-xs font-bold flex items-center justify-center flex-shrink-0 uppercase shadow-2xs group-hover:border-[#B8860B] transition-colors" style="width: 40px; height: 40px; flex-shrink: 0;">' +
+                html += '<div class="border border-[#E8E4DF] rounded-xl bg-[#FFFFFF] flex items-center justify-between gap-4 shadow-2xs hover:border-[#B8860B] transition-all group" style="padding: 0.85rem 1rem; margin-bottom: 0.75rem; display: flex; align-items: center;">' +
+                            '<div class="flex items-center gap-3.5 min-w-0 flex-1" style="display: flex; align-items: center;">' +
+                                '<div class="rounded-lg bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-xs font-bold flex items-center justify-center flex-shrink-0 uppercase shadow-2xs group-hover:border-[#B8860B] transition-colors" style="width: 40px; height: 40px; flex-shrink: 0; margin-right: 1rem;">' +
                                     ext +
                                 '</div>' +
                                 '<div class="min-w-0 flex-1" style="display: flex; flex-direction: column; gap: 0.25rem;">' +
@@ -785,8 +785,8 @@
 
             html += '<div id="prog-item-' + item.id + '" class="border border-[#E8E4DF] rounded-xl bg-[#FFFFFF] shadow-2xs" style="padding: 0.9rem 1rem; margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.65rem;">' +
                         '<div class="flex items-center justify-between gap-3.5" style="display: flex; align-items: center; justify-content: space-between;">' +
-                            '<div class="flex items-center gap-3.5 min-w-0 flex-1" style="display: flex; align-items: center; gap: 0.85rem;">' +
-                                '<div class="rounded-lg bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase shadow-2xs" style="width: 36px; height: 36px;">' +
+                            '<div class="flex items-center gap-3.5 min-w-0 flex-1" style="display: flex; align-items: center;">' +
+                                '<div class="rounded-lg bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase shadow-2xs" style="width: 36px; height: 36px; margin-right: 1rem;">' +
                                     ext +
                                 '</div>' +
                                 '<div class="min-w-0 flex-1" style="display: flex; flex-direction: column; gap: 0.15rem;">' +
