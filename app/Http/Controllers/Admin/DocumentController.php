@@ -43,14 +43,26 @@ class DocumentController extends Controller
      * @param  Activity              $activity  Route model binding
      * @return RedirectResponse
      */
-    public function store(StoreDocumentRequest $request, Activity $activity): RedirectResponse
+    public function store(StoreDocumentRequest $request, Activity $activity): \Illuminate\Http\JsonResponse|RedirectResponse
     {
         try {
-            $this->documentService->upload(
+            $document = $this->documentService->upload(
                 file:         $request->file('file'),
                 activity:     $activity,
                 documentType: $request->validated('document_type'),
             );
+
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Dokumen berhasil diunggah.',
+                    'data'    => [
+                        'id'            => $document->id,
+                        'file_name'     => $document->file_name,
+                        'document_type' => $document->document_type,
+                    ],
+                ]);
+            }
 
             return redirect()
                 ->route('admin.activities.show', $activity)
@@ -59,11 +71,19 @@ class DocumentController extends Controller
         } catch (\Throwable $e) {
             report($e);
 
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal mengunggah dokumen: ' . $e->getMessage(),
+                ], 422);
+            }
+
             return redirect()
                 ->route('admin.activities.show', $activity)
                 ->with('error', 'Gagal mengunggah dokumen. Silakan coba lagi.');
         }
     }
+
 
     /**
      * Perbarui metadata dokumen dan/atau ganti berkas di Supabase Storage.

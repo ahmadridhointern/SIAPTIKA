@@ -358,15 +358,15 @@
     </div>
 
     {{-- Upload Document Modal --}}
-    <div id="upload-document-modal" class="modal-backdrop hidden" onclick="if(event.target===event.currentTarget) closeUploadDocumentModal()">
-        <div class="modal-box">
+    <div id="upload-document-modal" class="modal-backdrop hidden" onclick="if(event.target===event.currentTarget && !isUploadingActive) closeUploadDocumentModal()">
+        <div class="modal-box" style="max-width:44rem;">
             {{-- Modal Header --}}
             <div class="flex items-center justify-between px-8 pt-7 pb-5 border-b border-[#E8E4DF]">
                 <div>
-                    <h2 class="font-serif text-2xl text-[#1A1A1A]">Unggah Dokumen</h2>
-                    <p class="text-xs text-[#6B6B6B] mt-0.5">Tambah surat, notulen, atau dokumentasi kegiatan. Kolom bertanda <span class="text-red-500">*</span> wajib diisi.</p>
+                    <h2 id="upload-modal-title" class="font-serif text-2xl text-[#1A1A1A]">Unggah Dokumen</h2>
+                    <p id="upload-modal-subtitle" class="text-xs text-[#6B6B6B] mt-0.5">Pilih berkas untuk jenis Surat, Notulen, atau Dokumentasi.</p>
                 </div>
-                <button type="button" onclick="closeUploadDocumentModal()"
+                <button type="button" onclick="closeUploadDocumentModal()" id="btn-close-upload-modal"
                         class="text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors p-1 rounded"
                         style="background:none;border:none;cursor:pointer;">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -375,128 +375,174 @@
                 </button>
             </div>
 
-            {{-- Form --}}
-            <form id="form-upload-doc"
-                  method="POST"
-                  action="{{ route('admin.activities.documents.store', $activity) }}"
-                  enctype="multipart/form-data"
-                  novalidate
-                  class="flex flex-col overflow-hidden min-h-0 flex-1">
-                <div class="flex-1 overflow-y-auto px-8 py-6 space-y-5 modal-form-body">
-                    @csrf
+            {{-- ══ PHASE 1: SELECTION VIEW ══ --}}
+            <div id="upload-phase-select" class="flex flex-col overflow-hidden min-h-0 flex-1">
+                <div class="flex-1 overflow-y-auto px-8 py-6 space-y-6 modal-form-body">
 
-                    {{-- Validation Errors --}}
-                    @if(($errors->has('document_type') || $errors->has('file')) && old('_method') !== 'PUT')
-                        <div class="mb-5 p-3 bg-red-50 border border-red-200 rounded space-y-1">
-                            @foreach($errors->all() as $error)
-                                <p class="text-xs text-red-600 font-mono leading-snug">{{ $error }}</p>
-                            @endforeach
-                        </div>
-                    @endif
+                    {{-- 3 Category Dropzones Grid --}}
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-                    <div class="space-y-5">
-                        {{-- Jenis Dokumen --}}
-                        <div>
-                            <label for="modal_document_type" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">
-                                Jenis Dokumen <span class="text-red-500">*</span>
-                            </label>
-                            <select id="modal_document_type" name="document_type" required
-                                    class="input-serif pr-8 appearance-none cursor-pointer {{ $errors->has('document_type') ? 'border-red-400 bg-red-50' : '' }}"
-                                    style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B6B6B' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\");
-                                           background-repeat:no-repeat;
-                                           background-position:right 0.75rem center;
-                                           background-size:0.875rem;">
-                                <option value="" disabled {{ old('document_type') ? '' : 'selected' }}>— Pilih jenis dokumen —</option>
-                                <option value="surat"       {{ old('document_type') === 'surat'       ? 'selected' : '' }}>Surat / Dokumen</option>
-                                <option value="notulen"     {{ old('document_type') === 'notulen'     ? 'selected' : '' }}>Notulen</option>
-                                <option value="dokumentasi" {{ old('document_type') === 'dokumentasi' ? 'selected' : '' }}>Dokumentasi</option>
-                            </select>
-                            @if($errors->has('document_type'))
-                                <p class="mt-1 text-xs text-red-600">{{ $errors->first('document_type') }}</p>
-                            @endif
-                        </div>
-
-                        {{-- Drop Zone Layout (Sesuai Gambar Referensi) --}}
-                        <div>
-                            <label class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">
-                                Berkas Dokumen <span class="text-red-500">*</span>
-                            </label>
-
-                            <div id="drop-zone"
-                                 class="flex flex-col items-center justify-center p-7 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 text-center {{ $errors->has('file') ? 'border-red-300 bg-red-50' : 'border-[#E8E4DF] bg-[#FAFAF8] hover:border-[#B8860B] hover:bg-[#FFFFFF]' }}"
-                                 onclick="document.getElementById('upload_file').click()">
-
-                                <div class="w-12 h-12 rounded-xl bg-[#F5F3F0] flex items-center justify-center mb-3 text-[#B8860B] transition-transform duration-200 group-hover:scale-105">
-                                    <svg id="drop-icon" class="w-6 h-6 text-[#B8860B]" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"/>
+                        {{-- 1. Surat --}}
+                        <div class="flex flex-col">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="text-xs font-semibold text-[#1A1A1A] uppercase font-mono tracking-wider">1. Surat / Dokumen</span>
+                                <span id="count-badge-surat" class="text-[0.6rem] font-mono px-1.5 py-0.5 rounded bg-amber-50 text-[#B8860B] border border-amber-200 hidden">0 file</span>
+                            </div>
+                            <div id="drop-zone-surat"
+                                 class="flex-1 flex flex-col items-center justify-center p-4 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 text-center border-[#E8E4DF] bg-[#FAFAF8] hover:border-[#B8860B] hover:bg-[#FFFFFF]"
+                                 onclick="document.getElementById('input_file_surat').click()">
+                                <div class="w-9 h-9 rounded-lg bg-[#F5F3F0] flex items-center justify-center mb-2 text-[#B8860B]">
+                                    <svg class="w-5 h-5 text-[#B8860B]" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
                                     </svg>
                                 </div>
-
-                                <p class="text-xs text-[#1A1A1A] font-medium">
-                                    Seret & lepas berkas di sini, atau <span class="text-[#B8860B] font-semibold underline underline-offset-2 hover:text-[#9A7009]">Pilih Berkas</span>
-                                </p>
-                                <p class="text-[0.7rem] text-[#6B6B6B] mt-1.5 font-mono">
-                                    Format: PDF, Word, JPG, PNG, MP4 (Maksimal 10 MB)
-                                </p>
+                                <p class="text-xs text-[#1A1A1A] font-medium">Seret / <span class="text-[#B8860B] font-semibold underline">Pilih Surat</span></p>
+                                <p class="text-[0.6rem] text-[#6B6B6B] mt-1 font-mono">PDF, Word, JPG (Maks. 10MB)</p>
                             </div>
+                            <input id="input_file_surat" type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="sr-only">
+                        </div>
 
-                            <input id="upload_file" name="file" type="file" required
-                                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4"
-                                   class="sr-only">
-
-                            @if($errors->has('file'))
-                                <p class="mt-1 text-xs text-red-600">{{ $errors->first('file') }}</p>
-                            @endif
-
-                            {{-- Selected File Item Card (Sesuai Gambar Referensi) --}}
-                            <div id="selected-file-container" class="hidden mt-3 p-3.5 border border-[#E8E4DF] rounded-lg bg-[#FFFFFF] flex items-center justify-between gap-3 shadow-xs">
-                                <div class="flex items-center gap-3 min-w-0 flex-1">
-                                    <div id="selected-file-ext" class="w-9 h-9 rounded bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase">
-                                        FILE
-                                    </div>
-                                    <div class="min-w-0 flex-1">
-                                        <p id="selected-file-name" class="text-xs font-semibold text-[#1A1A1A] font-mono truncate"></p>
-                                        <p id="selected-file-size" class="text-[0.65rem] text-[#6B6B6B] font-mono mt-0.5"></p>
-                                    </div>
-                                </div>
-                                <button type="button" onclick="clearSelectedFile()" class="p-1 text-[#6B6B6B] hover:text-red-600 transition-colors" title="Hapus Berkas">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        {{-- 2. Notulen --}}
+                        <div class="flex flex-col">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="text-xs font-semibold text-[#1A1A1A] uppercase font-mono tracking-wider">2. Notulen</span>
+                                <span id="count-badge-notulen" class="text-[0.6rem] font-mono px-1.5 py-0.5 rounded bg-amber-50 text-[#B8860B] border border-amber-200 hidden">0 file</span>
+                            </div>
+                            <div id="drop-zone-notulen"
+                                 class="flex-1 flex flex-col items-center justify-center p-4 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 text-center border-[#E8E4DF] bg-[#FAFAF8] hover:border-[#B8860B] hover:bg-[#FFFFFF]"
+                                 onclick="document.getElementById('input_file_notulen').click()">
+                                <div class="w-9 h-9 rounded-lg bg-[#F5F3F0] flex items-center justify-center mb-2 text-[#B8860B]">
+                                    <svg class="w-5 h-5 text-[#B8860B]" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
                                     </svg>
-                                </button>
+                                </div>
+                                <p class="text-xs text-[#1A1A1A] font-medium">Seret / <span class="text-[#B8860B] font-semibold underline">Pilih Notulen</span></p>
+                                <p class="text-[0.6rem] text-[#6B6B6B] mt-1 font-mono">PDF, Word, JPG (Maks. 10MB)</p>
                             </div>
+                            <input id="input_file_notulen" type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="sr-only">
+                        </div>
+
+                        {{-- 3. Dokumentasi --}}
+                        <div class="flex flex-col">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="text-xs font-semibold text-[#1A1A1A] uppercase font-mono tracking-wider">3. Dokumentasi</span>
+                                <span id="count-badge-dokumentasi" class="text-[0.6rem] font-mono px-1.5 py-0.5 rounded bg-amber-50 text-[#B8860B] border border-amber-200 hidden">0 file</span>
+                            </div>
+                            <div id="drop-zone-dokumentasi"
+                                 class="flex-1 flex flex-col items-center justify-center p-4 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 text-center border-[#E8E4DF] bg-[#FAFAF8] hover:border-[#B8860B] hover:bg-[#FFFFFF]"
+                                 onclick="document.getElementById('input_file_dokumentasi').click()">
+                                <div class="w-9 h-9 rounded-lg bg-[#F5F3F0] flex items-center justify-center mb-2 text-[#B8860B]">
+                                    <svg class="w-5 h-5 text-[#B8860B]" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"/>
+                                    </svg>
+                                </div>
+                                <p class="text-xs text-[#1A1A1A] font-medium">Seret / <span class="text-[#B8860B] font-semibold underline">Pilih Foto/Video</span></p>
+                                <p class="text-[0.6rem] text-[#6B6B6B] mt-1 font-mono">JPG, PNG, MP4 (Maks. 10MB)</p>
+                            </div>
+                            <input id="input_file_dokumentasi" type="file" multiple accept=".jpg,.jpeg,.png,.mp4" class="sr-only">
+                        </div>
+
+                    </div>
+
+                    {{-- Daftar Berkas Terpilih (Antrean Upload) --}}
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-[#1A1A1A]">Daftar Berkas Siap Diunggah</span>
+                            <span id="queue-total-badge" class="text-xs font-mono text-[#6B6B6B]">0 berkas terpilih</span>
+                        </div>
+
+                        <div id="queue-empty-state" class="p-6 border border-dashed border-[#E8E4DF] rounded-xl text-center bg-[#FAFAF8]">
+                            <p class="text-xs text-[#6B6B6B] font-mono">Belum ada berkas yang dipilih. Silakan klik atau seret berkas ke salah satu kotak di atas.</p>
+                        </div>
+
+                        <div id="queue-file-list" class="space-y-2 max-h-56 overflow-y-auto pr-1 hidden">
+                            {{-- Items dynamically rendered via JS --}}
                         </div>
                     </div>
+
                 </div>
 
                 {{-- Modal Footer --}}
                 <div class="flex items-center gap-4 px-8 py-5 border-t border-[#E8E4DF] bg-[#FAFAF8] flex-shrink-0">
-                    <button id="btn-upload-doc" type="submit" class="btn-primary flex-1 justify-center">
-                        Simpan Dokumen
+                    <button id="btn-start-upload" type="button" onclick="startBatchUpload()" class="btn-primary flex-1 justify-center" style="min-height:2.75rem;">
+                        Unggah Dokumen
                     </button>
-                    <button type="button" onclick="closeUploadDocumentModal()" class="btn-secondary flex-1 justify-center">
+                    <button type="button" onclick="closeUploadDocumentModal()" class="btn-secondary flex-1 justify-center" style="min-height:2.75rem;">
                         Batal
                     </button>
                 </div>
-            </form>
+            </div>
+
+            {{-- ══ PHASE 2: PROGRESS VIEW ══ --}}
+            <div id="upload-phase-progress" class="hidden flex flex-col overflow-hidden min-h-0 flex-1">
+                <div class="flex-1 overflow-y-auto px-8 py-6 space-y-5 modal-form-body">
+
+                    {{-- Status Banner --}}
+                    <div id="upload-status-alert" class="p-4 rounded-xl border bg-amber-50 border-amber-200 text-amber-900 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                            <span class="btn-spinner"></span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p id="upload-status-title" class="text-xs font-semibold font-mono uppercase tracking-wider">Proses Mengunggah Dokumen</p>
+                            <p id="upload-status-sub" class="text-xs text-amber-700 font-mono mt-0.5">Harap tunggu hingga seluruh berkas selesai dikirim ke storage...</p>
+                        </div>
+                    </div>
+
+                    {{-- Overall Progress --}}
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-mono text-[#6B6B6B] mb-1.5">
+                            <span>Kemajuan Total</span>
+                            <span id="overall-progress-percent">0%</span>
+                        </div>
+                        <div class="w-full h-2.5 rounded-full bg-[#E8E4DF] overflow-hidden">
+                            <div id="overall-progress-bar" class="h-full bg-[#B8860B] transition-all duration-200 rounded-full" style="width:0%;"></div>
+                        </div>
+                    </div>
+
+                    {{-- Progress Items List --}}
+                    <div>
+                        <span class="text-xs font-semibold text-[#1A1A1A] block mb-2">Rincian Berkas</span>
+                        <div id="progress-file-list" class="space-y-2.5 max-h-60 overflow-y-auto pr-1">
+                            {{-- Items dynamically rendered via JS with progress bars --}}
+                        </div>
+                    </div>
+
+                </div>
+
+                {{-- Progress Modal Footer --}}
+                <div id="progress-footer-actions" class="hidden flex items-center gap-4 px-8 py-5 border-t border-[#E8E4DF] bg-[#FAFAF8] flex-shrink-0">
+                    <button type="button" onclick="retryUpload()" class="btn-primary flex-1 justify-center" style="min-height:2.75rem;">
+                        Coba Lagi
+                    </button>
+                    <button type="button" onclick="backToSelectionPhase()" class="btn-secondary flex-1 justify-center" style="min-height:2.75rem;">
+                        Kembali ke Pemilihan
+                    </button>
+                </div>
+            </div>
+
         </div>
     </div>
-
 
     @endpush
 
     {{-- ── Scripts ── --}}
     <script>
+    var queuedUploadFiles = [];
+    var isUploadingActive = false;
+
     // Upload Document Modal
     function openUploadDocumentModal() {
         closeEditDocumentModal();
         closeDeleteModalShow();
+        backToSelectionPhase();
         document.getElementById('upload-document-modal').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
         var ac = document.getElementById('app-content');
         if (ac) ac.classList.add('modal-open-filter');
     }
     function closeUploadDocumentModal() {
+        if (isUploadingActive) return;
         document.getElementById('upload-document-modal').classList.add('hidden');
         document.body.style.overflow = '';
         var ac = document.getElementById('app-content');
@@ -534,8 +580,8 @@
 
         form.action = actionUrl;
         selectType.value = type;
-        nameDisplay.textContent = 'Berkas saat ini: ' + filename;
-        hintDisplay.textContent = 'Klik atau seret berkas baru jika ingin mengganti berkas ini';
+        nameDisplay.textContent = filename;
+        hintDisplay.textContent = 'Berkas saat ini';
         fileInput.value = '';
         icon.classList.remove('text-[#B8860B]');
         icon.classList.add('text-[#C9C0B5]');
@@ -554,92 +600,354 @@
     }
 
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
+        if (e.key === 'Escape' && !isUploadingActive) {
             closeUploadDocumentModal();
             closeDeleteModalShow();
             closeEditDocumentModal();
         }
     });
 
-    @if($errors->any() && old('_method') !== 'PUT')
-        document.addEventListener('DOMContentLoaded', function() {
-            openUploadDocumentModal();
-        });
-    @elseif($errors->any() && old('_method') === 'PUT')
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('edit-document-modal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        });
-    @endif
-
-
-    function clearSelectedFile() {
-        var input = document.getElementById('upload_file');
-        var container = document.getElementById('selected-file-container');
-        if (input) input.value = '';
-        if (container) container.classList.add('hidden');
+    // ── Multi-Dropzone & Queue Logic ──
+    function handleFileSelection(category, files) {
+        if (!files || files.length === 0) return;
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+            queuedUploadFiles.push({
+                id: fileId,
+                file: file,
+                type: category,
+                status: 'pending',
+                progress: 0,
+                error: null
+            });
+        }
+        renderUploadQueue();
     }
 
-    // Upload Form (Store) & Edit Form Drag & Drop
-    (function () {
-        // Upload Form (Store)
-        var zone  = document.getElementById('drop-zone');
-        var input = document.getElementById('upload_file');
-        var form  = document.getElementById('form-upload-doc');
-        var btn   = document.getElementById('btn-upload-doc');
+    function removeQueuedFile(fileId) {
+        if (isUploadingActive) return;
+        queuedUploadFiles = queuedUploadFiles.filter(function(item) { return item.id !== fileId; });
+        renderUploadQueue();
+    }
 
-        if (zone && input) {
-            input.addEventListener('change', function () { applyFile(this.files[0]); });
+    function renderUploadQueue() {
+        var queueList  = document.getElementById('queue-file-list');
+        var emptyState = document.getElementById('queue-empty-state');
+        var totalBadge = document.getElementById('queue-total-badge');
 
-            zone.addEventListener('dragover', function (e) {
-                e.preventDefault();
-                zone.classList.add('border-[#B8860B]', 'bg-[#FAFAF8]');
-                zone.classList.remove('border-[#E8E4DF]');
-            });
-            zone.addEventListener('dragleave', function (e) {
-                if (!zone.contains(e.relatedTarget)) resetZone();
-            });
-            zone.addEventListener('drop', function (e) {
-                e.preventDefault();
-                resetZone();
-                var file = e.dataTransfer.files[0];
-                if (file) {
-                    var dt = new DataTransfer();
-                    dt.items.add(file);
-                    input.files = dt.files;
-                    applyFile(file);
-                }
-            });
+        var suratCount = 0, notulenCount = 0, dokCount = 0;
+        queuedUploadFiles.forEach(function(item) {
+            if (item.type === 'surat') suratCount++;
+            if (item.type === 'notulen') notulenCount++;
+            if (item.type === 'dokumentasi') dokCount++;
+        });
 
-            if (form && btn) {
-                form.addEventListener('submit', function () {
-                    if (typeof setButtonLoading === 'function') setButtonLoading(btn, true);
-                });
+        updateCountBadge('count-badge-surat', suratCount);
+        updateCountBadge('count-badge-notulen', notulenCount);
+        updateCountBadge('count-badge-dokumentasi', dokCount);
+
+        if (totalBadge) totalBadge.textContent = queuedUploadFiles.length + ' berkas terpilih';
+
+        if (queuedUploadFiles.length === 0) {
+            if (emptyState) emptyState.classList.remove('hidden');
+            if (queueList) {
+                queueList.classList.add('hidden');
+                queueList.innerHTML = '';
             }
-
-            function applyFile(file) {
-                if (!file) return;
-                var nameEl = document.getElementById('selected-file-name');
-                var sizeEl = document.getElementById('selected-file-size');
-                var extEl  = document.getElementById('selected-file-ext');
-                var container = document.getElementById('selected-file-container');
-
-                if (nameEl) nameEl.textContent = file.name;
-                if (sizeEl) sizeEl.textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
-                if (extEl) {
-                    var ext = file.name.split('.').pop().toUpperCase();
-                    extEl.textContent = ext.length <= 4 ? ext : 'FILE';
-                }
-                if (container) container.classList.remove('hidden');
-            }
-
-            function resetZone() {
-                zone.classList.remove('border-[#B8860B]', 'bg-[#FAFAF8]');
-                zone.classList.add('border-[#E8E4DF]');
-            }
+            return;
         }
 
-        // Edit Document Form
+        if (emptyState) emptyState.classList.add('hidden');
+        if (queueList) {
+            queueList.classList.remove('hidden');
+            var html = '';
+            queuedUploadFiles.forEach(function(item) {
+                var ext = item.file.name.split('.').pop().toUpperCase();
+                if (ext.length > 4) ext = 'FILE';
+                var sizeMb = (item.file.size / (1024 * 1024)).toFixed(2) + ' MB';
+                var typeLabel = item.type === 'surat' ? 'Surat' : (item.type === 'notulen' ? 'Notulen' : 'Dokumentasi');
+
+                html += `
+                    <div class="p-3 border border-[#E8E4DF] rounded-lg bg-[#FFFFFF] flex items-center justify-between gap-3 shadow-xs">
+                        <div class="flex items-center gap-3 min-w-0 flex-1">
+                            <div class="w-8 h-8 rounded bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase">
+                                ${ext}
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-xs font-semibold text-[#1A1A1A] font-mono truncate" title="${item.file.name}">${item.file.name}</p>
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[0.55rem] font-mono font-medium uppercase bg-amber-50 text-[#B8860B] border border-amber-200">${typeLabel}</span>
+                                    <span class="text-[0.65rem] text-[#6B6B6B] font-mono">${sizeMb}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="removeQueuedFile('${item.id}')" class="p-1 text-[#6B6B6B] hover:text-red-600 transition-colors" title="Hapus dari antrean">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+            });
+            queueList.innerHTML = html;
+        }
+    }
+
+    function updateCountBadge(elementId, count) {
+        var el = document.getElementById(elementId);
+        if (!el) return;
+        if (count > 0) {
+            el.textContent = count + ' file';
+            el.classList.remove('hidden');
+        } else {
+            el.classList.add('hidden');
+        }
+    }
+
+    // ── Batch Upload Engine ──
+    function startBatchUpload() {
+        if (queuedUploadFiles.length === 0) {
+            alert('Silakan pilih setidaknya 1 berkas dokumen terlebih dahulu.');
+            return;
+        }
+
+        isUploadingActive = true;
+        document.getElementById('upload-phase-select').classList.add('hidden');
+        document.getElementById('upload-phase-progress').classList.remove('hidden');
+        document.getElementById('btn-close-upload-modal').classList.add('hidden');
+
+        renderProgressList();
+        uploadNextInQueue(0);
+    }
+
+    function renderProgressList() {
+        var container = document.getElementById('progress-file-list');
+        if (!container) return;
+
+        var html = '';
+        queuedUploadFiles.forEach(function(item) {
+            var typeLabel = item.type === 'surat' ? 'Surat' : (item.type === 'notulen' ? 'Notulen' : 'Dokumentasi');
+            html += `
+                <div id="prog-item-${item.id}" class="p-3 border border-[#E8E4DF] rounded-lg bg-[#FFFFFF] space-y-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs font-semibold text-[#1A1A1A] font-mono truncate" title="${item.file.name}">${item.file.name}</p>
+                            <span class="text-[0.6rem] text-[#B8860B] font-mono">${typeLabel}</span>
+                        </div>
+                        <span id="prog-badge-${item.id}" class="text-xs font-mono text-[#6B6B6B]">0%</span>
+                    </div>
+                    <div class="w-full h-2 rounded-full bg-[#E8E4DF] overflow-hidden">
+                        <div id="prog-bar-${item.id}" class="h-full bg-[#B8860B] transition-all duration-150 rounded-full" style="width:0%;"></div>
+                    </div>
+                    <p id="prog-err-${item.id}" class="hidden text-[0.65rem] text-red-600 font-mono"></p>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function uploadNextInQueue(index) {
+        if (index >= queuedUploadFiles.length) {
+            var hasFailures = queuedUploadFiles.some(function(item) { return item.status === 'failed'; });
+            if (!hasFailures) {
+                updateOverallProgress(100);
+                showUploadSuccessState();
+            } else {
+                showUploadFailureState();
+            }
+            return;
+        }
+
+        var item = queuedUploadFiles[index];
+        item.status = 'uploading';
+
+        var formData = new FormData();
+        formData.append('document_type', item.type);
+        formData.append('file', item.file);
+        formData.append('_token', '{{ csrf_token() }}');
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '{{ route("admin.activities.documents.store", $activity) }}', true);
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+        xhr.upload.onprogress = function(e) {
+            if (e.lengthComputable) {
+                var percent = Math.round((e.loaded / e.total) * 100);
+                item.progress = percent;
+
+                var bar = document.getElementById('prog-bar-' + item.id);
+                var badge = document.getElementById('prog-badge-' + item.id);
+                if (bar) bar.style.width = percent + '%';
+                if (badge) badge.textContent = percent + '%';
+
+                var totalProgressSum = 0;
+                queuedUploadFiles.forEach(function(f) { totalProgressSum += (f.progress || 0); });
+                var overallPercent = Math.round(totalProgressSum / queuedUploadFiles.length);
+                updateOverallProgress(overallPercent);
+            }
+        };
+
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                item.status = 'success';
+                item.progress = 100;
+                var bar = document.getElementById('prog-bar-' + item.id);
+                var badge = document.getElementById('prog-badge-' + item.id);
+                if (bar) {
+                    bar.style.width = '100%';
+                    bar.classList.remove('bg-[#B8860B]');
+                    bar.classList.add('bg-emerald-600');
+                }
+                if (badge) {
+                    badge.textContent = '100% Selesai';
+                    badge.className = 'text-xs font-mono font-semibold text-emerald-600';
+                }
+                uploadNextInQueue(index + 1);
+            } else {
+                item.status = 'failed';
+                var errMessage = 'Gagal mengunggah berkas.';
+                try {
+                    var json = JSON.parse(xhr.responseText);
+                    if (json.message) errMessage = json.message;
+                    if (json.errors && json.errors.file) errMessage = json.errors.file[0];
+                } catch (_) {}
+
+                item.error = errMessage;
+                var bar = document.getElementById('prog-bar-' + item.id);
+                var badge = document.getElementById('prog-badge-' + item.id);
+                var errEl = document.getElementById('prog-err-' + item.id);
+
+                if (bar) {
+                    bar.classList.remove('bg-[#B8860B]');
+                    bar.classList.add('bg-red-500');
+                }
+                if (badge) {
+                    badge.textContent = 'Gagal';
+                    badge.className = 'text-xs font-mono font-semibold text-red-600';
+                }
+                if (errEl) {
+                    errEl.textContent = errMessage;
+                    errEl.classList.remove('hidden');
+                }
+                uploadNextInQueue(index + 1);
+            }
+        };
+
+        xhr.onerror = function() {
+            item.status = 'failed';
+            item.error = 'Koneksi terputus saat mengunggah.';
+            uploadNextInQueue(index + 1);
+        };
+
+        xhr.send(formData);
+    }
+
+    function updateOverallProgress(percent) {
+        var bar = document.getElementById('overall-progress-bar');
+        var badge = document.getElementById('overall-progress-percent');
+        if (bar) bar.style.width = percent + '%';
+        if (badge) badge.textContent = percent + '%';
+    }
+
+    function showUploadSuccessState() {
+        var alertBox = document.getElementById('upload-status-alert');
+        var alertTitle = document.getElementById('upload-status-title');
+        var alertSub = document.getElementById('upload-status-sub');
+
+        if (alertBox) alertBox.className = 'p-4 rounded-xl border bg-emerald-50 border-emerald-200 text-emerald-900 flex items-center gap-3';
+        if (alertTitle) alertTitle.textContent = 'Unggah Selesai!';
+        if (alertSub) alertSub.textContent = 'Seluruh dokumen berhasil disimpan ke arsip. Menutup otomatis dalam 2 detik...';
+
+        setTimeout(function() {
+            closeUploadDocumentModal();
+            window.location.reload();
+        }, 2000);
+    }
+
+    function showUploadFailureState() {
+        isUploadingActive = false;
+        var alertBox = document.getElementById('upload-status-alert');
+        var alertTitle = document.getElementById('upload-status-title');
+        var alertSub = document.getElementById('upload-status-sub');
+        var footerActions = document.getElementById('progress-footer-actions');
+        var closeBtn = document.getElementById('btn-close-upload-modal');
+
+        if (alertBox) alertBox.className = 'p-4 rounded-xl border bg-red-50 border-red-200 text-red-900 flex items-center gap-3';
+        if (alertTitle) alertTitle.textContent = 'Beberapa Unggahan Gagal';
+        if (alertSub) alertSub.textContent = 'Silakan periksa rincian kesalahan di bawah ini dan coba lagi.';
+        if (footerActions) footerActions.classList.remove('hidden');
+        if (closeBtn) closeBtn.classList.remove('hidden');
+    }
+
+    function retryUpload() {
+        document.getElementById('progress-footer-actions').classList.add('hidden');
+        var alertBox = document.getElementById('upload-status-alert');
+        var alertTitle = document.getElementById('upload-status-title');
+        var alertSub = document.getElementById('upload-status-sub');
+
+        if (alertBox) alertBox.className = 'p-4 rounded-xl border bg-amber-50 border-amber-200 text-amber-900 flex items-center gap-3';
+        if (alertTitle) alertTitle.textContent = 'Mencoba Mengunggah Ulang...';
+        if (alertSub) alertSub.textContent = 'Harap tunggu hingga proses mengunggah selesai...';
+
+        queuedUploadFiles.forEach(function(item) {
+            if (item.status === 'failed') {
+                item.status = 'pending';
+                item.progress = 0;
+                item.error = null;
+            }
+        });
+
+        renderProgressList();
+        uploadNextInQueue(0);
+    }
+
+    function backToSelectionPhase() {
+        isUploadingActive = false;
+        queuedUploadFiles = [];
+        renderUploadQueue();
+        document.getElementById('upload-phase-progress').classList.add('hidden');
+        document.getElementById('upload-phase-select').classList.remove('hidden');
+        document.getElementById('btn-close-upload-modal').classList.remove('hidden');
+        document.getElementById('progress-footer-actions').classList.add('hidden');
+    }
+
+    // Attach Drag & Drop for 3 categories
+    (function () {
+        ['surat', 'notulen', 'dokumentasi'].forEach(function(cat) {
+            var zone = document.getElementById('drop-zone-' + cat);
+            var input = document.getElementById('input_file_' + cat);
+
+            if (zone && input) {
+                input.addEventListener('change', function() {
+                    handleFileSelection(cat, this.files);
+                    this.value = '';
+                });
+
+                zone.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    zone.classList.add('border-[#B8860B]', 'bg-[#FAFAF8]');
+                    zone.classList.remove('border-[#E8E4DF]');
+                });
+                zone.addEventListener('dragleave', function(e) {
+                    if (!zone.contains(e.relatedTarget)) {
+                        zone.classList.remove('border-[#B8860B]', 'bg-[#FAFAF8]');
+                        zone.classList.add('border-[#E8E4DF]');
+                    }
+                });
+                zone.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    zone.classList.remove('border-[#B8860B]', 'bg-[#FAFAF8]');
+                    zone.classList.add('border-[#E8E4DF]');
+                    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                        handleFileSelection(cat, e.dataTransfer.files);
+                    }
+                });
+            }
+        });
+
+        // Edit Document Form Drag & Drop
         var editZone  = document.getElementById('edit-drop-zone');
         var editInput = document.getElementById('edit_upload_file');
         var editForm  = document.getElementById('edit-document-form');
@@ -698,4 +1006,3 @@
 
 
 </x-layouts.admin>
-
