@@ -259,7 +259,7 @@
 
     {{-- Edit Document Modal --}}
     <div id="edit-document-modal" class="modal-backdrop hidden" onclick="if(event.target===event.currentTarget) closeEditDocumentModal()">
-        <div class="modal-box modal-box-sm">
+        <div class="modal-box">
             {{-- Modal Header --}}
             <div class="flex items-center justify-between px-8 pt-7 pb-5 border-b border-[#E8E4DF]">
                 <div>
@@ -341,7 +341,8 @@
 
     {{-- Upload Document Modal --}}
     <div id="upload-document-modal" class="modal-backdrop hidden" onclick="if(event.target===event.currentTarget) closeUploadDocumentModal()">
-        <div class="modal-box modal-box-sm">
+        <div class="modal-box">
+
             {{-- Modal Header --}}
             <div class="flex items-center justify-between px-8 pt-7 pb-5 border-b border-[#E8E4DF]">
                 <div>
