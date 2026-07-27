@@ -327,6 +327,11 @@
                             Batal
                         </button>
                     </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     {{-- Upload Document Modal --}}
     <div id="upload-document-modal" class="modal-backdrop hidden"
          onclick="if(event.target===event.currentTarget) closeUploadDocumentModal()">
