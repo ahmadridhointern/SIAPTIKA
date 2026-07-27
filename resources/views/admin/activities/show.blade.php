@@ -692,7 +692,9 @@
         }
 
         if (emptyState) emptyState.classList.add('hidden');
-               var html = '';
+        if (queueList) {
+            queueList.classList.remove('hidden');
+            var html = '';
             queuedUploadFiles.forEach(function(item) {
                 var ext = item.file.name.split('.').pop().toUpperCase();
                 if (ext.length > 4) ext = 'FILE';
@@ -724,7 +726,7 @@
                             '<button type="button" onclick="removeQueuedFile(\'' + item.id + '\')" class="w-8 h-8 rounded-lg text-[#9A948D] hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors flex-shrink-0" title="Hapus dari antrean">' +
                                 '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
                                     '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>' +
-                                </svg>' +
+                                '</svg>' +
                             '</button>' +
                         '</div>';
             });
