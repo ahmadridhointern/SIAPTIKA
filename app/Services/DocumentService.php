@@ -10,13 +10,14 @@ use Illuminate\Support\Facades\DB;
 /**
  * DocumentService
  *
- * Bertanggung jawab untuk mengorchestrasi proses upload dokumen:
- *   1. Upload file ke Supabase Storage
- *   2. Simpan metadata ke database dalam DB::transaction
+ * Bertanggung jawab untuk mengorchestrasi proses upload & update dokumen:
+ *   1. Upload/Ganti file di Supabase Storage
+ *   2. Simpan/Perbarui metadata di database dalam DB::transaction
  *   3. Rollback file dari Storage jika transaksi database gagal
+ *   4. Hapus file lama dari Storage setelah penggantian berkas berhasil
  *
  * Prinsip: Single Responsibility — service ini hanya mengurusi
- * operasi bisnis dokumen (upload + persist), terpisah dari HTTP layer.
+ * operasi bisnis dokumen (upload, update & persist), terpisah dari HTTP layer.
  */
 class DocumentService
 {
@@ -31,12 +32,6 @@ class DocumentService
     /**
      * Upload file ke Storage dan simpan metadata-nya ke database secara atomik.
      *
-     * Alur:
-     *   1. Upload file ke Supabase Storage → dapatkan path
-     *   2. Buka DB::transaction → Document::create()
-     *   3. Jika DB gagal → rollback otomatis + hapus file dari Storage
-     *   4. Return Document yang berhasil dibuat
-     *
      * @param  UploadedFile  $file          File yang diupload
      * @param  Activity      $activity      Kegiatan yang terkait
      * @param  string        $documentType  Jenis dokumen: surat|notulen|dokumentasi
@@ -50,7 +45,6 @@ class DocumentService
         string $documentType,
     ): Document {
         // Langkah 1: Upload file ke Supabase Storage
-        // Dilakukan sebelum transaksi DB karena Storage tidak mendukung rollback atomik.
         $path = $this->storage->upload(
             file:      $file,
             directory: "documents/{$activity->id}",
@@ -71,15 +65,100 @@ class DocumentService
 
         } catch (\Throwable $e) {
             // Langkah 3: Rollback — hapus file dari Storage agar tidak ada orphan file
-            // Jika delete juga gagal, tetap log dan lempar exception asli.
             try {
                 $this->storage->delete($path);
             } catch (\Throwable $deleteException) {
                 report($deleteException);
             }
 
-            // Lempar exception asli ke controller untuk ditangani
             throw $e;
         }
+    }
+
+    /**
+     * Perbarui metadata dokumen dan/atau ganti file di Storage secara atomik.
+     *
+     * @param  Document      $document      Record dokumen yang diperbarui
+     * @param  string        $documentType  Jenis dokumen baru
+     * @param  UploadedFile|null $newFile   File baru (opsional)
+     * @return Document                     Record dokumen yang telah diperbarui
+     *
+     * @throws \Throwable  Jika upload Storage atau transaksi DB gagal
+     */
+    public function update(
+        Document $document,
+        string $documentType,
+        ?UploadedFile $newFile = null,
+    ): Document {
+        // Kasus 1: File tidak diganti, hanya jenis dokumen yang diubah
+        if ($newFile === null) {
+            return DB::transaction(function () use ($document, $documentType): Document {
+                $document->update([
+                    'document_type' => $documentType,
+                ]);
+
+                return $document;
+            });
+        }
+
+        // Kasus 2: File diganti
+        // 1. Upload file baru ke Storage
+        $newPath = $this->storage->upload(
+            file:      $newFile,
+            directory: "documents/{$document->activity_id}",
+        );
+
+        $oldPath = $this->extractStoragePath($document->file_url);
+
+        try {
+            // 2. Perbarui metadata di database dalam transaksi
+            $updatedDocument = DB::transaction(function () use ($document, $documentType, $newFile, $newPath): Document {
+                $document->update([
+                    'document_type' => $documentType,
+                    'file_name'     => $newFile->getClientOriginalName(),
+                    'file_url'      => $this->storage->url($newPath),
+                ]);
+
+                return $document;
+            });
+
+            // 3. Hapus file lama dari Storage setelah DB berhasil di-update
+            if ($oldPath) {
+                try {
+                    $this->storage->delete($oldPath);
+                } catch (\Throwable $deleteOldException) {
+                    report($deleteOldException);
+                }
+            }
+
+            return $updatedDocument;
+
+        } catch (\Throwable $e) {
+            // Rollback: Hapus file BARU dari Storage jika transaksi DB gagal
+            try {
+                $this->storage->delete($newPath);
+            } catch (\Throwable $rollbackException) {
+                report($rollbackException);
+            }
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Ekstrak path relatif storage dari file_url.
+     * Contoh file_url: https://...supabase.co/storage/v1/object/public/documents/12/uuid.pdf
+     * Path yang dikembalikan: documents/12/uuid.pdf
+     */
+    private function extractStoragePath(string $fileUrl): ?string
+    {
+        $needle = '/object/public/';
+        $pos    = strpos($fileUrl, $needle);
+
+        if ($pos === false) {
+            return null;
+        }
+
+        return substr($fileUrl, $pos + strlen($needle));
     }
 }

@@ -39,6 +39,12 @@ Route::middleware('admin.auth')->prefix('admin')->name('admin.')->group(function
         [DocumentController::class, 'store']
     )->name('activities.documents.store');
 
+    // Update dokumen arsip — edit jenis dokumen / ganti berkas
+    Route::put(
+        'documents/{document}',
+        [DocumentController::class, 'update']
+    )->name('documents.update');
+
     // Download dokumen arsip — proxy via Laravel (header attachment)
     Route::get(
         'documents/{document}/download',

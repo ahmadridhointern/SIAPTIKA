@@ -238,16 +238,24 @@
                                     </div>
                                 </div>
 
-                                {{-- Tombol Aksi: Buka + Unduh --}}
-                                <div class="flex flex-col items-end gap-1 flex-shrink-0">
+                                {{-- Tombol Aksi: Ubah + Buka + Unduh --}}
+                                <div class="flex items-center gap-2.5 flex-shrink-0">
+                                    <button type="button"
+                                            onclick="openEditDocumentModal({{ $doc->id }}, '{{ $doc->document_type }}', '{{ addslashes($doc->file_name) }}', '{{ route('admin.documents.update', $doc) }}')"
+                                            class="text-[0.65rem] font-mono font-semibold text-[#6B6B6B] hover:text-[#B8860B] transition-colors duration-150"
+                                            title="Edit Dokumen">
+                                        Ubah ✎
+                                    </button>
                                     <a href="{{ $doc->file_url }}"
                                        target="_blank"
                                        rel="noopener noreferrer"
-                                       class="text-[0.65rem] font-mono font-semibold text-[#B8860B] hover:text-[#D4A84B] transition-colors duration-150">
+                                       class="text-[0.65rem] font-mono font-semibold text-[#B8860B] hover:text-[#D4A84B] transition-colors duration-150"
+                                       title="Buka Dokumen">
                                         Buka ↗
                                     </a>
                                     <a href="{{ route('admin.documents.download', $doc) }}"
-                                       class="text-[0.65rem] font-mono font-semibold text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors duration-150">
+                                       class="text-[0.65rem] font-mono font-semibold text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors duration-150"
+                                       title="Unduh Dokumen">
                                         Unduh ↓
                                     </a>
                                 </div>
@@ -268,8 +276,9 @@
 
     </div>
 
-    {{-- ── Delete Modal ── --}}
+    {{-- ── Modals ── --}}
     @push('modals')
+    {{-- Delete Activity Modal --}}
     <div id="show-delete-modal" class="modal-backdrop hidden"
          onclick="if(event.target===event.currentTarget) closeDeleteModalShow()">
         <div class="modal-box modal-box-sm">
@@ -295,7 +304,82 @@
                                 class="flex-1 text-center text-xs font-mono font-semibold py-2.5 px-4 rounded border border-red-300 text-red-600 bg-red-50 hover:bg-red-100 transition-all duration-150 cursor-pointer">
                             Ya, Hapus
                         </button>
-                        <button type="button" onclick="closeDeleteModalShow()" class="btn-secondary flex-1">
+                        <button type="button" onclick="closeDeleteModalShow()" class="btn-secondary flex-1 justify-center">
+                            Batal
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Edit Document Modal --}}
+    <div id="edit-document-modal" class="modal-backdrop hidden"
+         onclick="if(event.target===event.currentTarget) closeEditDocumentModal()">
+        <div class="modal-box modal-box-sm">
+            <div class="px-8 pt-7 pb-6">
+                <div class="flex items-center justify-between pb-4 border-b border-[#F5F3F0] mb-5">
+                    <div>
+                        <h2 class="font-serif text-xl text-[#1A1A1A]">Edit Dokumen Arsip</h2>
+                        <p class="text-xs text-[#6B6B6B] font-mono mt-0.5">Perbarui jenis atau ganti berkas dokumen</p>
+                    </div>
+                    <button type="button" onclick="closeEditDocumentModal()" class="text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <form id="edit-document-form" method="POST" action="" enctype="multipart/form-data" class="space-y-4">
+                    @csrf
+                    @method('PUT')
+
+                    {{-- Jenis Dokumen --}}
+                    <div>
+                        <label for="edit_document_type" class="block text-xs font-mono uppercase tracking-wider text-[#6B6B6B] mb-1.5">
+                            Jenis Dokumen <span class="text-red-500">*</span>
+                        </label>
+                        <select id="edit_document_type" name="document_type" required
+                                class="input-serif text-sm pr-8 appearance-none cursor-pointer"
+                                style="height:2.5rem;
+                                       background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B6B6B' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\");
+                                       background-repeat:no-repeat;
+                                       background-position:right 0.625rem center;
+                                       background-size:0.875rem;">
+                            <option value="surat">Surat / Dokumen</option>
+                            <option value="notulen">Notulen</option>
+                            <option value="dokumentasi">Dokumentasi</option>
+                        </select>
+                    </div>
+
+                    {{-- Ganti Berkas (Opsional) --}}
+                    <div>
+                        <label class="block text-xs font-mono uppercase tracking-wider text-[#6B6B6B] mb-1.5">
+                            Ganti Berkas <span class="text-gray-400 font-normal lowercase">(opsional)</span>
+                        </label>
+
+                        <div id="edit-drop-zone"
+                             class="flex items-center gap-3 w-full border border-dashed border-[#E8E4DF] hover:border-[#B8860B] hover:bg-[#FAFAF8] rounded-md px-4 py-3 cursor-pointer transition-all duration-150"
+                             onclick="document.getElementById('edit_upload_file').click()">
+                            <svg id="edit-drop-icon" class="w-5 h-5 flex-shrink-0 text-[#C9C0B5] transition-colors" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                            </svg>
+                            <div class="min-w-0 flex-1">
+                                <p id="edit-current-filename" class="text-xs font-mono text-[#1A1A1A] font-semibold truncate"></p>
+                                <p id="edit-drop-hint" class="text-[0.65rem] text-[#6B6B6B] font-mono mt-0.5">Klik atau seret berkas baru untuk mengganti</p>
+                            </div>
+                        </div>
+
+                        <input id="edit_upload_file" name="file" type="file"
+                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4"
+                               class="sr-only">
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-2">
+                        <button id="btn-submit-edit-doc" type="submit" class="btn-primary flex-1 justify-center" style="min-height:2.5rem;">
+                            Simpan Perubahan
+                        </button>
+                        <button type="button" onclick="closeEditDocumentModal()" class="btn-secondary flex-1 justify-center" style="min-height:2.5rem;">
                             Batal
                         </button>
                     </div>
@@ -307,7 +391,7 @@
 
     {{-- ── Scripts ── --}}
     <script>
-    // Delete Modal
+    // Delete Activity Modal
     function openDeleteModalShow(id, title) {
         document.getElementById('show-delete-name').textContent = '"' + title + '"';
         document.getElementById('show-delete-modal').classList.remove('hidden');
@@ -321,12 +405,47 @@
         var ac = document.getElementById('app-content');
         if (ac) ac.classList.remove('modal-open-filter');
     }
+
+    // Edit Document Modal
+    function openEditDocumentModal(id, type, filename, actionUrl) {
+        var form = document.getElementById('edit-document-form');
+        var selectType = document.getElementById('edit_document_type');
+        var nameDisplay = document.getElementById('edit-current-filename');
+        var hintDisplay = document.getElementById('edit-drop-hint');
+        var fileInput = document.getElementById('edit_upload_file');
+        var icon = document.getElementById('edit-drop-icon');
+
+        form.action = actionUrl;
+        selectType.value = type;
+        nameDisplay.textContent = 'Berkas saat ini: ' + filename;
+        hintDisplay.textContent = 'Klik atau seret berkas baru jika ingin mengganti berkas ini';
+        fileInput.value = '';
+        icon.classList.remove('text-[#B8860B]');
+        icon.classList.add('text-[#C9C0B5]');
+
+        document.getElementById('edit-document-modal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        var ac = document.getElementById('app-content');
+        if (ac) ac.classList.add('modal-open-filter');
+    }
+
+    function closeEditDocumentModal() {
+        document.getElementById('edit-document-modal').classList.add('hidden');
+        document.body.style.overflow = '';
+        var ac = document.getElementById('app-content');
+        if (ac) ac.classList.remove('modal-open-filter');
+    }
+
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') closeDeleteModalShow();
+        if (e.key === 'Escape') {
+            closeDeleteModalShow();
+            closeEditDocumentModal();
+        }
     });
 
-    // Drag & Drop + File picker
+    // Upload Form (Store) & Edit Form Drag & Drop
     (function () {
+        // Upload Form (Store)
         var zone  = document.getElementById('drop-zone');
         var input = document.getElementById('upload_file');
         var icon  = document.getElementById('drop-icon');
@@ -335,53 +454,101 @@
         var form  = document.getElementById('form-upload-doc');
         var btn   = document.getElementById('btn-upload-doc');
 
-        if (!zone || !input) return;
+        if (zone && input) {
+            input.addEventListener('change', function () { applyFile(this.files[0]); });
 
-        // File selected via click
-        input.addEventListener('change', function () { applyFile(this.files[0]); });
-
-        // Drag events
-        zone.addEventListener('dragover', function (e) {
-            e.preventDefault();
-            zone.classList.add('border-[#B8860B]', 'bg-[#FAFAF8]');
-            zone.classList.remove('border-[#E8E4DF]');
-        });
-        zone.addEventListener('dragleave', function (e) {
-            if (!zone.contains(e.relatedTarget)) resetZone();
-        });
-        zone.addEventListener('drop', function (e) {
-            e.preventDefault();
-            resetZone();
-            var file = e.dataTransfer.files[0];
-            if (file) {
-                var dt = new DataTransfer();
-                dt.items.add(file);
-                input.files = dt.files;
-                applyFile(file);
-            }
-        });
-
-        // Loading spinner on submit
-        if (form && btn) {
-            form.addEventListener('submit', function () {
-                if (typeof setButtonLoading === 'function') setButtonLoading(btn, true);
+            zone.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                zone.classList.add('border-[#B8860B]', 'bg-[#FAFAF8]');
+                zone.classList.remove('border-[#E8E4DF]');
             });
+            zone.addEventListener('dragleave', function (e) {
+                if (!zone.contains(e.relatedTarget)) resetZone();
+            });
+            zone.addEventListener('drop', function (e) {
+                e.preventDefault();
+                resetZone();
+                var file = e.dataTransfer.files[0];
+                if (file) {
+                    var dt = new DataTransfer();
+                    dt.items.add(file);
+                    input.files = dt.files;
+                    applyFile(file);
+                }
+            });
+
+            if (form && btn) {
+                form.addEventListener('submit', function () {
+                    if (typeof setButtonLoading === 'function') setButtonLoading(btn, true);
+                });
+            }
+
+            function applyFile(file) {
+                if (!file) return;
+                fn.textContent = file.name;
+                fn.classList.remove('hidden');
+                ph.classList.add('hidden');
+                icon.classList.remove('text-[#C9C0B5]');
+                icon.classList.add('text-[#B8860B]');
+            }
+
+            function resetZone() {
+                zone.classList.remove('border-[#B8860B]', 'bg-[#FAFAF8]');
+                zone.classList.add('border-[#E8E4DF]');
+            }
         }
 
-        function applyFile(file) {
-            if (!file) return;
-            fn.textContent = file.name;
-            fn.classList.remove('hidden');
-            ph.classList.add('hidden');
-            icon.classList.remove('text-[#C9C0B5]');
-            icon.classList.add('text-[#B8860B]');
-        }
+        // Edit Document Form
+        var editZone  = document.getElementById('edit-drop-zone');
+        var editInput = document.getElementById('edit_upload_file');
+        var editForm  = document.getElementById('edit-document-form');
+        var editBtn   = document.getElementById('btn-submit-edit-doc');
+        var editHint  = document.getElementById('edit-drop-hint');
+        var editIcon  = document.getElementById('edit-drop-icon');
 
-        function resetZone() {
-            zone.classList.remove('border-[#B8860B]', 'bg-[#FAFAF8]');
-            zone.classList.add('border-[#E8E4DF]');
+        if (editZone && editInput) {
+            editInput.addEventListener('change', function () { applyEditFile(this.files[0]); });
+
+            editZone.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                editZone.classList.add('border-[#B8860B]', 'bg-[#FAFAF8]');
+                editZone.classList.remove('border-[#E8E4DF]');
+            });
+            editZone.addEventListener('dragleave', function (e) {
+                if (!editZone.contains(e.relatedTarget)) resetEditZone();
+            });
+            editZone.addEventListener('drop', function (e) {
+                e.preventDefault();
+                resetEditZone();
+                var file = e.dataTransfer.files[0];
+                if (file) {
+                    var dt = new DataTransfer();
+                    dt.items.add(file);
+                    editInput.files = dt.files;
+                    applyEditFile(file);
+                }
+            });
+
+            if (editForm && editBtn) {
+                editForm.addEventListener('submit', function () {
+                    if (typeof setButtonLoading === 'function') setButtonLoading(editBtn, true);
+                });
+            }
+
+            function applyEditFile(file) {
+                if (!file) return;
+                editHint.textContent = 'Berkas pengganti: ' + file.name;
+                editIcon.classList.remove('text-[#C9C0B5]');
+                editIcon.classList.add('text-[#B8860B]');
+            }
+
+            function resetEditZone() {
+                editZone.classList.remove('border-[#B8860B]', 'bg-[#FAFAF8]');
+                editZone.classList.add('border-[#E8E4DF]');
+            }
         }
     })();
     </script>
 
 </x-layouts.admin>
+

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDocumentRequest;
+use App\Http\Requests\UpdateDocumentRequest;
 use App\Models\Activity;
 use App\Models\Document;
 use App\Services\DocumentService;
@@ -16,6 +17,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  *
  * Bertanggung jawab menangani request HTTP untuk dokumen arsip:
  *   - store()    : Upload dokumen + simpan metadata (via DocumentService)
+ *   - update()   : Edit metadata & opsi ganti berkas (via DocumentService)
  *   - download() : Stream file dari Supabase dengan header Content-Disposition: attachment
  *
  * Prinsip: Thin Controller — tidak ada logika bisnis di sini.
@@ -23,7 +25,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class DocumentController extends Controller
 {
     /**
-     * Dependency Injection: DocumentService menangani upload + simpan metadata.
+     * Dependency Injection: DocumentService menangani upload, update, & simpan metadata.
      * StorageServiceInterface digunakan untuk streaming download.
      */
     public function __construct(
@@ -64,6 +66,38 @@ class DocumentController extends Controller
     }
 
     /**
+     * Perbarui metadata dokumen dan/atau ganti berkas di Supabase Storage.
+     *
+     * Validasi dilakukan otomatis oleh UpdateDocumentRequest.
+     * Logika bisnis didelegasikan ke DocumentService@update.
+     *
+     * @param  UpdateDocumentRequest  $request
+     * @param  Document               $document  Route model binding
+     * @return RedirectResponse
+     */
+    public function update(UpdateDocumentRequest $request, Document $document): RedirectResponse
+    {
+        try {
+            $this->documentService->update(
+                document:     $document,
+                documentType: $request->validated('document_type'),
+                newFile:      $request->file('file'),
+            );
+
+            return redirect()
+                ->route('admin.activities.show', $document->activity_id)
+                ->with('success', 'Dokumen arsip berhasil diperbarui.');
+
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->route('admin.activities.show', $document->activity_id)
+                ->with('error', 'Gagal memperbarui dokumen arsip. Silakan coba lagi.');
+        }
+    }
+
+    /**
      * Unduh dokumen dari Supabase Storage.
      *
      * Me-proxy file dari Supabase Storage ke browser dengan header
@@ -76,14 +110,11 @@ class DocumentController extends Controller
     public function download(Document $document): StreamedResponse
     {
         // Ekstrak path relatif dari file_url yang tersimpan di DB
-        // file_url format: https://...supabase.co/storage/v1/object/public/documents/42/uuid.pdf
-        // Path yang dibutuhkan: documents/42/uuid.pdf
         $url      = $document->file_url;
         $needle   = '/object/public/';
         $pathFull = substr($url, strpos($url, $needle) + strlen($needle));
 
         // Hapus nama bucket dari awal path (bucket = 'documents')
-        // pathFull = "documents/42/uuid.pdf" → storagePath = "42/uuid.pdf"
         $bucketName  = 'documents';
         $storagePath = ltrim(substr($pathFull, strlen($bucketName)), '/');
 
