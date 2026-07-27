@@ -380,67 +380,76 @@
                 <div class="flex-1 overflow-y-auto px-8 py-6 space-y-6 modal-form-body">
 
                     {{-- 3 Category Dropzones Grid --}}
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
                         {{-- 1. Surat --}}
                         <div class="flex flex-col">
-                            <div class="flex items-center justify-between mb-1.5">
-                                <span class="text-xs font-semibold text-[#1A1A1A] uppercase font-mono tracking-wider">1. Surat / Dokumen</span>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold text-[#1A1A1A] font-serif tracking-wide">Surat / Dokumen</span>
                                 <span id="count-badge-surat" class="text-[0.6rem] font-mono px-1.5 py-0.5 rounded bg-amber-50 text-[#B8860B] border border-amber-200 hidden">0 file</span>
                             </div>
                             <div id="drop-zone-surat"
-                                 class="flex-1 flex flex-col items-center justify-center p-4 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 text-center border-[#E8E4DF] bg-[#FAFAF8] hover:border-[#B8860B] hover:bg-[#FFFFFF]"
+                                 class="flex-1 flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 text-center border-[#E8E4DF] bg-[#FAFAF8] hover:border-[#B8860B] hover:bg-[#FFFFFF] hover:shadow-xs group"
                                  onclick="document.getElementById('input_file_surat').click()">
-                                <div class="w-9 h-9 rounded-lg bg-[#F5F3F0] flex items-center justify-center mb-2 text-[#B8860B]">
+                                <div class="w-11 h-11 rounded-xl bg-[#F5F3F0] flex items-center justify-center mb-3 text-[#B8860B] group-hover:scale-105 transition-transform duration-200">
                                     <svg class="w-5 h-5 text-[#B8860B]" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
                                     </svg>
                                 </div>
-                                <p class="text-xs text-[#1A1A1A] font-medium">Seret / <span class="text-[#B8860B] font-semibold underline">Pilih Surat</span></p>
-                                <p class="text-[0.6rem] text-[#6B6B6B] mt-1 font-mono">PDF, Word, JPG (Maks. 10MB)</p>
+                                <p class="text-xs text-[#1A1A1A] font-medium leading-snug">
+                                    <span class="text-[#B8860B] font-semibold underline underline-offset-2 hover:text-[#9A7009]">Pilih Berkas</span>
+                                </p>
+                                <p class="text-[0.68rem] text-[#6B6B6B] mt-1">atau seret ke sini</p>
+                                <p class="text-[0.6rem] text-[#9A948D] mt-2 font-mono">PDF, Word, JPG (Maks. 10MB)</p>
                             </div>
-                            <input id="input_file_surat" type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="sr-only">
+                            <input id="input_file_surat" type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display:none;">
                         </div>
 
                         {{-- 2. Notulen --}}
                         <div class="flex flex-col">
-                            <div class="flex items-center justify-between mb-1.5">
-                                <span class="text-xs font-semibold text-[#1A1A1A] uppercase font-mono tracking-wider">2. Notulen</span>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold text-[#1A1A1A] font-serif tracking-wide">Notulen</span>
                                 <span id="count-badge-notulen" class="text-[0.6rem] font-mono px-1.5 py-0.5 rounded bg-amber-50 text-[#B8860B] border border-amber-200 hidden">0 file</span>
                             </div>
                             <div id="drop-zone-notulen"
-                                 class="flex-1 flex flex-col items-center justify-center p-4 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 text-center border-[#E8E4DF] bg-[#FAFAF8] hover:border-[#B8860B] hover:bg-[#FFFFFF]"
+                                 class="flex-1 flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 text-center border-[#E8E4DF] bg-[#FAFAF8] hover:border-[#B8860B] hover:bg-[#FFFFFF] hover:shadow-xs group"
                                  onclick="document.getElementById('input_file_notulen').click()">
-                                <div class="w-9 h-9 rounded-lg bg-[#F5F3F0] flex items-center justify-center mb-2 text-[#B8860B]">
+                                <div class="w-11 h-11 rounded-xl bg-[#F5F3F0] flex items-center justify-center mb-3 text-[#B8860B] group-hover:scale-105 transition-transform duration-200">
                                     <svg class="w-5 h-5 text-[#B8860B]" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
                                     </svg>
                                 </div>
-                                <p class="text-xs text-[#1A1A1A] font-medium">Seret / <span class="text-[#B8860B] font-semibold underline">Pilih Notulen</span></p>
-                                <p class="text-[0.6rem] text-[#6B6B6B] mt-1 font-mono">PDF, Word, JPG (Maks. 10MB)</p>
+                                <p class="text-xs text-[#1A1A1A] font-medium leading-snug">
+                                    <span class="text-[#B8860B] font-semibold underline underline-offset-2 hover:text-[#9A7009]">Pilih Berkas</span>
+                                </p>
+                                <p class="text-[0.68rem] text-[#6B6B6B] mt-1">atau seret ke sini</p>
+                                <p class="text-[0.6rem] text-[#9A948D] mt-2 font-mono">PDF, Word, JPG (Maks. 10MB)</p>
                             </div>
-                            <input id="input_file_notulen" type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="sr-only">
+                            <input id="input_file_notulen" type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display:none;">
                         </div>
 
                         {{-- 3. Dokumentasi --}}
                         <div class="flex flex-col">
-                            <div class="flex items-center justify-between mb-1.5">
-                                <span class="text-xs font-semibold text-[#1A1A1A] uppercase font-mono tracking-wider">3. Dokumentasi</span>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold text-[#1A1A1A] font-serif tracking-wide">Dokumentasi</span>
                                 <span id="count-badge-dokumentasi" class="text-[0.6rem] font-mono px-1.5 py-0.5 rounded bg-amber-50 text-[#B8860B] border border-amber-200 hidden">0 file</span>
                             </div>
                             <div id="drop-zone-dokumentasi"
-                                 class="flex-1 flex flex-col items-center justify-center p-4 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 text-center border-[#E8E4DF] bg-[#FAFAF8] hover:border-[#B8860B] hover:bg-[#FFFFFF]"
+                                 class="flex-1 flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 text-center border-[#E8E4DF] bg-[#FAFAF8] hover:border-[#B8860B] hover:bg-[#FFFFFF] hover:shadow-xs group"
                                  onclick="document.getElementById('input_file_dokumentasi').click()">
-                                <div class="w-9 h-9 rounded-lg bg-[#F5F3F0] flex items-center justify-center mb-2 text-[#B8860B]">
+                                <div class="w-11 h-11 rounded-xl bg-[#F5F3F0] flex items-center justify-center mb-3 text-[#B8860B] group-hover:scale-105 transition-transform duration-200">
                                     <svg class="w-5 h-5 text-[#B8860B]" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"/>
                                     </svg>
                                 </div>
-                                <p class="text-xs text-[#1A1A1A] font-medium">Seret / <span class="text-[#B8860B] font-semibold underline">Pilih Foto/Video</span></p>
-                                <p class="text-[0.6rem] text-[#6B6B6B] mt-1 font-mono">JPG, PNG, MP4 (Maks. 10MB)</p>
+                                <p class="text-xs text-[#1A1A1A] font-medium leading-snug">
+                                    <span class="text-[#B8860B] font-semibold underline underline-offset-2 hover:text-[#9A7009]">Pilih Foto/Video</span>
+                                </p>
+                                <p class="text-[0.68rem] text-[#6B6B6B] mt-1">atau seret ke sini</p>
+                                <p class="text-[0.6rem] text-[#9A948D] mt-2 font-mono">JPG, PNG, MP4 (Maks. 10MB)</p>
                             </div>
-                            <input id="input_file_dokumentasi" type="file" multiple accept=".jpg,.jpeg,.png,.mp4" class="sr-only">
+                            <input id="input_file_dokumentasi" type="file" multiple accept=".jpg,.jpeg,.png,.mp4" style="display:none;">
                         </div>
 
                     </div>
