@@ -37,16 +37,17 @@
             {{-- Detail Card --}}
             <div class="card-serif bg-[#FFFFFF]">
 
+                {{-- Header Kartu: Info Pembuat --}}
+                <div class="px-8 py-4 border-b border-[#F5F3F0] flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
+                    <span class="text-xs text-[#6B6B6B] font-mono">Pembuat: <span class="text-[#1A1A1A] font-semibold">{{ $activity->user->name }}</span></span>
+                    <span class="text-xs text-[#6B6B6B] font-mono">Dibuat: <span class="text-[#1A1A1A]">{{ $activity->created_at->isoFormat('D MMMM YYYY, HH:mm') }} WIB</span></span>
+                </div>
+
                 <div class="p-8 space-y-6">
 
                 {{-- Meta: Tanggal · Tempat · Status --}}
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pb-6 border-b border-[#F5F3F0]">
-                    
-                    {{-- Header kartu: info pembuat --}}
-                    <div class="border-b border-[#F5F3F0] flex flex-wrap gap-x-6 gap-y-1">
-                        <span class="text-xs text-[#6B6B6B] font-mono">Pembuat: <span class="text-[#1A1A1A]">{{ $activity->user->name }}</span></span>
-                        <span class="text-xs text-[#6B6B6B] font-mono">Dibuat: <span class="text-[#1A1A1A]">{{ $activity->created_at->isoFormat('D MMMM YYYY, H:i') }} WIB</span></span>
-                    </div>
+
 
                     <div>
                         <span class="small-caps text-[0.65rem] block mb-1">Waktu Pelaksanaan</span>
