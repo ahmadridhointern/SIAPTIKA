@@ -455,21 +455,21 @@
                     </div>
 
                     {{-- Daftar Berkas Terpilih (Antrean Upload) --}}
-                    <div class="mt-8 pt-6 border-t border-[#E8E4DF]">
-                        <div class="flex items-center justify-between mb-4">
+                    <div class="border-t border-[#E8E4DF]" style="margin-top: 2rem; padding-top: 1.5rem;">
+                        <div class="flex items-center justify-between" style="margin-bottom: 1rem;">
                             <span class="text-xs font-semibold text-[#1A1A1A] font-serif uppercase tracking-wider">Daftar Berkas Siap Diunggah</span>
                             <span id="queue-total-badge" class="px-2.5 py-0.5 rounded-full bg-[#F5F3F0] text-[#B8860B] font-mono text-[0.68rem] font-medium border border-[#E8E4DF]">0 berkas terpilih</span>
                         </div>
 
-                        <div id="queue-empty-state" class="p-6 border border-dashed border-[#E8E4DF] rounded-xl text-center bg-[#FAFAF8] flex flex-col items-center justify-center space-y-1.5">
-                            <svg class="w-6 h-6 text-[#C9C0B5]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <div id="queue-empty-state" class="border border-dashed border-[#E8E4DF] rounded-xl text-center bg-[#FAFAF8] flex flex-col items-center justify-center" style="padding: 2rem 1.5rem; gap: 0.5rem;">
+                            <svg class="text-[#C9C0B5]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="width: 32px; height: 32px; flex-shrink: 0;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
                             </svg>
-                            <p class="text-xs font-medium text-[#6B6B6B]">Belum ada berkas yang dipilih</p>
-                            <p class="text-[0.68rem] text-[#9A948D]">Silakan klik atau seret berkas ke salah satu kotak di atas.</p>
+                            <p class="text-xs font-medium text-[#6B6B6B]" style="margin: 0;">Belum ada berkas yang dipilih</p>
+                            <p class="text-[0.68rem] text-[#9A948D]" style="margin: 0;">Silakan klik atau seret berkas ke salah satu kotak di atas.</p>
                         </div>
 
-                        <div id="queue-file-list" class="space-y-3 max-h-60 overflow-y-auto pr-1 hidden">
+                        <div id="queue-file-list" class="hidden pr-1" style="max-height: 240px; overflow-y: auto;">
                             {{-- Items dynamically rendered via JS --}}
                         </div>
                     </div>
@@ -710,21 +710,21 @@
                     typeLabel = 'Dokumentasi';
                 }
 
-                html += '<div class="p-3.5 border border-[#E8E4DF] rounded-xl bg-[#FFFFFF] flex items-center justify-between gap-4 shadow-2xs hover:border-[#B8860B] transition-all group">' +
+                html += '<div class="border border-[#E8E4DF] rounded-xl bg-[#FFFFFF] flex items-center justify-between gap-4 shadow-2xs hover:border-[#B8860B] transition-all group" style="padding: 0.85rem 1rem; margin-bottom: 0.75rem;">' +
                             '<div class="flex items-center gap-3.5 min-w-0 flex-1">' +
-                                '<div class="w-10 h-10 rounded-lg bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-xs font-bold flex items-center justify-center flex-shrink-0 uppercase shadow-2xs group-hover:border-[#B8860B] transition-colors">' +
+                                '<div class="rounded-lg bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-xs font-bold flex items-center justify-center flex-shrink-0 uppercase shadow-2xs group-hover:border-[#B8860B] transition-colors" style="width: 40px; height: 40px; flex-shrink: 0;">' +
                                     ext +
                                 '</div>' +
-                                '<div class="min-w-0 flex-1 space-y-1">' +
-                                    '<p class="text-xs font-semibold text-[#1A1A1A] truncate leading-tight" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</p>' +
-                                    '<div class="flex items-center gap-2.5 mt-0.5">' +
-                                        '<span class="inline-flex items-center px-2 py-0.5 rounded text-[0.6rem] font-mono font-medium uppercase border ' + typeBadgeClass + '">' + typeLabel + '</span>' +
+                                '<div class="min-w-0 flex-1" style="display: flex; flex-direction: column; gap: 0.25rem;">' +
+                                    '<p class="text-xs font-semibold text-[#1A1A1A] truncate leading-tight" style="margin: 0;" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</p>' +
+                                    '<div class="flex items-center gap-2.5" style="display: flex; align-items: center; gap: 0.65rem;">' +
+                                        '<span class="inline-flex items-center rounded text-[0.6rem] font-mono font-medium uppercase border ' + typeBadgeClass + '" style="padding: 2px 6px; line-height: 1; display: inline-block;">' + typeLabel + '</span>' +
                                         '<span class="text-[0.65rem] text-[#6B6B6B] font-mono">' + sizeMb + '</span>' +
                                     '</div>' +
                                 '</div>' +
                             '</div>' +
-                            '<button type="button" onclick="removeQueuedFile(\'' + item.id + '\')" class="w-8 h-8 rounded-lg text-[#9A948D] hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors flex-shrink-0" title="Hapus dari antrean">' +
-                                '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
+                            '<button type="button" onclick="removeQueuedFile(\'' + item.id + '\')" class="text-[#9A948D] hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors flex-shrink-0" style="width: 32px; height: 32px; border-radius: 8px; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Hapus dari antrean">' +
+                                '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width: 16px; height: 16px; flex-shrink: 0;">' +
                                     '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>' +
                                 '</svg>' +
                             '</button>' +
@@ -780,20 +780,20 @@
                 typeLabel = 'Dokumentasi';
             }
 
-            html += '<div id="prog-item-' + item.id + '" class="p-3.5 border border-[#E8E4DF] rounded-xl bg-[#FFFFFF] space-y-3 shadow-2xs">' +
-                        '<div class="flex items-center justify-between gap-3.5">' +
-                            '<div class="flex items-center gap-3.5 min-w-0 flex-1">' +
-                                '<div class="w-9 h-9 rounded-lg bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase shadow-2xs">' +
+            html += '<div id="prog-item-' + item.id + '" class="border border-[#E8E4DF] rounded-xl bg-[#FFFFFF] shadow-2xs" style="padding: 0.9rem 1rem; margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.65rem;">' +
+                        '<div class="flex items-center justify-between gap-3.5" style="display: flex; align-items: center; justify-content: space-between;">' +
+                            '<div class="flex items-center gap-3.5 min-w-0 flex-1" style="display: flex; align-items: center; gap: 0.85rem;">' +
+                                '<div class="rounded-lg bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase shadow-2xs" style="width: 36px; height: 36px;">' +
                                     ext +
                                 '</div>' +
-                                '<div class="min-w-0 flex-1 space-y-0.5">' +
-                                    '<p class="text-xs font-semibold text-[#1A1A1A] truncate" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</p>' +
-                                    '<span class="inline-flex items-center px-2 py-0.5 rounded text-[0.58rem] font-mono font-medium uppercase border ' + typeBadgeClass + '">' + typeLabel + '</span>' +
+                                '<div class="min-w-0 flex-1" style="display: flex; flex-direction: column; gap: 0.15rem;">' +
+                                    '<p class="text-xs font-semibold text-[#1A1A1A] truncate" style="margin: 0;" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</p>' +
+                                    '<span class="inline-flex items-center rounded text-[0.58rem] font-mono font-medium uppercase border ' + typeBadgeClass + '" style="padding: 2px 6px; width: fit-content; line-height: 1; display: inline-block;">' + typeLabel + '</span>' +
                                 '</div>' +
                             '</div>' +
                             '<span id="prog-badge-' + item.id + '" class="text-xs font-mono text-[#6B6B6B] font-medium flex-shrink-0">0%</span>' +
                         '</div>' +
-                        '<div class="w-full h-2 rounded-full bg-[#E8E4DF] overflow-hidden">' +
+                        '<div class="w-full rounded-full bg-[#E8E4DF] overflow-hidden" style="height: 8px;">' +
                             '<div id="prog-bar-' + item.id + '" class="h-full bg-[#B8860B] transition-all duration-150 rounded-full" style="width:0%;"></div>' +
                         '</div>' +
                         '<p id="prog-err-' + item.id + '" class="hidden text-[0.65rem] text-red-600 font-mono"></p>' +
