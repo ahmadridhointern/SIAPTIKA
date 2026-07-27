@@ -87,12 +87,17 @@ class ActivityController extends Controller
         // Eager load relasi user untuk menghindari N+1 pada info pembuat
         $activity->loadMissing('user');
 
-        // Counter jumlah berkas per jenis dokumen
+        // Counter jumlah berkas per jenis dokumen (dioptimasi: 1 query agregasi)
+        $rawCounts = $activity->documents()
+            ->selectRaw('document_type, COUNT(*) as aggregate')
+            ->groupBy('document_type')
+            ->pluck('aggregate', 'document_type');
+
         $documentCounts = [
-            'all'         => $activity->documents()->count(),
-            'surat'       => $activity->documents()->where('document_type', 'surat')->count(),
-            'notulen'     => $activity->documents()->where('document_type', 'notulen')->count(),
-            'dokumentasi' => $activity->documents()->where('document_type', 'dokumentasi')->count(),
+            'all'         => (int) $rawCounts->sum(),
+            'surat'       => (int) ($rawCounts['surat'] ?? 0),
+            'notulen'     => (int) ($rawCounts['notulen'] ?? 0),
+            'dokumentasi' => (int) ($rawCounts['dokumentasi'] ?? 0),
         ];
 
         // Filter dokumen berdasarkan document_type jika ada
