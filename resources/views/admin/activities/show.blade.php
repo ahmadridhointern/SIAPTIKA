@@ -258,170 +258,194 @@
     </div>
 
     {{-- Edit Document Modal --}}
-    <div id="edit-document-modal" class="modal-backdrop hidden"
-         onclick="if(event.target===event.currentTarget) closeEditDocumentModal()">
+    <div id="edit-document-modal" class="modal-backdrop hidden" onclick="if(event.target===event.currentTarget) closeEditDocumentModal()">
         <div class="modal-box modal-box-sm">
-            <div class="px-8 pt-7 pb-6">
-                <div class="flex items-center justify-between pb-4 border-b border-[#F5F3F0] mb-5">
-                    <div>
-                        <h2 class="font-serif text-xl text-[#1A1A1A]">Edit Dokumen Arsip</h2>
-                        <p class="text-xs text-[#6B6B6B] font-mono mt-0.5">Perbarui jenis atau ganti berkas dokumen</p>
-                    </div>
-                    <button type="button" onclick="closeEditDocumentModal()" class="text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
+            {{-- Modal Header --}}
+            <div class="flex items-center justify-between px-8 pt-7 pb-5 border-b border-[#E8E4DF]">
+                <div>
+                    <h2 class="font-serif text-2xl text-[#1A1A1A]">Edit Dokumen Arsip</h2>
+                    <p class="text-xs text-[#6B6B6B] mt-0.5">Perbarui jenis atau ganti berkas dokumen. Kolom bertanda <span class="text-red-500">*</span> wajib diisi.</p>
                 </div>
+                <button type="button" onclick="closeEditDocumentModal()"
+                        class="text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors p-1 rounded"
+                        style="background:none;border:none;cursor:pointer;">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
 
-                <form id="edit-document-form" method="POST" action="" enctype="multipart/form-data" class="space-y-4">
+            {{-- Form --}}
+            <form id="edit-document-form" method="POST" action="" enctype="multipart/form-data" novalidate class="flex flex-col overflow-hidden min-h-0 flex-1">
+                <div class="flex-1 overflow-y-auto px-8 py-6 space-y-5 modal-form-body">
                     @csrf
                     @method('PUT')
 
-                    {{-- Jenis Dokumen --}}
-                    <div>
-                        <label for="edit_document_type" class="block text-xs font-mono uppercase tracking-wider text-[#6B6B6B] mb-1.5">
-                            Jenis Dokumen <span class="text-red-500">*</span>
-                        </label>
-                        <select id="edit_document_type" name="document_type" required
-                                class="input-serif text-sm pr-8 appearance-none cursor-pointer"
-                                style="height:2.5rem;
-                                       background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B6B6B' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\");
-                                       background-repeat:no-repeat;
-                                       background-position:right 0.625rem center;
-                                       background-size:0.875rem;">
-                            <option value="surat">Surat / Dokumen</option>
-                            <option value="notulen">Notulen</option>
-                            <option value="dokumentasi">Dokumentasi</option>
-                        </select>
-                    </div>
-
-                    {{-- Ganti Berkas (Opsional) --}}
-                    <div>
-                        <label class="block text-xs font-mono uppercase tracking-wider text-[#6B6B6B] mb-1.5">
-                            Ganti Berkas <span class="text-gray-400 font-normal lowercase">(opsional)</span>
-                        </label>
-
-                        <div id="edit-drop-zone"
-                             class="flex items-center gap-3 w-full border border-dashed border-[#E8E4DF] hover:border-[#B8860B] hover:bg-[#FAFAF8] rounded-md px-4 py-3 cursor-pointer transition-all duration-150"
-                             onclick="document.getElementById('edit_upload_file').click()">
-                            <svg id="edit-drop-icon" class="w-5 h-5 flex-shrink-0 text-[#C9C0B5] transition-colors" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
-                            </svg>
-                            <div class="min-w-0 flex-1">
-                                <p id="edit-current-filename" class="text-xs font-mono text-[#1A1A1A] font-semibold truncate"></p>
-                                <p id="edit-drop-hint" class="text-[0.65rem] text-[#6B6B6B] font-mono mt-0.5">Klik atau seret berkas baru untuk mengganti</p>
-                            </div>
+                    <div class="space-y-5">
+                        {{-- Jenis Dokumen --}}
+                        <div>
+                            <label for="edit_document_type" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">
+                                Jenis Dokumen <span class="text-red-500">*</span>
+                            </label>
+                            <select id="edit_document_type" name="document_type" required
+                                    class="input-serif pr-8 appearance-none cursor-pointer"
+                                    style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B6B6B' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\");
+                                           background-repeat:no-repeat;
+                                           background-position:right 0.75rem center;
+                                           background-size:0.875rem;">
+                                <option value="surat">Surat / Dokumen</option>
+                                <option value="notulen">Notulen</option>
+                                <option value="dokumentasi">Dokumentasi</option>
+                            </select>
                         </div>
 
-                        <input id="edit_upload_file" name="file" type="file"
-                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4"
-                               class="sr-only">
-                    </div>
+                        {{-- Ganti Berkas (Opsional) --}}
+                        <div>
+                            <label class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">
+                                Ganti Berkas <span class="text-xs font-normal text-[#6B6B6B]">(opsional)</span>
+                            </label>
 
-                    <div class="flex items-center gap-3 pt-2">
-                        <button id="btn-submit-edit-doc" type="submit" class="btn-primary flex-1 justify-center" style="min-height:2.5rem;">
-                            Simpan Perubahan
-                        </button>
-                        <button type="button" onclick="closeEditDocumentModal()" class="btn-secondary flex-1 justify-center" style="min-height:2.5rem;">
-                            Batal
-                        </button>
+                            <div id="edit-drop-zone"
+                                 class="flex items-center gap-3.5 w-full border border-dashed border-[#E8E4DF] hover:border-[#B8860B] hover:bg-[#FAFAF8] rounded-md px-4 py-4 cursor-pointer transition-all duration-150"
+                                 onclick="document.getElementById('edit_upload_file').click()">
+                                <div class="w-9 h-9 rounded-full bg-[#F5F3F0] flex items-center justify-center flex-shrink-0">
+                                    <svg id="edit-drop-icon" class="w-4 h-4 text-[#6B6B6B] transition-colors" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                                    </svg>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p id="edit-current-filename" class="text-xs font-medium text-[#1A1A1A] font-mono truncate"></p>
+                                    <p id="edit-drop-hint" class="text-xs text-[#6B6B6B] mt-0.5">Klik atau seret berkas baru untuk mengganti</p>
+                                </div>
+                            </div>
+
+                            <input id="edit_upload_file" name="file" type="file"
+                                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4"
+                                   class="sr-only">
+                        </div>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                {{-- Modal Footer --}}
+                <div class="flex items-center gap-4 px-8 py-5 border-t border-[#E8E4DF] bg-[#FAFAF8] flex-shrink-0">
+                    <button id="btn-submit-edit-doc" type="submit" class="btn-primary">
+                        Simpan Perubahan
+                    </button>
+                    <button type="button" onclick="closeEditDocumentModal()" class="btn-secondary">
+                        Batal
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
     {{-- Upload Document Modal --}}
-    <div id="upload-document-modal" class="modal-backdrop hidden"
-         onclick="if(event.target===event.currentTarget) closeUploadDocumentModal()">
+    <div id="upload-document-modal" class="modal-backdrop hidden" onclick="if(event.target===event.currentTarget) closeUploadDocumentModal()">
         <div class="modal-box modal-box-sm">
-            <div class="px-8 pt-7 pb-6">
-                <div class="flex items-center justify-between pb-4 border-b border-[#F5F3F0] mb-5">
-                    <div>
-                        <h2 class="font-serif text-xl text-[#1A1A1A]">Unggah Dokumen Arsip</h2>
-                        <p class="text-xs text-[#6B6B6B] font-mono mt-0.5">Tambah surat, notulen, atau dokumentasi kegiatan</p>
-                    </div>
-                    <button type="button" onclick="closeUploadDocumentModal()" class="text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
+            {{-- Modal Header --}}
+            <div class="flex items-center justify-between px-8 pt-7 pb-5 border-b border-[#E8E4DF]">
+                <div>
+                    <h2 class="font-serif text-2xl text-[#1A1A1A]">Unggah Dokumen</h2>
+                    <p class="text-xs text-[#6B6B6B] mt-0.5">Tambah surat, notulen, atau dokumentasi kegiatan. Kolom bertanda <span class="text-red-500">*</span> wajib diisi.</p>
                 </div>
+                <button type="button" onclick="closeUploadDocumentModal()"
+                        class="text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors p-1 rounded"
+                        style="background:none;border:none;cursor:pointer;">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
 
-                @if($errors->has('document_type') || $errors->has('file'))
-                    <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded space-y-0.5">
-                        @foreach($errors->all() as $error)
-                            <p class="text-xs text-red-600 font-mono leading-snug">{{ $error }}</p>
-                        @endforeach
-                    </div>
-                @endif
-
-                <form id="form-upload-doc"
-                      method="POST"
-                      action="{{ route('admin.activities.documents.store', $activity) }}"
-                      enctype="multipart/form-data"
-                      class="space-y-4">
+            {{-- Form --}}
+            <form id="form-upload-doc"
+                  method="POST"
+                  action="{{ route('admin.activities.documents.store', $activity) }}"
+                  enctype="multipart/form-data"
+                  novalidate
+                  class="flex flex-col overflow-hidden min-h-0 flex-1">
+                <div class="flex-1 overflow-y-auto px-8 py-6 space-y-5 modal-form-body">
                     @csrf
 
-                    {{-- Jenis Dokumen --}}
-                    <div>
-                        <label for="modal_document_type" class="block text-xs font-mono uppercase tracking-wider text-[#6B6B6B] mb-1.5">
-                            Jenis Dokumen <span class="text-red-500">*</span>
-                        </label>
-                        <select id="modal_document_type" name="document_type" required
-                                class="input-serif text-sm pr-8 appearance-none cursor-pointer {{ $errors->has('document_type') ? 'border-red-400' : '' }}"
-                                style="height:2.5rem;
-                                       background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B6B6B' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\");
-                                       background-repeat:no-repeat;
-                                       background-position:right 0.625rem center;
-                                       background-size:0.875rem;">
-                            <option value="" disabled {{ old('document_type') ? '' : 'selected' }}>— Pilih jenis —</option>
-                            <option value="surat"       {{ old('document_type') === 'surat'       ? 'selected' : '' }}>Surat / Dokumen</option>
-                            <option value="notulen"     {{ old('document_type') === 'notulen'     ? 'selected' : '' }}>Notulen</option>
-                            <option value="dokumentasi" {{ old('document_type') === 'dokumentasi' ? 'selected' : '' }}>Dokumentasi</option>
-                        </select>
-                    </div>
+                    {{-- Validation Errors --}}
+                    @if(($errors->has('document_type') || $errors->has('file')) && old('_method') !== 'PUT')
+                        <div class="mb-5 p-3 bg-red-50 border border-red-200 rounded space-y-1">
+                            @foreach($errors->all() as $error)
+                                <p class="text-xs text-red-600 font-mono leading-snug">{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
 
-                    {{-- Drop Zone --}}
-                    <div>
-                        <label class="block text-xs font-mono uppercase tracking-wider text-[#6B6B6B] mb-1.5">
-                            Berkas Dokumen <span class="text-red-500">*</span>
-                        </label>
-                        <div id="drop-zone"
-                             class="flex items-center gap-3 w-full border border-dashed rounded-md px-4 py-3 cursor-pointer transition-all duration-150 {{ $errors->has('file') ? 'border-red-300 bg-red-50' : 'border-[#E8E4DF] hover:border-[#B8860B] hover:bg-[#FAFAF8]' }}"
-                             onclick="document.getElementById('upload_file').click()">
-
-                            <svg id="drop-icon" class="w-5 h-5 flex-shrink-0 text-[#C9C0B5] transition-colors" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
-                            </svg>
-
-                            <div class="min-w-0 flex-1">
-                                <p id="drop-placeholder" class="text-xs font-mono text-[#6B6B6B]">
-                                    Seret atau klik untuk memilih berkas
-                                </p>
-                                <p id="drop-file-name" class="hidden text-xs font-semibold text-[#1A1A1A] font-mono truncate"></p>
-                                <p class="text-[0.6rem] text-[#B8860B]/70 font-mono mt-0.5">PDF · Word · JPG · PNG · MP4 · Maks. 10 MB</p>
-                            </div>
+                    <div class="space-y-5">
+                        {{-- Jenis Dokumen --}}
+                        <div>
+                            <label for="modal_document_type" class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">
+                                Jenis Dokumen <span class="text-red-500">*</span>
+                            </label>
+                            <select id="modal_document_type" name="document_type" required
+                                    class="input-serif pr-8 appearance-none cursor-pointer {{ $errors->has('document_type') ? 'border-red-400 bg-red-50' : '' }}"
+                                    style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B6B6B' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\");
+                                           background-repeat:no-repeat;
+                                           background-position:right 0.75rem center;
+                                           background-size:0.875rem;">
+                                <option value="" disabled {{ old('document_type') ? '' : 'selected' }}>— Pilih jenis dokumen —</option>
+                                <option value="surat"       {{ old('document_type') === 'surat'       ? 'selected' : '' }}>Surat / Dokumen</option>
+                                <option value="notulen"     {{ old('document_type') === 'notulen'     ? 'selected' : '' }}>Notulen</option>
+                                <option value="dokumentasi" {{ old('document_type') === 'dokumentasi' ? 'selected' : '' }}>Dokumentasi</option>
+                            </select>
+                            @if($errors->has('document_type'))
+                                <p class="mt-1 text-xs text-red-600">{{ $errors->first('document_type') }}</p>
+                            @endif
                         </div>
 
-                        <input id="upload_file" name="file" type="file" required
-                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4"
-                               class="sr-only">
-                    </div>
+                        {{-- Drop Zone --}}
+                        <div>
+                            <label class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">
+                                Berkas Dokumen <span class="text-red-500">*</span>
+                            </label>
+                            <div id="drop-zone"
+                                 class="flex items-center gap-3.5 w-full border border-dashed rounded-md px-4 py-4 cursor-pointer transition-all duration-150 {{ $errors->has('file') ? 'border-red-300 bg-red-50' : 'border-[#E8E4DF] hover:border-[#B8860B] hover:bg-[#FAFAF8]' }}"
+                                 onclick="document.getElementById('upload_file').click()">
 
-                    <div class="flex items-center gap-3 pt-2">
-                        <button id="btn-upload-doc" type="submit" class="btn-primary flex-1 justify-center" style="min-height:2.5rem;">
-                            Unggah Dokumen
-                        </button>
-                        <button type="button" onclick="closeUploadDocumentModal()" class="btn-secondary flex-1 justify-center" style="min-height:2.5rem;">
-                            Batal
-                        </button>
+                                <div class="w-9 h-9 rounded-full bg-[#F5F3F0] flex items-center justify-center flex-shrink-0">
+                                    <svg id="drop-icon" class="w-4 h-4 text-[#6B6B6B] transition-colors" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                                    </svg>
+                                </div>
+
+                                <div class="min-w-0 flex-1">
+                                    <p id="drop-placeholder" class="text-xs font-medium text-[#1A1A1A]">
+                                        Klik atau seret berkas ke sini
+                                    </p>
+                                    <p id="drop-file-name" class="hidden text-xs font-semibold text-[#1A1A1A] font-mono truncate"></p>
+                                    <p class="text-xs text-[#6B6B6B] mt-0.5">Format: PDF, Word, JPG, PNG, MP4 (Maks. 10 MB)</p>
+                                </div>
+                            </div>
+
+                            <input id="upload_file" name="file" type="file" required
+                                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4"
+                                   class="sr-only">
+
+                            @if($errors->has('file'))
+                                <p class="mt-1 text-xs text-red-600">{{ $errors->first('file') }}</p>
+                            @endif
+                        </div>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                {{-- Modal Footer --}}
+                <div class="flex items-center gap-4 px-8 py-5 border-t border-[#E8E4DF] bg-[#FAFAF8] flex-shrink-0">
+                    <button id="btn-upload-doc" type="submit" class="btn-primary">
+                        Simpan Dokumen
+                    </button>
+                    <button type="button" onclick="closeUploadDocumentModal()" class="btn-secondary">
+                        Batal
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+
     @endpush
 
     {{-- ── Scripts ── --}}
