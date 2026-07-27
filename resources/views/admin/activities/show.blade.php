@@ -305,33 +305,51 @@
                                 Ganti Berkas <span class="text-xs font-normal text-[#6B6B6B]">(opsional)</span>
                             </label>
 
+                            {{-- Large Centered Drop Zone --}}
                             <div id="edit-drop-zone"
-                                 class="flex items-center gap-3.5 w-full border border-dashed border-[#E8E4DF] hover:border-[#B8860B] hover:bg-[#FAFAF8] rounded-md px-4 py-4 cursor-pointer transition-all duration-150"
+                                 class="flex flex-col items-center justify-center p-7 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 text-center border-[#E8E4DF] bg-[#FAFAF8] hover:border-[#B8860B] hover:bg-[#FFFFFF]"
                                  onclick="document.getElementById('edit_upload_file').click()">
-                                <div class="w-9 h-9 rounded-full bg-[#F5F3F0] flex items-center justify-center flex-shrink-0">
-                                    <svg id="edit-drop-icon" class="w-4 h-4 text-[#6B6B6B] transition-colors" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+
+                                <div class="w-12 h-12 rounded-xl bg-[#F5F3F0] flex items-center justify-center mb-3 text-[#B8860B]">
+                                    <svg id="edit-drop-icon" class="w-6 h-6 text-[#B8860B]" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"/>
                                     </svg>
                                 </div>
-                                <div class="min-w-0 flex-1">
-                                    <p id="edit-current-filename" class="text-xs font-medium text-[#1A1A1A] font-mono truncate"></p>
-                                    <p id="edit-drop-hint" class="text-xs text-[#6B6B6B] mt-0.5">Klik atau seret berkas baru untuk mengganti</p>
-                                </div>
+
+                                <p class="text-xs text-[#1A1A1A] font-medium">
+                                    Seret & lepas berkas baru di sini, atau <span class="text-[#B8860B] font-semibold underline underline-offset-2 hover:text-[#9A7009]">Pilih Berkas Baru</span>
+                                </p>
+                                <p class="text-[0.7rem] text-[#6B6B6B] mt-1.5 font-mono">
+                                    Kosongkan jika tidak ingin mengganti berkas saat ini
+                                </p>
                             </div>
 
                             <input id="edit_upload_file" name="file" type="file"
                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4"
                                    class="sr-only">
+
+                            {{-- Current & New File Item Card --}}
+                            <div class="mt-3 p-3.5 border border-[#E8E4DF] rounded-lg bg-[#FFFFFF] flex items-center justify-between gap-3 shadow-xs">
+                                <div class="flex items-center gap-3 min-w-0 flex-1">
+                                    <div id="edit-file-ext" class="w-9 h-9 rounded bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase">
+                                        FILE
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <p id="edit-current-filename" class="text-xs font-semibold text-[#1A1A1A] font-mono truncate"></p>
+                                        <p id="edit-drop-hint" class="text-[0.65rem] text-[#6B6B6B] font-mono mt-0.5">Berkas saat ini</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {{-- Modal Footer --}}
                 <div class="flex items-center gap-4 px-8 py-5 border-t border-[#E8E4DF] bg-[#FAFAF8] flex-shrink-0">
-                    <button id="btn-submit-edit-doc" type="submit" class="btn-primary">
+                    <button id="btn-submit-edit-doc" type="submit" class="btn-primary flex-1 justify-center">
                         Simpan Perubahan
                     </button>
-                    <button type="button" onclick="closeEditDocumentModal()" class="btn-secondary">
+                    <button type="button" onclick="closeEditDocumentModal()" class="btn-secondary flex-1 justify-center">
                         Batal
                     </button>
                 </div>
@@ -342,7 +360,6 @@
     {{-- Upload Document Modal --}}
     <div id="upload-document-modal" class="modal-backdrop hidden" onclick="if(event.target===event.currentTarget) closeUploadDocumentModal()">
         <div class="modal-box">
-
             {{-- Modal Header --}}
             <div class="flex items-center justify-between px-8 pt-7 pb-5 border-b border-[#E8E4DF]">
                 <div>
@@ -399,28 +416,28 @@
                             @endif
                         </div>
 
-                        {{-- Drop Zone --}}
+                        {{-- Drop Zone Layout (Sesuai Gambar Referensi) --}}
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-[#1A1A1A]">
                                 Berkas Dokumen <span class="text-red-500">*</span>
                             </label>
+
                             <div id="drop-zone"
-                                 class="flex items-center gap-3.5 w-full border border-dashed rounded-md px-4 py-4 cursor-pointer transition-all duration-150 {{ $errors->has('file') ? 'border-red-300 bg-red-50' : 'border-[#E8E4DF] hover:border-[#B8860B] hover:bg-[#FAFAF8]' }}"
+                                 class="flex flex-col items-center justify-center p-7 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 text-center {{ $errors->has('file') ? 'border-red-300 bg-red-50' : 'border-[#E8E4DF] bg-[#FAFAF8] hover:border-[#B8860B] hover:bg-[#FFFFFF]' }}"
                                  onclick="document.getElementById('upload_file').click()">
 
-                                <div class="w-9 h-9 rounded-full bg-[#F5F3F0] flex items-center justify-center flex-shrink-0">
-                                    <svg id="drop-icon" class="w-4 h-4 text-[#6B6B6B] transition-colors" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                                <div class="w-12 h-12 rounded-xl bg-[#F5F3F0] flex items-center justify-center mb-3 text-[#B8860B] transition-transform duration-200 group-hover:scale-105">
+                                    <svg id="drop-icon" class="w-6 h-6 text-[#B8860B]" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"/>
                                     </svg>
                                 </div>
 
-                                <div class="min-w-0 flex-1">
-                                    <p id="drop-placeholder" class="text-xs font-medium text-[#1A1A1A]">
-                                        Klik atau seret berkas ke sini
-                                    </p>
-                                    <p id="drop-file-name" class="hidden text-xs font-semibold text-[#1A1A1A] font-mono truncate"></p>
-                                    <p class="text-xs text-[#6B6B6B] mt-0.5">Format: PDF, Word, JPG, PNG, MP4 (Maks. 10 MB)</p>
-                                </div>
+                                <p class="text-xs text-[#1A1A1A] font-medium">
+                                    Seret & lepas berkas di sini, atau <span class="text-[#B8860B] font-semibold underline underline-offset-2 hover:text-[#9A7009]">Pilih Berkas</span>
+                                </p>
+                                <p class="text-[0.7rem] text-[#6B6B6B] mt-1.5 font-mono">
+                                    Format: PDF, Word, JPG, PNG, MP4 (Maksimal 10 MB)
+                                </p>
                             </div>
 
                             <input id="upload_file" name="file" type="file" required
@@ -430,22 +447,41 @@
                             @if($errors->has('file'))
                                 <p class="mt-1 text-xs text-red-600">{{ $errors->first('file') }}</p>
                             @endif
+
+                            {{-- Selected File Item Card (Sesuai Gambar Referensi) --}}
+                            <div id="selected-file-container" class="hidden mt-3 p-3.5 border border-[#E8E4DF] rounded-lg bg-[#FFFFFF] flex items-center justify-between gap-3 shadow-xs">
+                                <div class="flex items-center gap-3 min-w-0 flex-1">
+                                    <div id="selected-file-ext" class="w-9 h-9 rounded bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase">
+                                        FILE
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <p id="selected-file-name" class="text-xs font-semibold text-[#1A1A1A] font-mono truncate"></p>
+                                        <p id="selected-file-size" class="text-[0.65rem] text-[#6B6B6B] font-mono mt-0.5"></p>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="clearSelectedFile()" class="p-1 text-[#6B6B6B] hover:text-red-600 transition-colors" title="Hapus Berkas">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {{-- Modal Footer --}}
                 <div class="flex items-center gap-4 px-8 py-5 border-t border-[#E8E4DF] bg-[#FAFAF8] flex-shrink-0">
-                    <button id="btn-upload-doc" type="submit" class="btn-primary">
+                    <button id="btn-upload-doc" type="submit" class="btn-primary flex-1 justify-center">
                         Simpan Dokumen
                     </button>
-                    <button type="button" onclick="closeUploadDocumentModal()" class="btn-secondary">
+                    <button type="button" onclick="closeUploadDocumentModal()" class="btn-secondary flex-1 justify-center">
                         Batal
                     </button>
                 </div>
             </form>
         </div>
     </div>
+
 
     @endpush
 
@@ -537,14 +573,18 @@
     @endif
 
 
+    function clearSelectedFile() {
+        var input = document.getElementById('upload_file');
+        var container = document.getElementById('selected-file-container');
+        if (input) input.value = '';
+        if (container) container.classList.add('hidden');
+    }
+
     // Upload Form (Store) & Edit Form Drag & Drop
     (function () {
         // Upload Form (Store)
         var zone  = document.getElementById('drop-zone');
         var input = document.getElementById('upload_file');
-        var icon  = document.getElementById('drop-icon');
-        var ph    = document.getElementById('drop-placeholder');
-        var fn    = document.getElementById('drop-file-name');
         var form  = document.getElementById('form-upload-doc');
         var btn   = document.getElementById('btn-upload-doc');
 
@@ -579,11 +619,18 @@
 
             function applyFile(file) {
                 if (!file) return;
-                fn.textContent = file.name;
-                fn.classList.remove('hidden');
-                ph.classList.add('hidden');
-                icon.classList.remove('text-[#C9C0B5]');
-                icon.classList.add('text-[#B8860B]');
+                var nameEl = document.getElementById('selected-file-name');
+                var sizeEl = document.getElementById('selected-file-size');
+                var extEl  = document.getElementById('selected-file-ext');
+                var container = document.getElementById('selected-file-container');
+
+                if (nameEl) nameEl.textContent = file.name;
+                if (sizeEl) sizeEl.textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+                if (extEl) {
+                    var ext = file.name.split('.').pop().toUpperCase();
+                    extEl.textContent = ext.length <= 4 ? ext : 'FILE';
+                }
+                if (container) container.classList.remove('hidden');
             }
 
             function resetZone() {
@@ -597,8 +644,6 @@
         var editInput = document.getElementById('edit_upload_file');
         var editForm  = document.getElementById('edit-document-form');
         var editBtn   = document.getElementById('btn-submit-edit-doc');
-        var editHint  = document.getElementById('edit-drop-hint');
-        var editIcon  = document.getElementById('edit-drop-icon');
 
         if (editZone && editInput) {
             editInput.addEventListener('change', function () { applyEditFile(this.files[0]); });
@@ -631,9 +676,16 @@
 
             function applyEditFile(file) {
                 if (!file) return;
-                editHint.textContent = 'Berkas pengganti: ' + file.name;
-                editIcon.classList.remove('text-[#C9C0B5]');
-                editIcon.classList.add('text-[#B8860B]');
+                var nameEl = document.getElementById('edit-current-filename');
+                var hintEl = document.getElementById('edit-drop-hint');
+                var extEl  = document.getElementById('edit-file-ext');
+
+                if (nameEl) nameEl.textContent = file.name;
+                if (hintEl) hintEl.textContent = 'Berkas pengganti baru (' + (file.size / (1024 * 1024)).toFixed(2) + ' MB)';
+                if (extEl) {
+                    var ext = file.name.split('.').pop().toUpperCase();
+                    extEl.textContent = ext.length <= 4 ? ext : 'FILE';
+                }
             }
 
             function resetEditZone() {
@@ -643,6 +695,7 @@
         }
     })();
     </script>
+
 
 </x-layouts.admin>
 
