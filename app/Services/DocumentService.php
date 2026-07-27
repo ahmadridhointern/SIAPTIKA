@@ -102,13 +102,14 @@ class DocumentService
         }
 
         // Kasus 2: File diganti
+        // Dapatkan path relatif file lama SEBELUM $document di-update di DB
+        $oldPath = self::extractStoragePath($document->file_url);
+
         // 1. Upload file baru ke Storage
         $newPath = $this->storage->upload(
             file:      $newFile,
             directory: "documents/{$document->activity_id}",
         );
-
-        $oldPath = $this->extractStoragePath($document->file_url);
 
         try {
             // 2. Perbarui metadata di database dalam transaksi
@@ -147,18 +148,23 @@ class DocumentService
 
     /**
      * Ekstrak path relatif storage dari file_url.
-     * Contoh file_url: https://...supabase.co/storage/v1/object/public/documents/12/uuid.pdf
-     * Path yang dikembalikan: documents/12/uuid.pdf
+     * Mendukung format URL Supabase S3 (/storage/v1/s3/{bucket}/...)
+     * maupun format REST public API (/storage/v1/object/public/{bucket}/...).
+     *
+     * Contoh output: "documents/2/uuid.jpg"
      */
-    private function extractStoragePath(string $fileUrl): ?string
+    public static function extractStoragePath(string $fileUrl): ?string
     {
-        $needle = '/object/public/';
-        $pos    = strpos($fileUrl, $needle);
-
-        if ($pos === false) {
-            return null;
+        // Format 1: /storage/v1/(s3|object/public)/{bucket}/(path)
+        if (preg_match('#/storage/v1/(?:s3|object/public)/[^/]+/(.+)$#', $fileUrl, $matches)) {
+            return $matches[1];
         }
 
-        return substr($fileUrl, $pos + strlen($needle));
+        // Format 2 Fallback: ambil dari /documents/ (nama bucket) ke kanan
+        if (preg_match('#/(documents/.+)$#', $fileUrl, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
     }
 }

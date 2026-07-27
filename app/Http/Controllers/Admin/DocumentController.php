@@ -109,21 +109,15 @@ class DocumentController extends Controller
      */
     public function download(Document $document): StreamedResponse
     {
-        // Ekstrak path relatif dari file_url yang tersimpan di DB
-        $url      = $document->file_url;
-        $needle   = '/object/public/';
-        $pathFull = substr($url, strpos($url, $needle) + strlen($needle));
+        $path = DocumentService::extractStoragePath($document->file_url);
 
-        // Hapus nama bucket dari awal path (bucket = 'documents')
-        $bucketName  = 'documents';
-        $storagePath = ltrim(substr($pathFull, strlen($bucketName)), '/');
-
-        // Bangun path lengkap yang dikirim ke Storage disk
-        $fullPath = $bucketName . '/' . $storagePath;
+        if (! $path || ! \Illuminate\Support\Facades\Storage::disk('supabase')->exists($path)) {
+            abort(404, 'Berkas dokumen tidak ditemukan di storage.');
+        }
 
         return response()->streamDownload(
-            callback: function () use ($fullPath) {
-                $stream = \Illuminate\Support\Facades\Storage::disk('supabase')->readStream($fullPath);
+            callback: function () use ($path) {
+                $stream = \Illuminate\Support\Facades\Storage::disk('supabase')->readStream($path);
                 if ($stream) {
                     fpassthru($stream);
                     fclose($stream);
