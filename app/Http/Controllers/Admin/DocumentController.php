@@ -114,7 +114,10 @@ class DocumentController extends Controller
             abort(404, 'Berkas dokumen tidak ditemukan di storage.');
         }
 
-        return response()->streamDownload(
+        $fileName = $document->file_name;
+        $mimeType = $this->getMimeType($fileName);
+
+        return response()->stream(
             callback: function () use ($path) {
                 $stream = \Illuminate\Support\Facades\Storage::disk('supabase')->readStream($path);
                 if ($stream) {
@@ -122,10 +125,10 @@ class DocumentController extends Controller
                     fclose($stream);
                 }
             },
-            name:    $document->file_name,
+            status: 200,
             headers: [
-                'Content-Type'        => $this->getMimeType($document->file_name),
-                'Content-Disposition' => 'inline; filename="' . addslashes($document->file_name) . '"',
+                'Content-Type'        => $mimeType,
+                'Content-Disposition' => 'inline; filename="' . addslashes($fileName) . '"',
             ],
         );
     }
