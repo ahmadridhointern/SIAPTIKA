@@ -39,5 +39,11 @@ Route::middleware('admin.auth')->prefix('admin')->name('admin.')->group(function
         [DocumentController::class, 'store']
     )->name('activities.documents.store');
 
+    // Download dokumen arsip — proxy via Laravel (header attachment)
+    Route::get(
+        'documents/{document}/download',
+        [DocumentController::class, 'download']
+    )->name('documents.download');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

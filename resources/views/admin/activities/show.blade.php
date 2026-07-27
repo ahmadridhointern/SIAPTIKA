@@ -35,22 +35,19 @@
         <div class="lg:col-span-2 space-y-6">
 
             {{-- Detail Card --}}
-            <div class="card-serif p-8 bg-[#FFFFFF] space-y-6">
+            <div class="card-serif bg-[#FFFFFF]">
 
-                {{-- Meta Grid: Pembuat · Waktu · Tempat · Status --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pb-6 border-b border-[#F5F3F0]">
+                <div class="p-8 space-y-6">
 
-                    {{-- Pembuat & Dibuat (style sebelumnya: font-mono text-xs) --}}
-                    <div>
-                        <div class="text-xs text-[#6B6B6B] font-mono">
-                            Pembuat: <span class="text-[#1A1A1A] font-medium">{{ $activity->user->name }}</span>
-                        </div>
-                        <div class="text-xs text-[#6B6B6B] font-mono mt-1">
-                            Dibuat: <span class="text-[#1A1A1A]">{{ $activity->created_at->isoFormat('D MMM YYYY, H:i') }} WIB</span>
-                        </div>
+                {{-- Meta: Tanggal · Tempat · Status --}}
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pb-6 border-b border-[#F5F3F0]">
+                    
+                    {{-- Header kartu: info pembuat --}}
+                    <div class="border-b border-[#F5F3F0] flex flex-wrap gap-x-6 gap-y-1">
+                        <span class="text-xs text-[#6B6B6B] font-mono">Pembuat: <span class="text-[#1A1A1A]">{{ $activity->user->name }}</span></span>
+                        <span class="text-xs text-[#6B6B6B] font-mono">Dibuat: <span class="text-[#1A1A1A]">{{ $activity->created_at->isoFormat('D MMMM YYYY, H:i') }} WIB</span></span>
                     </div>
 
-                    {{-- Waktu Pelaksanaan --}}
                     <div>
                         <span class="small-caps text-[0.65rem] block mb-1">Waktu Pelaksanaan</span>
                         <div class="text-[#1A1A1A] font-medium text-base">
@@ -61,14 +58,12 @@
                         </div>
                     </div>
 
-                    {{-- Tempat / Ruangan --}}
                     <div>
                         <span class="small-caps text-[0.65rem] block mb-1">Tempat / Ruangan</span>
                         <div class="text-[#1A1A1A] font-medium text-base">{{ $activity->location }}</div>
                         <div class="text-[#6B6B6B] text-xs mt-0.5">Bidang APTIKA Diskominfotik Riau</div>
                     </div>
 
-                    {{-- Status --}}
                     <div>
                         <span class="small-caps text-[0.65rem] block mb-1">Status</span>
                         @if($activity->status === 'completed')
@@ -82,7 +77,6 @@
 
                 </div>
 
-
                 {{-- Deskripsi --}}
                 <div>
                     <span class="small-caps text-[0.65rem] block mb-2">Deskripsi & Agenda</span>
@@ -91,10 +85,12 @@
                     </div>
                 </div>
 
+                </div>{{-- /p-8 --}}
+
             </div>{{-- /card-serif --}}
 
             {{-- Danger Zone --}}
-            @if(!$activity->activity_date->lt(today()) && $activity->documents->count() === 0)
+            @if(!$activity->activity_date->lt(today()) && $documents->total() === 0)
                 <div class="card-serif p-6 bg-[#FFFFFF] border-red-200">
                     <span class="small-caps text-[0.65rem] text-red-600 block mb-2">Zona Bahaya</span>
                     <p class="text-xs text-[#6B6B6B] leading-relaxed mb-4">
@@ -185,17 +181,17 @@
                 </form>
             </div>
 
-            {{-- ② Daftar Dokumen & Lampiran — lebih tinggi --}}
+            {{-- ② Daftar Dokumen & Lampiran — paginated --}}
             <div class="card-serif bg-[#FFFFFF]">
                 <div class="px-5 pt-4 pb-3 border-b border-[#F5F3F0] flex items-center justify-between">
                     <span class="small-caps text-[0.65rem]">Dokumen & Lampiran</span>
                     <span class="text-[0.6rem] font-mono text-[#6B6B6B]">
-                        {{ $activity->documents->count() }} berkas
+                        {{ $documents->total() }} berkas
                     </span>
                 </div>
 
                 <div class="divide-y divide-[#F5F3F0]">
-                    @if($activity->documents->isEmpty())
+                    @if($documents->total() === 0)
                         <div class="py-12 flex flex-col items-center gap-2 text-center">
                             <svg class="w-8 h-8 text-[#E8E4DF]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
@@ -204,10 +200,10 @@
                             <p class="text-[0.6rem] text-[#6B6B6B]/60 font-mono">Unggah dokumen menggunakan form di atas</p>
                         </div>
                     @else
-                        @foreach($activity->documents as $doc)
+                        @foreach($documents as $doc)
                             <div class="px-5 py-4 flex items-start justify-between gap-3 hover:bg-[#FAFAF8] transition-colors duration-150">
                                 <div class="min-w-0 flex-1">
-                                    <div class="text-xs font-semibold text-[#1A1A1A] truncate leading-snug">
+                                    <div class="text-xs font-semibold text-[#1A1A1A] truncate leading-snug" title="{{ $doc->file_name }}">
                                         {{ $doc->file_name }}
                                     </div>
                                     <div class="flex items-center gap-2 mt-1.5">
@@ -219,14 +215,31 @@
                                         </span>
                                     </div>
                                 </div>
-                                <a href="{{ $doc->file_url }}" target="_blank"
-                                   class="flex-shrink-0 mt-0.5 text-[0.65rem] font-mono font-semibold text-[#B8860B] hover:text-[#D4A84B] transition-colors duration-150">
-                                    Buka ↗
-                                </a>
+
+                                {{-- Tombol Aksi: Buka + Unduh --}}
+                                <div class="flex flex-col items-end gap-1 flex-shrink-0">
+                                    <a href="{{ $doc->file_url }}"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       class="text-[0.65rem] font-mono font-semibold text-[#B8860B] hover:text-[#D4A84B] transition-colors duration-150">
+                                        Buka ↗
+                                    </a>
+                                    <a href="{{ route('admin.documents.download', $doc) }}"
+                                       class="text-[0.65rem] font-mono font-semibold text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors duration-150">
+                                        Unduh ↓
+                                    </a>
+                                </div>
                             </div>
                         @endforeach
                     @endif
                 </div>
+
+                {{-- Pagination links --}}
+                @if($documents->hasPages())
+                    <div class="px-5 py-3 border-t border-[#F5F3F0]">
+                        {{ $documents->links() }}
+                    </div>
+                @endif
             </div>
 
         </div>

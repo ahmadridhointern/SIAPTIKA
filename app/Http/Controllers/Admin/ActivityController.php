@@ -80,14 +80,20 @@ class ActivityController extends Controller
     }
 
     /**
-     * Tampilkan detail kegiatan.
+     * Tampilkan detail kegiatan beserta daftar dokumennya (paginated).
      */
     public function show(Activity $activity): View
     {
-        // Eager load relasi documents untuk optimasi N+1
-        $activity->load('documents');
+        // Eager load relasi user untuk menghindari N+1 pada info pembuat
+        $activity->loadMissing('user');
 
-        return view('admin.activities.show', compact('activity'));
+        // Dokumen di-paginate terpisah untuk efisiensi memori
+        // Menggunakan 'doc_page' agar tidak konflik dengan query string lain di halaman
+        $documents = $activity->documents()
+            ->orderBy('created_at', 'desc')
+            ->paginate(5, ['*'], 'doc_page');
+
+        return view('admin.activities.show', compact('activity', 'documents'));
     }
 
     /**
