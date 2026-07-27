@@ -80,20 +80,32 @@ class ActivityController extends Controller
     }
 
     /**
-     * Tampilkan detail kegiatan beserta daftar dokumennya (paginated).
+     * Tampilkan detail kegiatan beserta daftar dokumennya (paginated & filtered by type).
      */
-    public function show(Activity $activity): View
+    public function show(Request $request, Activity $activity): View
     {
         // Eager load relasi user untuk menghindari N+1 pada info pembuat
         $activity->loadMissing('user');
 
-        // Dokumen di-paginate terpisah untuk efisiensi memori
-        // Menggunakan 'doc_page' agar tidak konflik dengan query string lain di halaman
-        $documents = $activity->documents()
-            ->orderBy('created_at', 'desc')
-            ->paginate(5, ['*'], 'doc_page');
+        // Counter jumlah berkas per jenis dokumen
+        $documentCounts = [
+            'all'         => $activity->documents()->count(),
+            'surat'       => $activity->documents()->where('document_type', 'surat')->count(),
+            'notulen'     => $activity->documents()->where('document_type', 'notulen')->count(),
+            'dokumentasi' => $activity->documents()->where('document_type', 'dokumentasi')->count(),
+        ];
 
-        return view('admin.activities.show', compact('activity', 'documents'));
+        // Filter dokumen berdasarkan document_type jika ada
+        $query = $activity->documents()->orderBy('created_at', 'desc');
+
+        if ($request->filled('type') && in_array($request->input('type'), ['surat', 'notulen', 'dokumentasi'])) {
+            $query->where('document_type', $request->input('type'));
+        }
+
+        $documents = $query->paginate(5, ['*'], 'doc_page')
+            ->withQueryString();
+
+        return view('admin.activities.show', compact('activity', 'documents', 'documentCounts'));
     }
 
     /**
