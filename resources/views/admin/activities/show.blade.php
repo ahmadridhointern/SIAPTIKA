@@ -455,7 +455,7 @@
                     </div>
 
                     {{-- Daftar Berkas Terpilih (Antrean Upload) --}}
-                    <div class="space-y-3 pt-2">
+                    <div class="mt-7 pt-5 border-t border-[#E8E4DF] space-y-3.5">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-semibold text-[#1A1A1A] font-serif tracking-wide uppercase">Daftar Berkas Siap Diunggah</span>
                             <span id="queue-total-badge" class="px-2.5 py-0.5 rounded-full bg-[#F5F3F0] text-[#B8860B] font-mono text-[0.68rem] font-medium border border-[#E8E4DF]">0 berkas terpilih</span>
@@ -469,7 +469,7 @@
                             <p class="text-[0.68rem] text-[#9A948D]">Pilih atau seret berkas ke salah satu kotak di atas untuk menambahkan ke antrean unggah.</p>
                         </div>
 
-                        <div id="queue-file-list" class="space-y-2.5 max-h-60 overflow-y-auto pr-1 hidden">
+                        <div id="queue-file-list" class="space-y-3 max-h-60 overflow-y-auto pr-1 hidden">
                             {{-- Items dynamically rendered via JS --}}
                         </div>
                     </div>
@@ -710,20 +710,20 @@
                     typeLabel = 'Dokumentasi';
                 }
 
-                html += '<div class="p-3 border border-[#E8E4DF] rounded-xl bg-[#FFFFFF] flex items-center justify-between gap-3 shadow-2xs hover:border-[#B8860B] transition-all group">' +
-                            '<div class="flex items-center gap-3 min-w-0 flex-1">' +
-                                '<div class="w-9 h-9 rounded-lg bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase shadow-2xs group-hover:border-[#B8860B] transition-colors">' +
+                html += '<div class="p-3.5 border border-[#E8E4DF] rounded-xl bg-[#FFFFFF] flex items-center justify-between gap-4 shadow-2xs hover:border-[#B8860B] transition-all group">' +
+                            '<div class="flex items-center gap-3.5 min-w-0 flex-1">' +
+                                '<div class="w-10 h-10 rounded-lg bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-xs font-bold flex items-center justify-center flex-shrink-0 uppercase shadow-2xs group-hover:border-[#B8860B] transition-colors">' +
                                     ext +
                                 '</div>' +
-                                '<div class="min-w-0 flex-1">' +
-                                    '<p class="text-xs font-semibold text-[#1A1A1A] truncate" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</p>' +
-                                    '<div class="flex items-center gap-2 mt-1">' +
+                                '<div class="min-w-0 flex-1 space-y-1">' +
+                                    '<p class="text-xs font-semibold text-[#1A1A1A] truncate leading-tight" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</p>' +
+                                    '<div class="flex items-center gap-2.5">' +
                                         '<span class="inline-flex items-center px-2 py-0.5 rounded text-[0.6rem] font-mono font-medium uppercase border ' + typeBadgeClass + '">' + typeLabel + '</span>' +
                                         '<span class="text-[0.65rem] text-[#6B6B6B] font-mono">' + sizeMb + '</span>' +
                                     '</div>' +
                                 '</div>' +
                             '</div>' +
-                            '<button type="button" onclick="removeQueuedFile(\'' + item.id + '\')" class="w-7 h-7 rounded-lg text-[#9A948D] hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors flex-shrink-0" title="Hapus dari antrean">' +
+                            '<button type="button" onclick="removeQueuedFile(\'' + item.id + '\')" class="w-8 h-8 rounded-lg text-[#9A948D] hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors flex-shrink-0" title="Hapus dari antrean">' +
                                 '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
                                     '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>' +
                                 '</svg>' +
@@ -780,15 +780,15 @@
                 typeLabel = 'Dokumentasi';
             }
 
-            html += '<div id="prog-item-' + item.id + '" class="p-3.5 border border-[#E8E4DF] rounded-xl bg-[#FFFFFF] space-y-2.5 shadow-2xs">' +
-                        '<div class="flex items-center justify-between gap-3">' +
-                            '<div class="flex items-center gap-3 min-w-0 flex-1">' +
-                                '<div class="w-8 h-8 rounded-lg bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase">' +
+            html += '<div id="prog-item-' + item.id + '" class="p-3.5 border border-[#E8E4DF] rounded-xl bg-[#FFFFFF] space-y-3 shadow-2xs">' +
+                        '<div class="flex items-center justify-between gap-3.5">' +
+                            '<div class="flex items-center gap-3.5 min-w-0 flex-1">' +
+                                '<div class="w-9 h-9 rounded-lg bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase shadow-2xs">' +
                                     ext +
                                 '</div>' +
-                                '<div class="min-w-0 flex-1">' +
+                                '<div class="min-w-0 flex-1 space-y-0.5">' +
                                     '<p class="text-xs font-semibold text-[#1A1A1A] truncate" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</p>' +
-                                    '<span class="inline-flex items-center px-1.5 py-0.2 rounded text-[0.55rem] font-mono font-medium uppercase border ' + typeBadgeClass + ' mt-0.5">' + typeLabel + '</span>' +
+                                    '<span class="inline-flex items-center px-2 py-0.5 rounded text-[0.58rem] font-mono font-medium uppercase border ' + typeBadgeClass + '">' + typeLabel + '</span>' +
                                 '</div>' +
                             '</div>' +
                             '<span id="prog-badge-' + item.id + '" class="text-xs font-mono text-[#6B6B6B] font-medium flex-shrink-0">0%</span>' +
