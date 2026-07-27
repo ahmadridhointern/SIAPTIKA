@@ -45,6 +45,12 @@ Route::middleware('admin.auth')->prefix('admin')->name('admin.')->group(function
         [DocumentController::class, 'update']
     )->name('documents.update');
 
+    // View (preview) dokumen arsip — proxy via Laravel (header inline)
+    Route::get(
+        'documents/{document}/view',
+        [DocumentController::class, 'show']
+    )->name('documents.show');
+
     // Download dokumen arsip — proxy via Laravel (header attachment)
     Route::get(
         'documents/{document}/download',

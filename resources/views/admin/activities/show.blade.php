@@ -246,7 +246,7 @@
                                             title="Edit Dokumen">
                                         Ubah ✎
                                     </button>
-                                    <a href="{{ $doc->file_url }}"
+                                    <a href="{{ route('admin.documents.show', $doc) }}"
                                        target="_blank"
                                        rel="noopener noreferrer"
                                        class="text-[0.65rem] font-mono font-semibold text-[#B8860B] hover:text-[#D4A84B] transition-colors duration-150"

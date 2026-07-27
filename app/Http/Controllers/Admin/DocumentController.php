@@ -98,6 +98,39 @@ class DocumentController extends Controller
     }
 
     /**
+     * Tampilkan (preview) dokumen di browser secara inline (tab baru).
+     *
+     * Me-proxy file dari Supabase Storage ke browser dengan header
+     * Content-Disposition: inline sehingga browser membuka preview (PDF/gambar/video).
+     *
+     * @param  Document  $document  Route model binding
+     * @return StreamedResponse
+     */
+    public function show(Document $document): StreamedResponse
+    {
+        $path = DocumentService::extractStoragePath($document->file_url);
+
+        if (! $path || ! \Illuminate\Support\Facades\Storage::disk('supabase')->exists($path)) {
+            abort(404, 'Berkas dokumen tidak ditemukan di storage.');
+        }
+
+        return response()->streamDownload(
+            callback: function () use ($path) {
+                $stream = \Illuminate\Support\Facades\Storage::disk('supabase')->readStream($path);
+                if ($stream) {
+                    fpassthru($stream);
+                    fclose($stream);
+                }
+            },
+            name:    $document->file_name,
+            headers: [
+                'Content-Type'        => $this->getMimeType($document->file_name),
+                'Content-Disposition' => 'inline; filename="' . addslashes($document->file_name) . '"',
+            ],
+        );
+    }
+
+    /**
      * Unduh dokumen dari Supabase Storage.
      *
      * Me-proxy file dari Supabase Storage ke browser dengan header

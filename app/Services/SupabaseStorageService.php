@@ -79,6 +79,14 @@ class SupabaseStorageService implements StorageServiceInterface
      */
     public function url(string $path): string
     {
+        $endpoint = config('filesystems.disks.supabase.endpoint');
+        $bucket   = config('filesystems.disks.supabase.bucket', 'documents');
+
+        if ($endpoint) {
+            $baseUrl = preg_replace('#/storage/v1/s3/?$#', '', $endpoint);
+            return "{$baseUrl}/storage/v1/object/public/{$bucket}/{$path}";
+        }
+
         return Storage::disk(self::DISK)->url($path);
     }
 
