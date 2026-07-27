@@ -787,7 +787,7 @@
                                 '<div class="min-w-0 flex-1 space-y-0.5">' +
                                     '<p class="text-xs font-semibold text-[#1A1A1A] truncate" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</p>' +
                                     '<span class="inline-flex items-center px-2 py-0.5 rounded text-[0.58rem] font-mono font-medium uppercase border ' + typeBadgeClass + '">' + typeLabel + '</span>' +
-                                </div>' +
+                                '</div>' +
                             '</div>' +
                             '<span id="prog-badge-' + item.id + '" class="text-xs font-mono text-[#6B6B6B] font-medium flex-shrink-0">0%</span>' +
                         '</div>' +
