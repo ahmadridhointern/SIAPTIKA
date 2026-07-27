@@ -39,7 +39,7 @@
 
                 {{-- Header Kartu: Info Pembuat --}}
                 <div class="px-8 py-4 border-b border-[#F5F3F0] flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
-                    <span class="text-xs text-[#6B6B6B] font-mono">Pembuat: <span class="text-[#1A1A1A] font-semibold">{{ $activity->user->name }}</span></span>
+                    <span class="text-xs text-[#6B6B6B] font-mono">Pembuat: <span class="text-[#1A1A1A]">{{ $activity->user->name }}</span></span>
                     <span class="text-xs text-[#6B6B6B] font-mono">Dibuat: <span class="text-[#1A1A1A]">{{ $activity->created_at->isoFormat('D MMMM YYYY, HH:mm') }} WIB</span></span>
                 </div>
 
@@ -108,81 +108,10 @@
 
         </div>
 
-        {{-- ══ KANAN (1/3) — Upload + Dokumen ══ --}}
+        {{-- ══ KANAN (1/3) — Dokumen & Lampiran ══ --}}
         <div class="space-y-5">
 
-            {{-- ① Unggah Dokumen — kompak --}}
-            <div class="card-serif bg-[#FFFFFF]">
-                <div class="px-5 py-4 pt-4 pb-4 border-b border-[#F5F3F0]">
-                    <span class="small-caps text-[0.65rem]">Unggah Dokumen</span>
-                </div>
-
-                @if($errors->any())
-                    <div class="mx-5 mt-3 p-3 bg-red-50 border border-red-200 rounded space-y-0.5">
-                        @foreach($errors->all() as $error)
-                            <p class="text-xs text-red-600 font-mono leading-snug">{{ $error }}</p>
-                        @endforeach
-                    </div>
-                @endif
-
-                <form id="form-upload-doc"
-                      method="POST"
-                      action="{{ route('admin.activities.documents.store', $activity) }}"
-                      enctype="multipart/form-data"
-                      class="p-5 space-y-3">
-                    @csrf
-
-                    {{-- Jenis Dokumen --}}
-                    <select id="document_type" name="document_type"
-                            class="input-serif text-sm pr-8 appearance-none cursor-pointer
-                                   {{ $errors->has('document_type') ? 'border-red-400' : '' }}"
-                            style="height:2.5rem;
-                                   background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B6B6B' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\");
-                                   background-repeat:no-repeat;
-                                   background-position:right 0.625rem center;
-                                   background-size:0.875rem;">
-                        <option value="" disabled {{ old('document_type') ? '' : 'selected' }}>— Pilih jenis —</option>
-                        <option value="surat"       {{ old('document_type') === 'surat'       ? 'selected' : '' }}>Surat / Dokumen</option>
-                        <option value="notulen"     {{ old('document_type') === 'notulen'     ? 'selected' : '' }}>Notulen</option>
-                        <option value="dokumentasi" {{ old('document_type') === 'dokumentasi' ? 'selected' : '' }}>Dokumentasi</option>
-                    </select>
-
-                    {{-- Drop Zone --}}
-                    <div id="drop-zone"
-                         class="flex items-center gap-3 w-full border border-dashed rounded-md px-4 py-3
-                                cursor-pointer transition-all duration-150
-                                {{ $errors->has('file') ? 'border-red-300 bg-red-50' : 'border-[#E8E4DF] hover:border-[#B8860B] hover:bg-[#FAFAF8]' }}"
-                         onclick="document.getElementById('upload_file').click()">
-
-                        <svg id="drop-icon" class="w-5 h-5 flex-shrink-0 text-[#C9C0B5] transition-colors duration-150" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
-                        </svg>
-
-                        <div class="min-w-0 flex-1">
-                            <p id="drop-placeholder" class="text-xs font-mono text-[#6B6B6B]">
-                                Seret atau klik untuk memilih berkas
-                            </p>
-                            <p id="drop-file-name" class="hidden text-xs font-semibold text-[#1A1A1A] font-mono truncate"></p>
-                            <p class="text-[0.6rem] text-[#B8860B]/70 font-mono mt-0.5">PDF · Word · JPG · PNG · MP4 · Maks. 10 MB</p>
-                        </div>
-                    </div>
-
-                    <input id="upload_file" name="file" type="file"
-                           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4"
-                           class="sr-only">
-
-                    <button id="btn-upload-doc" type="submit"
-                            class="btn-primary w-full justify-center"
-                            style="min-height:2.5rem;">
-                        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
-                        </svg>
-                        Unggah
-                    </button>
-                </form>
-            </div>
-
-            {{-- ② Daftar Dokumen & Lampiran — paginated & organized by type --}}
+            {{-- Dokumen & Lampiran — paginated & organized by type --}}
             <div class="card-serif bg-[#FFFFFF]">
                 <div class="px-5 pt-4 pb-3 border-b border-[#F5F3F0] flex items-center justify-between">
                     <span class="small-caps text-[0.65rem]">Dokumen & Lampiran</span>
@@ -220,7 +149,7 @@
                             <p class="text-xs font-mono text-[#6B6B6B]">
                                 {{ request('type') ? 'Tidak ada dokumen untuk jenis "'.request('type').'"' : 'Belum ada dokumen' }}
                             </p>
-                            <p class="text-[0.6rem] text-[#6B6B6B]/60 font-mono">Unggah dokumen menggunakan form di atas</p>
+                            <p class="text-[0.6rem] text-[#6B6B6B]/60 font-mono">Klik tombol di bawah untuk mengunggah dokumen</p>
                         </div>
                     @else
                         @foreach($documents as $doc)
@@ -271,7 +200,21 @@
                         {{ $documents->links() }}
                     </div>
                 @endif
+
+                {{-- Trigger Modal Unggah Dokumen di bagian paling bawah section --}}
+                <div class="p-4 border-t border-[#F5F3F0] bg-[#FFFFFF]">
+                    <button type="button"
+                            onclick="openUploadDocumentModal()"
+                            class="btn-primary w-full justify-center gap-2"
+                            style="min-height:2.5rem;">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                        </svg>
+                        Unggah Dokumen
+                    </button>
+                </div>
             </div>
+
 
         </div>
 
@@ -384,6 +327,92 @@
                             Batal
                         </button>
                     </div>
+    {{-- Upload Document Modal --}}
+    <div id="upload-document-modal" class="modal-backdrop hidden"
+         onclick="if(event.target===event.currentTarget) closeUploadDocumentModal()">
+        <div class="modal-box modal-box-sm">
+            <div class="px-8 pt-7 pb-6">
+                <div class="flex items-center justify-between pb-4 border-b border-[#F5F3F0] mb-5">
+                    <div>
+                        <h2 class="font-serif text-xl text-[#1A1A1A]">Unggah Dokumen Arsip</h2>
+                        <p class="text-xs text-[#6B6B6B] font-mono mt-0.5">Tambah surat, notulen, atau dokumentasi kegiatan</p>
+                    </div>
+                    <button type="button" onclick="closeUploadDocumentModal()" class="text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                @if($errors->has('document_type') || $errors->has('file'))
+                    <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded space-y-0.5">
+                        @foreach($errors->all() as $error)
+                            <p class="text-xs text-red-600 font-mono leading-snug">{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
+
+                <form id="form-upload-doc"
+                      method="POST"
+                      action="{{ route('admin.activities.documents.store', $activity) }}"
+                      enctype="multipart/form-data"
+                      class="space-y-4">
+                    @csrf
+
+                    {{-- Jenis Dokumen --}}
+                    <div>
+                        <label for="modal_document_type" class="block text-xs font-mono uppercase tracking-wider text-[#6B6B6B] mb-1.5">
+                            Jenis Dokumen <span class="text-red-500">*</span>
+                        </label>
+                        <select id="modal_document_type" name="document_type" required
+                                class="input-serif text-sm pr-8 appearance-none cursor-pointer {{ $errors->has('document_type') ? 'border-red-400' : '' }}"
+                                style="height:2.5rem;
+                                       background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B6B6B' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\");
+                                       background-repeat:no-repeat;
+                                       background-position:right 0.625rem center;
+                                       background-size:0.875rem;">
+                            <option value="" disabled {{ old('document_type') ? '' : 'selected' }}>— Pilih jenis —</option>
+                            <option value="surat"       {{ old('document_type') === 'surat'       ? 'selected' : '' }}>Surat / Dokumen</option>
+                            <option value="notulen"     {{ old('document_type') === 'notulen'     ? 'selected' : '' }}>Notulen</option>
+                            <option value="dokumentasi" {{ old('document_type') === 'dokumentasi' ? 'selected' : '' }}>Dokumentasi</option>
+                        </select>
+                    </div>
+
+                    {{-- Drop Zone --}}
+                    <div>
+                        <label class="block text-xs font-mono uppercase tracking-wider text-[#6B6B6B] mb-1.5">
+                            Berkas Dokumen <span class="text-red-500">*</span>
+                        </label>
+                        <div id="drop-zone"
+                             class="flex items-center gap-3 w-full border border-dashed rounded-md px-4 py-3 cursor-pointer transition-all duration-150 {{ $errors->has('file') ? 'border-red-300 bg-red-50' : 'border-[#E8E4DF] hover:border-[#B8860B] hover:bg-[#FAFAF8]' }}"
+                             onclick="document.getElementById('upload_file').click()">
+
+                            <svg id="drop-icon" class="w-5 h-5 flex-shrink-0 text-[#C9C0B5] transition-colors" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                            </svg>
+
+                            <div class="min-w-0 flex-1">
+                                <p id="drop-placeholder" class="text-xs font-mono text-[#6B6B6B]">
+                                    Seret atau klik untuk memilih berkas
+                                </p>
+                                <p id="drop-file-name" class="hidden text-xs font-semibold text-[#1A1A1A] font-mono truncate"></p>
+                                <p class="text-[0.6rem] text-[#B8860B]/70 font-mono mt-0.5">PDF · Word · JPG · PNG · MP4 · Maks. 10 MB</p>
+                            </div>
+                        </div>
+
+                        <input id="upload_file" name="file" type="file" required
+                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4"
+                               class="sr-only">
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-2">
+                        <button id="btn-upload-doc" type="submit" class="btn-primary flex-1 justify-center" style="min-height:2.5rem;">
+                            Unggah Dokumen
+                        </button>
+                        <button type="button" onclick="closeUploadDocumentModal()" class="btn-secondary flex-1 justify-center" style="min-height:2.5rem;">
+                            Batal
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -392,8 +421,26 @@
 
     {{-- ── Scripts ── --}}
     <script>
+    // Upload Document Modal
+    function openUploadDocumentModal() {
+        closeEditDocumentModal();
+        closeDeleteModalShow();
+        document.getElementById('upload-document-modal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        var ac = document.getElementById('app-content');
+        if (ac) ac.classList.add('modal-open-filter');
+    }
+    function closeUploadDocumentModal() {
+        document.getElementById('upload-document-modal').classList.add('hidden');
+        document.body.style.overflow = '';
+        var ac = document.getElementById('app-content');
+        if (ac) ac.classList.remove('modal-open-filter');
+    }
+
     // Delete Activity Modal
     function openDeleteModalShow(id, title) {
+        closeUploadDocumentModal();
+        closeEditDocumentModal();
         document.getElementById('show-delete-name').textContent = '"' + title + '"';
         document.getElementById('show-delete-modal').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
@@ -409,6 +456,9 @@
 
     // Edit Document Modal
     function openEditDocumentModal(id, type, filename, actionUrl) {
+        closeUploadDocumentModal();
+        closeDeleteModalShow();
+
         var form = document.getElementById('edit-document-form');
         var selectType = document.getElementById('edit_document_type');
         var nameDisplay = document.getElementById('edit-current-filename');
@@ -439,10 +489,23 @@
 
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
+            closeUploadDocumentModal();
             closeDeleteModalShow();
             closeEditDocumentModal();
         }
     });
+
+    @if($errors->any() && old('_method') !== 'PUT')
+        document.addEventListener('DOMContentLoaded', function() {
+            openUploadDocumentModal();
+        });
+    @elseif($errors->any() && old('_method') === 'PUT')
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('edit-document-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+    @endif
+
 
     // Upload Form (Store) & Edit Form Drag & Drop
     (function () {
