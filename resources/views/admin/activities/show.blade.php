@@ -617,11 +617,12 @@
     });
 
     // ── Multi-Dropzone & Queue Logic ──
-    function handleFileSelection(category, files) {
-        if (!files || files.length === 0) return;
-        for (var i = 0; i < files.length; i++) {
-            var file = files[i];
-            var fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    function handleFileSelection(category, fileList) {
+        if (!fileList || fileList.length === 0) return;
+        var filesArr = Array.from(fileList);
+        for (var i = 0; i < filesArr.length; i++) {
+            var file = filesArr[i];
+            var fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
             queuedUploadFiles.push({
                 id: fileId,
                 file: file,
@@ -638,6 +639,15 @@
         if (isUploadingActive) return;
         queuedUploadFiles = queuedUploadFiles.filter(function(item) { return item.id !== fileId; });
         renderUploadQueue();
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        return String(text).replace(/&/g, "&amp;")
+                           .replace(/</g, "&lt;")
+                           .replace(/>/g, "&gt;")
+                           .replace(/"/g, "&quot;")
+                           .replace(/'/g, "&#039;");
     }
 
     function renderUploadQueue() {
@@ -677,27 +687,25 @@
                 var sizeMb = (item.file.size / (1024 * 1024)).toFixed(2) + ' MB';
                 var typeLabel = item.type === 'surat' ? 'Surat' : (item.type === 'notulen' ? 'Notulen' : 'Dokumentasi');
 
-                html += `
-                    <div class="p-3 border border-[#E8E4DF] rounded-lg bg-[#FFFFFF] flex items-center justify-between gap-3 shadow-xs">
-                        <div class="flex items-center gap-3 min-w-0 flex-1">
-                            <div class="w-8 h-8 rounded bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase">
-                                ${ext}
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <p class="text-xs font-semibold text-[#1A1A1A] font-mono truncate" title="${item.file.name}">${item.file.name}</p>
-                                <div class="flex items-center gap-2 mt-0.5">
-                                    <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[0.55rem] font-mono font-medium uppercase bg-amber-50 text-[#B8860B] border border-amber-200">${typeLabel}</span>
-                                    <span class="text-[0.65rem] text-[#6B6B6B] font-mono">${sizeMb}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" onclick="removeQueuedFile('${item.id}')" class="p-1 text-[#6B6B6B] hover:text-red-600 transition-colors" title="Hapus dari antrean">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
-                    </div>
-                `;
+                html += '<div class="p-3 border border-[#E8E4DF] rounded-lg bg-[#FFFFFF] flex items-center justify-between gap-3 shadow-xs">' +
+                            '<div class="flex items-center gap-3 min-w-0 flex-1">' +
+                                '<div class="w-8 h-8 rounded bg-[#FAFAF8] border border-[#E8E4DF] text-[#B8860B] font-mono text-[0.65rem] font-bold flex items-center justify-center flex-shrink-0 uppercase">' +
+                                    ext +
+                                '</div>' +
+                                '<div class="min-w-0 flex-1">' +
+                                    '<p class="text-xs font-semibold text-[#1A1A1A] font-mono truncate" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</p>' +
+                                    '<div class="flex items-center gap-2 mt-0.5">' +
+                                        '<span class="inline-flex items-center px-1.5 py-0.2 rounded text-[0.55rem] font-mono font-medium uppercase bg-amber-50 text-[#B8860B] border border-amber-200">' + typeLabel + '</span>' +
+                                        '<span class="text-[0.65rem] text-[#6B6B6B] font-mono">' + sizeMb + '</span>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<button type="button" onclick="removeQueuedFile(\'' + item.id + '\')" class="p-1 text-[#6B6B6B] hover:text-red-600 transition-colors" title="Hapus dari antrean">' +
+                                '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
+                                    '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>' +
+                                '</svg>' +
+                            '</button>' +
+                        '</div>';
             });
             queueList.innerHTML = html;
         }
@@ -737,21 +745,19 @@
         var html = '';
         queuedUploadFiles.forEach(function(item) {
             var typeLabel = item.type === 'surat' ? 'Surat' : (item.type === 'notulen' ? 'Notulen' : 'Dokumentasi');
-            html += `
-                <div id="prog-item-${item.id}" class="p-3 border border-[#E8E4DF] rounded-lg bg-[#FFFFFF] space-y-2">
-                    <div class="flex items-center justify-between gap-2">
-                        <div class="min-w-0 flex-1">
-                            <p class="text-xs font-semibold text-[#1A1A1A] font-mono truncate" title="${item.file.name}">${item.file.name}</p>
-                            <span class="text-[0.6rem] text-[#B8860B] font-mono">${typeLabel}</span>
-                        </div>
-                        <span id="prog-badge-${item.id}" class="text-xs font-mono text-[#6B6B6B]">0%</span>
-                    </div>
-                    <div class="w-full h-2 rounded-full bg-[#E8E4DF] overflow-hidden">
-                        <div id="prog-bar-${item.id}" class="h-full bg-[#B8860B] transition-all duration-150 rounded-full" style="width:0%;"></div>
-                    </div>
-                    <p id="prog-err-${item.id}" class="hidden text-[0.65rem] text-red-600 font-mono"></p>
-                </div>
-            `;
+            html += '<div id="prog-item-' + item.id + '" class="p-3 border border-[#E8E4DF] rounded-lg bg-[#FFFFFF] space-y-2">' +
+                        '<div class="flex items-center justify-between gap-2">' +
+                            '<div class="min-w-0 flex-1">' +
+                                '<p class="text-xs font-semibold text-[#1A1A1A] font-mono truncate" title="' + escapeHtml(item.file.name) + '">' + escapeHtml(item.file.name) + '</p>' +
+                                '<span class="text-[0.6rem] text-[#B8860B] font-mono">' + typeLabel + '</span>' +
+                            '</div>' +
+                            '<span id="prog-badge-' + item.id + '" class="text-xs font-mono text-[#6B6B6B]">0%</span>' +
+                        '</div>' +
+                        '<div class="w-full h-2 rounded-full bg-[#E8E4DF] overflow-hidden">' +
+                            '<div id="prog-bar-' + item.id + '" class="h-full bg-[#B8860B] transition-all duration-150 rounded-full" style="width:0%;"></div>' +
+                        '</div>' +
+                        '<p id="prog-err-' + item.id + '" class="hidden text-[0.65rem] text-red-600 font-mono"></p>' +
+                    '</div>';
         });
         container.innerHTML = html;
     }
@@ -930,8 +936,11 @@
 
             if (zone && input) {
                 input.addEventListener('change', function() {
-                    handleFileSelection(cat, this.files);
-                    this.value = '';
+                    if (this.files && this.files.length > 0) {
+                        var filesArr = Array.from(this.files);
+                        this.value = '';
+                        handleFileSelection(cat, filesArr);
+                    }
                 });
 
                 zone.addEventListener('dragover', function(e) {
@@ -950,7 +959,7 @@
                     zone.classList.remove('border-[#B8860B]', 'bg-[#FAFAF8]');
                     zone.classList.add('border-[#E8E4DF]');
                     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                        handleFileSelection(cat, e.dataTransfer.files);
+                        handleFileSelection(cat, Array.from(e.dataTransfer.files));
                     }
                 });
             }
