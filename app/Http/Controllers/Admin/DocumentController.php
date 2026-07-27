@@ -5,35 +5,32 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Models\Activity;
-use App\Services\StorageServiceInterface;
+use App\Services\DocumentService;
 use Illuminate\Http\RedirectResponse;
 
 /**
  * DocumentController
  *
- * Bertanggung jawab untuk menangani upload dokumen arsip ke Supabase Storage.
- * Controller ini TIDAK menyimpan metadata ke database (akan ditambahkan di Sprint 3 tahap berikutnya).
+ * Bertanggung jawab menangani request HTTP untuk upload dokumen arsip.
+ * Seluruh logika bisnis (upload Storage + simpan DB) didelegasikan ke DocumentService.
  *
- * Prinsip: Single Responsibility — controller ini hanya mengurusi operasi dokumen,
- * terpisah dari ActivityController yang mengurusi data kegiatan.
+ * Prinsip: Thin Controller — controller hanya menerima request, mendelegasikan,
+ * dan mengembalikan response. Tidak ada logika bisnis di sini.
  */
 class DocumentController extends Controller
 {
     /**
-     * DocumentController menggunakan Dependency Injection untuk storage service.
-     * Controller tidak mengetahui detail implementasi Supabase — hanya mengenal interface.
+     * Dependency Injection: DocumentService menangani semua logika upload.
      */
     public function __construct(
-        private readonly StorageServiceInterface $storage,
+        private readonly DocumentService $documentService,
     ) {}
 
     /**
-     * Upload dokumen ke Supabase Storage.
+     * Upload dokumen dan simpan metadata ke database.
      *
-     * Alur:
-     * 1. Validasi request (dilakukan oleh StoreDocumentRequest sebelum method ini dipanggil)
-     * 2. Upload file ke Storage dengan path: documents/{activity_id}/{uuid}.{ext}
-     * 3. Redirect kembali ke halaman detail kegiatan dengan pesan sukses/error
+     * Validasi dilakukan otomatis oleh StoreDocumentRequest sebelum method ini dipanggil.
+     * Alur lengkap ada di DocumentService@upload.
      *
      * @param  StoreDocumentRequest  $request
      * @param  Activity              $activity  Route model binding
@@ -42,16 +39,15 @@ class DocumentController extends Controller
     public function store(StoreDocumentRequest $request, Activity $activity): RedirectResponse
     {
         try {
-            // Upload file ke Supabase Storage
-            // Path: documents/{activity_id}/{uuid}.{ext}
-            $path = $this->storage->upload(
-                file:      $request->file('file'),
-                directory: "documents/{$activity->id}",
+            $this->documentService->upload(
+                file:         $request->file('file'),
+                activity:     $activity,
+                documentType: $request->validated('document_type'),
             );
 
             return redirect()
                 ->route('admin.activities.show', $activity)
-                ->with('success', 'Dokumen berhasil diunggah ke arsip.');
+                ->with('success', 'Dokumen berhasil diunggah dan disimpan ke arsip.');
 
         } catch (\Throwable $e) {
             report($e);
