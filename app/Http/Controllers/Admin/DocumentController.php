@@ -45,6 +45,14 @@ class DocumentController extends Controller
      */
     public function store(StoreDocumentRequest $request, Activity $activity): \Illuminate\Http\JsonResponse|RedirectResponse
     {
+        if ($activity->activity_date->gt(today())) {
+            $errorMsg = 'Dokumen tidak dapat diunggah karena kegiatan belum berlangsung.';
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => $errorMsg], 422);
+            }
+            return redirect()->back()->with('error', $errorMsg);
+        }
+
         try {
             $document = $this->documentService->upload(
                 file:         $request->file('file'),
@@ -105,14 +113,14 @@ class DocumentController extends Controller
             );
 
             return redirect()
-                ->route('admin.activities.show', $document->activity_id)
+                ->back()
                 ->with('success', 'Dokumen arsip berhasil diperbarui.');
 
         } catch (\Throwable $e) {
             report($e);
 
             return redirect()
-                ->route('admin.activities.show', $document->activity_id)
+                ->back()
                 ->with('error', 'Gagal memperbarui dokumen arsip. Silakan coba lagi.');
         }
     }

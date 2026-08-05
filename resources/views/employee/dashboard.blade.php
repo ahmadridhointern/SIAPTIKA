@@ -1,9 +1,9 @@
-<x-layouts.admin title="Dashboard Admin">
+<x-layouts.employee title="Dashboard Pegawai">
 
     {{-- Dashboard Header --}}
     <div class="mb-10">
         <div class="flex items-center gap-4 mb-4">
-            <span class="small-caps">Ikhtisar Administrasi</span>
+            <span class="small-caps">Portal Informasi Kegiatan</span>
             <span class="h-px flex-1 bg-[#E8E4DF]"></span>
         </div>
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -12,7 +12,7 @@
                     Dashboard Kegiatan
                 </h1>
                 <p class="mt-2 text-sm text-[#6B6B6B]">
-                    Pantau jadwal kegiatan dan administrasi Bidang APTIKA secara real-time.
+                    Informasi jadwal kegiatan dan arsip Bidang APTIKA — Diskominfotik Riau.
                 </p>
             </div>
 
@@ -99,7 +99,7 @@
                         </span>
                     @endif
                 </div>
-                <a href="{{ route('admin.activities.index', ['date_from' => $todayStr, 'date_to' => $todayStr]) }}"
+                <a href="{{ route('employee.activities.index', ['date_from' => $todayStr, 'date_to' => $todayStr]) }}"
                    onclick="showGlobalLoading('Memuat agenda...')"
                    class="group inline-flex items-center gap-1.5 text-[#B8860B] hover:text-[#9A7009] text-xs font-mono transition-colors"
                    title="Lihat semua">
@@ -125,7 +125,7 @@
                         <div class="px-6 py-4 {{ !$loop->last ? 'border-b border-[#F5F3F0]' : '' }} hover:bg-[#F5F3F0]/40 transition-colors duration-150">
                             <div class="flex items-start justify-between gap-4">
                                 <div class="min-w-0 flex-1">
-                                    <a href="{{ route('admin.activities.show', $kegiatan) }}"
+                                    <a href="{{ route('employee.activities.show', $kegiatan) }}"
                                        onclick="showGlobalLoading('Memuat detail kegiatan...')"
                                        class="font-serif text-base text-[#1A1A1A] hover:text-[#B8860B] transition-colors leading-snug truncate block">
                                         {{ $kegiatan->title }}
@@ -167,7 +167,7 @@
                         </span>
                     @endif
                 </div>
-                <a href="{{ $upcomingMinStr && $upcomingMaxStr ? route('admin.activities.index', ['date_from' => $upcomingMinStr, 'date_to' => $upcomingMaxStr]) : route('admin.activities.index', ['status' => 'scheduled']) }}"
+                <a href="{{ $upcomingMinStr && $upcomingMaxStr ? route('employee.activities.index', ['date_from' => $upcomingMinStr, 'date_to' => $upcomingMaxStr]) : route('employee.activities.index', ['status' => 'scheduled']) }}"
                    onclick="showGlobalLoading('Memuat agenda...')"
                    class="group inline-flex items-center gap-1.5 text-[#B8860B] hover:text-[#9A7009] text-xs font-mono transition-colors"
                    title="Lihat semua">
@@ -199,7 +199,7 @@
                         <div class="px-6 py-4 {{ !$loop->last ? 'border-b border-[#F5F3F0]' : '' }} hover:bg-[#F5F3F0]/40 transition-colors duration-150">
                             <div class="flex items-start justify-between gap-4">
                                 <div class="min-w-0 flex-1">
-                                    <a href="{{ route('admin.activities.show', $kegiatan) }}"
+                                    <a href="{{ route('employee.activities.show', $kegiatan) }}"
                                        onclick="showGlobalLoading('Memuat detail kegiatan...')"
                                        class="font-serif text-base text-[#1A1A1A] hover:text-[#B8860B] transition-colors leading-snug truncate block">
                                         {{ $kegiatan->title }}
@@ -267,4 +267,4 @@
         })();
     </script>
 
-</x-layouts.admin>
+</x-layouts.employee>

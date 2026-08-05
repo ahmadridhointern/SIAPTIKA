@@ -191,7 +191,7 @@
 
                 {{-- Submit Buttons --}}
                 <div class="flex items-center gap-4">
-                    <button type="submit" class="btn-primary">
+                    <button id="btn-create-page-submit" type="submit" class="btn-primary">
                         Simpan Kegiatan
                     </button>
                     <a href="{{ route('admin.activities.index') }}" 
@@ -205,8 +205,48 @@
         </form>
     </div>
 
-    {{-- Character Counter Script --}}
+    {{-- Form submit & Character Counter Script --}}
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const btn = document.getElementById('btn-create-page-submit');
+            const title = document.getElementById('title');
+            const date = document.getElementById('activity_date');
+            const time = document.getElementById('time');
+            const location = document.getElementById('location');
+
+            function checkFormValidation() {
+                if (!btn || !title || !date || !time || !location) return;
+                const isValid = title.value.trim() !== '' &&
+                                date.value !== '' &&
+                                time.value !== '' &&
+                                location.value.trim() !== '';
+                btn.disabled = !isValid;
+                if (!isValid) {
+                    btn.title = 'Lengkapi seluruh kolom wajib (Judul, Tanggal, Waktu, Tempat) terlebih dahulu';
+                } else {
+                    btn.title = 'Simpan kegiatan baru';
+                }
+            }
+
+            [title, date, time, location].forEach(el => {
+                if (el) {
+                    el.addEventListener('input', checkFormValidation);
+                    el.addEventListener('change', checkFormValidation);
+                }
+            });
+
+            checkFormValidation();
+
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function () {
+                    if (typeof setButtonLoading === 'function') {
+                        setButtonLoading(btn, true);
+                    }
+                });
+            }
+        });
+
         function setupCounter(inputId, counterId, max) {
             const input = document.getElementById(inputId);
             const counter = document.getElementById(counterId);

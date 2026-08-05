@@ -95,20 +95,50 @@
 
     <script>
         (function () {
-            /* Spinner on login submit — inline because auth layout has no shared JS block */
+            /* Lock login form visually on submit — NEVER disable inputs (disabled fields are NOT submitted by browser) */
             var form = document.getElementById('form-login');
             var btn  = document.getElementById('btn-login');
             if (form && btn) {
                 form.addEventListener('submit', function () {
+                    // Show spinner on button (disabled only on the button, not inputs)
                     var rect = btn.getBoundingClientRect();
                     btn.style.width  = rect.width  + 'px';
                     btn.style.height = rect.height + 'px';
                     btn.disabled = true;
                     btn.dataset.loading = 'true';
                     btn.innerHTML = '<span style="display:inline-block;width:1em;height:1em;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:btnSpin 0.65s linear infinite;"></span>';
+
+                    // Add a full-cover overlay on the card so nothing else can be clicked
+                    // We do NOT disable inputs — disabled inputs are excluded from form data
+                    var card = form.closest('.card-serif');
+                    if (card) {
+                        card.style.position = 'relative';
+                        var overlay = document.createElement('div');
+                        overlay.id = 'login-lock-overlay';
+                        overlay.style.cssText = 'position:absolute;inset:0;background:rgba(255,255,255,0.45);border-radius:inherit;z-index:10;cursor:not-allowed;pointer-events:all;';
+                        card.appendChild(overlay);
+                    // 20-Second Timeout Watchdog
+                    var timer = setTimeout(function() {
+                        btn.disabled = false;
+                        btn.dataset.loading = 'false';
+                        btn.style.width = '';
+                        btn.style.height = '';
+                        btn.innerHTML = 'Masuk';
+                        var ol = document.getElementById('login-lock-overlay');
+                        if (ol) ol.remove();
+
+                        var errAlert = document.createElement('div');
+                        errAlert.className = 'mb-5 alert-error';
+                        errAlert.textContent = 'Proses masuk memakan waktu terlalu lama (timeout). Silakan periksa koneksi internet Anda dan coba lagi.';
+                        form.parentNode.insertBefore(errAlert, form);
+                    }, 20000);
+
+                    window.addEventListener('pagehide', function() { clearTimeout(timer); }, { once: true });
                 });
             }
         })();
     </script>
 
+
 </x-layouts.auth>
+

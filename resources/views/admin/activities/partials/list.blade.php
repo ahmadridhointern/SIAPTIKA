@@ -1,5 +1,30 @@
+@php
+    $activeFilters = [];
+
+    if (request('status') === 'scheduled')   $activeFilters[] = 'Status: Direncana';
+    if (request('status') === 'ongoing')     $activeFilters[] = 'Status: Berlangsung';
+    if (request('status') === 'completed')   $activeFilters[] = 'Status: Selesai';
+
+    if (request('location')) {
+        $activeFilters[] = 'Lokasi Kegiatan: ' . request('location');
+    }
+
+    if (request('date_from') && request('date_to')) {
+        if (request('date_from') === request('date_to')) {
+            $activeFilters[] = 'Tanggal: ' . \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y');
+        } else {
+            $activeFilters[] = 'Tanggal: ' . \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') . ' – ' . \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y');
+        }
+    }
+
+    if (request('sort') === 'oldest')        $activeFilters[] = 'Urutan: Terlama';
+    if (request('sort') === 'az')            $activeFilters[] = 'Urutan: A → Z';
+
+    if (request('has_documents') === '1')    $activeFilters[] = 'Ada Arsip';
+@endphp
+
 {{-- Result Summary --}}
-<div class="flex items-center justify-between mb-3 px-1">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 px-1">
     <p class="text-xs font-mono text-[#6B6B6B]">
         Menampilkan
         <span class="font-semibold text-[#1A1A1A]">{{ $activities->firstItem() ?? 0 }}–{{ $activities->lastItem() ?? 0 }}</span>
@@ -9,13 +34,21 @@
             untuk <span class="text-[#B8860B] font-semibold">"{{ request('search') }}"</span>
         @endif
     </p>
-    @if(request()->anyFilled(['search', 'status']))
-        <span class="inline-flex items-center gap-1 text-xs font-mono text-[#B8860B]">
-            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.553.894l-4 2A1 1 0 016 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/></svg>
-            Filter Aktif
-        </span>
+    @if(count($activeFilters) > 0 || request('search'))
+        <div class="flex flex-wrap items-center gap-1.5 text-xs font-mono">
+            <span class="inline-flex items-center gap-1 text-[#B8860B] font-semibold">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.553.894l-4 2A1 1 0 016 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/></svg>
+                Filter Aktif:
+            </span>
+            @foreach($activeFilters as $filterLabel)
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[0.7rem] bg-[rgba(184,134,11,0.08)] text-[#B8860B] border border-[rgba(184,134,11,0.2)] font-mono">
+                    {{ $filterLabel }}
+                </span>
+            @endforeach
+        </div>
     @endif
 </div>
+
 
 {{-- ================================================================
      TABLE — Desktop
@@ -55,14 +88,15 @@
             <tbody class="divide-y divide-[#E8E4DF]">
                 @foreach($activities as $activity)
                     @php
-                        $isPast = $activity->activity_date->lt(today());
+                        $isStarted = $activity->is_started;
                         $hasDocuments = $activity->documents_count > 0;
                     @endphp
                     <tr class="hover:bg-[#F5F3F0]/50 transition-colors duration-150">
 
                         <td class="px-6 py-4 max-w-xs">
                             <a href="{{ route('admin.activities.show', $activity->id) }}"
-                               class="font-serif text-base text-[#1A1A1A] font-semibold hover:text-[#B8860B] transition-colors duration-150 line-clamp-1 block">
+                               onclick="showGlobalLoading('Memuat detail kegiatan...')"
+                               class="font-serif text-base text-[#1A1A1A] tracking-tight hover:text-[#B8860B] transition-colors duration-150 line-clamp-1 block">
                                 {{ $activity->title }}
                             </a>
                             @if($activity->description)
@@ -140,13 +174,13 @@
                         </td>
 
                         <td class="px-6 py-4 whitespace-nowrap">
-                            @if($activity->status === 'completed')
+                            @if($activity->computed_status === 'Selesai')
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[0.68rem] font-mono font-semibold uppercase tracking-wider bg-gray-100 text-gray-500 border border-gray-200">
                                     <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>Selesai
                                 </span>
-                            @elseif($activity->activity_date->isToday())
+                            @elseif($activity->computed_status === 'Sudah Berlangsung')
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[0.68rem] font-mono font-semibold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>Hari Ini
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>Sudah Berlangsung
                                 </span>
                             @else
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[0.68rem] font-mono font-semibold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200">
@@ -158,9 +192,10 @@
                         <td class="px-6 py-4 text-right whitespace-nowrap">
                             <div class="inline-flex items-center gap-3">
                                 <a href="{{ route('admin.activities.show', $activity->id) }}"
+                                   onclick="showGlobalLoading('Memuat detail kegiatan...')"
                                    class="text-xs font-mono font-semibold text-[#6B6B6B] hover:text-[#B8860B] transition-colors duration-150">Detail</a>
 
-                                @if(!$isPast)
+                                @if(!$isStarted)
                                     <span class="text-[#E8E4DF]">|</span>
                                     <button type="button"
                                             onclick="openEditModal(this)"
@@ -213,18 +248,19 @@
         </div>
     @else
         @foreach($activities as $activity)
-            @php $isPast = $activity->activity_date->lt(today()); $hasDocuments = $activity->documents_count > 0; @endphp
+            @php $isStarted = $activity->is_started; $hasDocuments = $activity->documents_count > 0; @endphp
             <div class="card-serif p-5 bg-[#FFFFFF]">
                 <div class="flex items-start justify-between gap-3 mb-3">
                     <a href="{{ route('admin.activities.show', $activity->id) }}"
+                       onclick="showGlobalLoading('Memuat detail kegiatan...')"
                        class="font-serif text-base text-[#1A1A1A] font-semibold hover:text-[#B8860B] transition-colors leading-snug flex-1">
                         {{ $activity->title }}
                     </a>
-                    @if($activity->status === 'completed')
+                    @if($activity->computed_status === 'Selesai')
                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.65rem] font-mono font-semibold uppercase tracking-wider bg-gray-100 text-gray-500 border border-gray-200 flex-shrink-0">Selesai</span>
-                    @elseif($activity->activity_date->isToday())
+                    @elseif($activity->computed_status === 'Sudah Berlangsung')
                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.65rem] font-mono font-semibold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200 flex-shrink-0">
-                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>Hari Ini
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>Sudah Berlangsung
                         </span>
                     @else
                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.65rem] font-mono font-semibold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200 flex-shrink-0">Direncana</span>
@@ -246,8 +282,9 @@
                 </div>
                 <div class="flex items-center gap-3 pt-3 border-t border-[#F5F3F0]">
                     <a href="{{ route('admin.activities.show', $activity->id) }}"
+                       onclick="showGlobalLoading('Memuat detail kegiatan...')"
                        class="text-xs font-mono font-semibold text-[#6B6B6B] hover:text-[#B8860B] transition-colors">Detail</a>
-                    @if(!$isPast)
+                    @if(!$isStarted)
                         <span class="text-[#E8E4DF]">|</span>
                         <button type="button"
                                 onclick="openEditModal(this)"

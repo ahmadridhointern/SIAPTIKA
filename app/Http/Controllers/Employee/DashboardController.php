@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
@@ -10,7 +10,7 @@ use Illuminate\View\View;
 class DashboardController extends Controller
 {
     /**
-     * Tampilkan halaman Dashboard Admin dengan statistik dan agenda kegiatan.
+     * Tampilkan halaman Dashboard Pegawai dengan statistik kegiatan.
      */
     public function index(): View
     {
@@ -42,7 +42,7 @@ class DashboardController extends Controller
         $upcomingMinStr = $upcomingMinDate ? \Carbon\Carbon::parse($upcomingMinDate)->format('Y-m-d') : null;
         $upcomingMaxStr = $upcomingMaxDate ? \Carbon\Carbon::parse($upcomingMaxDate)->format('Y-m-d') : null;
 
-        return view('admin.dashboard', compact(
+        return view('employee.dashboard', compact(
             'totalKegiatan',
             'kegiatanHariIni',
             'kegiatanMendatang',

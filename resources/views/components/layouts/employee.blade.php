@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="SIAPTIKA — Panel Admin">
-    <title>{{ $title ?? 'Dashboard' }} — SIAPTIKA Admin</title>
+    <meta name="description" content="SIAPTIKA — Portal Pegawai Bidang APTIKA">
+    <title>{{ $title ?? 'Dashboard' }} — SIAPTIKA Pegawai</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         /* Force explicit disabled button styling & cursor */
@@ -56,17 +56,9 @@
     </div>
 
     {{-- ─── Nav-link loading spinner helper ─────────────────────── --}}
-    {{--
-        __navGo(el, href)
-        Mengunci ukuran elemen, mengganti isinya dengan spinner,
-        lalu langsung navigasi — spinner tetap tampil hingga halaman baru render.
-    --}}
     <script>
         function __navGo(el, href) {
-            /* Jangan proses jika sudah dalam mode loading */
             if (el.dataset.loading === 'true') return;
-
-            /* Resolusi URL dan lewati jika sudah di halaman yang sama */
             var dest;
             try { dest = new URL(href, window.location.origin); }
             catch (_) { window.location.href = href; return; }
@@ -75,17 +67,15 @@
             var currPath = window.location.pathname.replace(/\/$/, '');
             if (destPath === currPath && dest.search === window.location.search) return;
 
-            /* Kunci dimensi agar ukuran tidak berubah saat teks diganti spinner */
             var rect = el.getBoundingClientRect();
             el.style.width          = rect.width  + 'px';
             el.style.height         = rect.height + 'px';
             el.style.display        = 'inline-flex';
             el.style.alignItems     = 'center';
             el.style.justifyContent = 'center';
-            el.style.pointerEvents  = 'none';   /* Cegah double-klik */
+            el.style.pointerEvents  = 'none';
             el.dataset.loading      = 'true';
 
-            /* Ganti teks dengan spinner kecil berwarna emas */
             el.innerHTML =
                 '<span style="' +
                     'display:inline-block;' +
@@ -96,7 +86,6 @@
                     'animation:btnSpin 0.65s linear infinite;' +
                 '"></span>';
 
-            /* Navigasi langsung — spinner tetap tampil hingga halaman baru tiba */
             window.location.href = dest.href;
         }
     </script>
@@ -168,10 +157,10 @@
         window.addEventListener('popstate', resetLoadingStates);
     </script>
 
-
     <div id="app-content" class="transition-all duration-300">
+
         {{-- ============================================================
-             FIXED HEADER
+             FIXED HEADER — Portal Pegawai (tanpa auth)
              ============================================================ --}}
         <header style="
             position: fixed;
@@ -186,80 +175,39 @@
         ">
             <nav class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
 
-                {{-- Brand (spinner saat diklik) --}}
-                <a href="{{ route('admin.dashboard') }}"
+                {{-- Brand --}}
+                <a href="{{ route('employee.dashboard') }}"
                    onclick="__navGo(this, this.href); return false;"
                    class="flex items-center gap-3" style="text-decoration: none;">
                     <span class="font-serif text-xl" style="color: #1A1A1A; letter-spacing: -0.01em;">SIAPTIKA</span>
                     <span class="h-4 w-px" style="background-color: #E8E4DF;"></span>
-                    <span class="small-caps" style="font-size: 0.65rem;">Panel Admin</span>
+                    <span class="small-caps" style="font-size: 0.65rem;">Portal Pegawai</span>
                 </a>
 
-                {{-- Nav Links + Logout --}}
-                <div class="flex items-center gap-5">
-
-                    {{-- Navigation Links --}}
-                    <nav class="hidden sm:flex items-center gap-1">
-                        <a id="nav-dashboard" href="{{ route('admin.dashboard') }}"
-                           onclick="__navGo(this, this.href); return false;"
-                           class="nav-link-item {{ request()->routeIs('admin.dashboard') ? 'nav-active' : '' }}">
-                            Dashboard
-                        </a>
-                        <a id="nav-kegiatan" href="{{ route('admin.activities.index') }}"
-                           onclick="__navGo(this, this.href); return false;"
-                           class="nav-link-item {{ request()->routeIs('admin.activities.*') ? 'nav-active' : '' }}">
-                            Kegiatan
-                        </a>
-                        <a id="nav-arsip" href="{{ route('admin.archive.index') }}"
-                           onclick="__navGo(this, this.href); return false;"
-                           class="nav-link-item {{ request()->routeIs('admin.archive.*') ? 'nav-active' : '' }}">
-                            Arsip
-                        </a>
-                    </nav>
-
-                    <span class="h-4 w-px hidden sm:block" style="background-color: #E8E4DF;"></span>
-
-                    {{-- User name --}}
-                    <span class="text-xs hidden md:block" style="color: #6B6B6B; font-family: 'Source Sans 3', system-ui, sans-serif;">
-                        {{ Auth::user()->name }}
-                    </span>
-
-                    {{-- Logout Button --}}
-                    <form id="form-logout" method="POST" action="{{ route('admin.logout') }}">
-                        @csrf
-                        <button id="btn-logout" type="submit" class="logout-btn" title="Keluar dari Akun">
-                            <svg class="logout-btn-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/>
-                            </svg>
-                            <span class="logout-btn-text">Keluar</span>
-                        </button>
-                    </form>
-                </div>
+                {{-- Navigation Links --}}
+                <nav class="flex items-center gap-1">
+                    <a id="nav-dashboard"
+                       href="{{ route('employee.dashboard') }}"
+                       onclick="__navGo(this, this.href); return false;"
+                       class="nav-link-item {{ request()->routeIs('employee.dashboard') ? 'nav-active' : '' }}">
+                        Dashboard
+                    </a>
+                    <a id="nav-kegiatan"
+                       href="{{ route('employee.activities.index') }}"
+                       onclick="__navGo(this, this.href); return false;"
+                       class="nav-link-item {{ request()->routeIs('employee.activities.*') ? 'nav-active' : '' }}">
+                        Kegiatan
+                    </a>
+                    <a id="nav-arsip"
+                       href="{{ route('employee.archive.index') }}"
+                       onclick="__navGo(this, this.href); return false;"
+                       class="nav-link-item {{ request()->routeIs('employee.archive.*') ? 'nav-active' : '' }}">
+                        Arsip
+                    </a>
+                </nav>
 
             </nav>
         </header>
-
-        {{-- ============================================================
-             TOAST NOTIFICATION CONTAINER
-             ============================================================ --}}
-        <div class="toast-container" id="toast-container" aria-live="polite">
-            @if(session('success'))
-                <div class="toast toast-success" role="alert">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/>
-                    </svg>
-                    <span>{{ session('success') }}</span>
-                </div>
-            @endif
-            @if(session('error'))
-                <div class="toast toast-error" role="alert">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
-                    </svg>
-                    <span>{{ session('error') }}</span>
-                </div>
-            @endif
-        </div>
 
         {{-- ============================================================
              MAIN CONTENT
@@ -267,60 +215,10 @@
         <main class="page-main max-w-7xl mx-auto px-6 pb-12">
             {{ $slot }}
         </main>
+
     </div>
-
-    @stack('modals')
-
-    {{-- ─── Toast Auto-Dismiss ───────────────────────────────────── --}}
-    <script>
-        (function () {
-            document.querySelectorAll('.toast').forEach(function (toast) {
-                setTimeout(function () {
-                    toast.classList.add('hiding');
-                    setTimeout(function () { toast.remove(); }, 320);
-                }, 3600);
-            });
-        })();
-    </script>
-
-    {{-- ─── Global Button Loading Utility ──────────────────────────── --}}
-    <script>
-        function setButtonLoading(btn, loading) {
-            if (!btn) return;
-            if (loading) {
-                var rect = btn.getBoundingClientRect();
-                btn.style.width  = rect.width  + 'px';
-                btn.style.height = rect.height + 'px';
-                btn.dataset.originalContent = btn.innerHTML;
-                btn.dataset.loading = 'true';
-                btn.disabled = true;
-                btn.innerHTML = '<span class="btn-spinner"></span>';
-            } else {
-                btn.style.width  = '';
-                btn.style.height = '';
-                btn.dataset.loading = 'false';
-                btn.disabled = false;
-                if (btn.dataset.originalContent) {
-                    btn.innerHTML = btn.dataset.originalContent;
-                }
-            }
-        }
-    </script>
-
-    {{-- ─── Logout Loading ─────────────────────────────────────── --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var logoutForm = document.getElementById('form-logout');
-            if (logoutForm) {
-                logoutForm.addEventListener('submit', function () {
-                    showGlobalLoading('Keluar dari akun…');
-                });
-            }
-        });
-    </script>
 
     @stack('modals')
 
 </body>
 </html>
-
