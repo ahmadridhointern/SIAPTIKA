@@ -85,7 +85,7 @@
                     <th class="px-6 py-3.5 font-mono text-[0.7rem] uppercase tracking-wider text-[#6B6B6B] font-medium text-right">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-[#E8E4DF]">
+            <tbody class="divide-y divide-[#E8E4DF]" data-gsap="stagger-rows">
                 @foreach($activities as $activity)
                     @php
                         $isStarted = $activity->is_started;

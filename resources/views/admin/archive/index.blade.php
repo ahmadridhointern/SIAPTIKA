@@ -643,6 +643,9 @@
             const modal = document.getElementById(id);
             if (modal) {
                 modal.classList.remove('hidden');
+                if (window.SIAPTIKA_GSAP && window.SIAPTIKA_GSAP.animateModal) {
+                    window.SIAPTIKA_GSAP.animateModal(id);
+                }
                 document.body.style.overflow = 'hidden';
                 if (id === 'advanced-filter-modal') {
                     refreshArchiveDateModes();

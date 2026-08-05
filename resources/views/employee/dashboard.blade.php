@@ -1,7 +1,7 @@
 <x-layouts.employee title="Dashboard Pegawai">
 
     {{-- Dashboard Header --}}
-    <div class="mb-10">
+    <div class="mb-10" data-gsap="fade-down">
         <div class="flex items-center gap-4 mb-4">
             <span class="small-caps">Portal Informasi Kegiatan</span>
             <span class="h-px flex-1 bg-[#E8E4DF]"></span>
@@ -29,10 +29,10 @@
     </div>
 
     {{-- Stats Grid --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10" data-gsap="stagger-cards">
 
         {{-- Card 1: Total Kegiatan --}}
-        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between">
+        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between gsap-card transition-all duration-200" data-gsap-hover="elevate">
             <div>
                 <span class="small-caps text-[0.65rem] tracking-[0.12em] block mb-2">Total Kegiatan</span>
                 <span class="font-serif text-5xl text-[#1A1A1A] font-light leading-none">
@@ -45,7 +45,7 @@
         </div>
 
         {{-- Card 2: Hari Ini --}}
-        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between">
+        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between gsap-card transition-all duration-200" data-gsap-hover="elevate">
             <div>
                 <span class="small-caps text-[0.65rem] tracking-[0.12em] block mb-2">Hari Ini</span>
                 <span class="font-serif text-5xl {{ $kegiatanHariIni > 0 ? 'text-[#B8860B]' : 'text-[#1A1A1A]' }} font-medium leading-none">
@@ -58,7 +58,7 @@
         </div>
 
         {{-- Card 3: Mendatang --}}
-        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between">
+        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between gsap-card transition-all duration-200" data-gsap-hover="elevate">
             <div>
                 <span class="small-caps text-[0.65rem] tracking-[0.12em] block mb-2">Mendatang</span>
                 <span class="font-serif text-5xl text-[#1A1A1A] font-light leading-none">
@@ -71,7 +71,7 @@
         </div>
 
         {{-- Card 4: Total Arsip --}}
-        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between">
+        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between gsap-card transition-all duration-200" data-gsap-hover="elevate">
             <div>
                 <span class="small-caps text-[0.65rem] tracking-[0.12em] block mb-2">Total Arsip</span>
                 <span class="font-serif text-5xl text-[#1A1A1A] font-light leading-none">
