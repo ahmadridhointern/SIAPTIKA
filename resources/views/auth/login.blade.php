@@ -100,16 +100,15 @@
             var btn  = document.getElementById('btn-login');
             if (form && btn) {
                 form.addEventListener('submit', function () {
-                    // Show spinner on button (disabled only on the button, not inputs)
+                    try { sessionStorage.setItem('siaptika_show_splash_admin', 'true'); } catch (_) {}
+
                     var rect = btn.getBoundingClientRect();
                     btn.style.width  = rect.width  + 'px';
                     btn.style.height = rect.height + 'px';
                     btn.disabled = true;
                     btn.dataset.loading = 'true';
-                    btn.innerHTML = '<span style="display:inline-block;width:1em;height:1em;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:btnSpin 0.65s linear infinite;"></span>';
+                    btn.innerHTML = '<span style="display:inline-flex;align-items:center;justify-content:center;width:1.2rem;height:1.2rem;border:2.5px solid #FFFFFF;border-top-color:transparent;border-radius:50%;animation:btnSpin 0.65s linear infinite;margin:0 auto;"></span>';
 
-                    // Add a full-cover overlay on the card so nothing else can be clicked
-                    // We do NOT disable inputs — disabled inputs are excluded from form data
                     var card = form.closest('.card-serif');
                     if (card) {
                         card.style.position = 'relative';
@@ -117,7 +116,8 @@
                         overlay.id = 'login-lock-overlay';
                         overlay.style.cssText = 'position:absolute;inset:0;background:rgba(255,255,255,0.45);border-radius:inherit;z-index:10;cursor:not-allowed;pointer-events:all;';
                         card.appendChild(overlay);
-                    // 20-Second Timeout Watchdog
+                    }
+
                     var timer = setTimeout(function() {
                         btn.disabled = false;
                         btn.dataset.loading = 'false';

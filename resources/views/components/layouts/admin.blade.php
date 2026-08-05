@@ -33,6 +33,21 @@
 </head>
 <body style="background-color: #FAFAF8; min-height: 100vh;">
 
+    <script>
+        (function() {
+            var fromSession = {{ session('just_logged_in') ? 'true' : 'false' }};
+            var fromStorage = sessionStorage.getItem('siaptika_show_splash_admin') === 'true';
+            window.__shouldShowAdminSplash = fromSession || fromStorage;
+        })();
+    </script>
+    <x-splash mode="Admin" splashId="admin-splash-screen" />
+    <script>
+        if (!window.__shouldShowAdminSplash) {
+            var s = document.getElementById('admin-splash-screen');
+            if (s) s.style.display = 'none';
+        }
+    </script>
+
     {{-- ─── Global Loading Overlay ──────────────────────────────── --}}
     <div id="global-loading-overlay"
          style="display:none; position:fixed; inset:0; z-index:9999;
@@ -56,17 +71,9 @@
     </div>
 
     {{-- ─── Nav-link loading spinner helper ─────────────────────── --}}
-    {{--
-        __navGo(el, href)
-        Mengunci ukuran elemen, mengganti isinya dengan spinner,
-        lalu langsung navigasi — spinner tetap tampil hingga halaman baru render.
-    --}}
     <script>
         function __navGo(el, href) {
-            /* Jangan proses jika sudah dalam mode loading */
             if (el.dataset.loading === 'true') return;
-
-            /* Resolusi URL dan lewati jika sudah di halaman yang sama */
             var dest;
             try { dest = new URL(href, window.location.origin); }
             catch (_) { window.location.href = href; return; }
@@ -75,17 +82,15 @@
             var currPath = window.location.pathname.replace(/\/$/, '');
             if (destPath === currPath && dest.search === window.location.search) return;
 
-            /* Kunci dimensi agar ukuran tidak berubah saat teks diganti spinner */
             var rect = el.getBoundingClientRect();
             el.style.width          = rect.width  + 'px';
             el.style.height         = rect.height + 'px';
             el.style.display        = 'inline-flex';
             el.style.alignItems     = 'center';
             el.style.justifyContent = 'center';
-            el.style.pointerEvents  = 'none';   /* Cegah double-klik */
+            el.style.pointerEvents  = 'none';
             el.dataset.loading      = 'true';
 
-            /* Ganti teks dengan spinner kecil berwarna emas */
             el.innerHTML =
                 '<span style="' +
                     'display:inline-block;' +
@@ -96,7 +101,6 @@
                     'animation:btnSpin 0.65s linear infinite;' +
                 '"></span>';
 
-            /* Navigasi langsung — spinner tetap tampil hingga halaman baru tiba */
             window.location.href = dest.href;
         }
     </script>
@@ -163,7 +167,6 @@
             }, timeoutMs);
         }
 
-        /* Otomatis bersihkan state loading jika pengguna menekan tombol Back / Forward di browser */
         window.addEventListener('pageshow', resetLoadingStates);
         window.addEventListener('popstate', resetLoadingStates);
     </script>
@@ -186,19 +189,37 @@
         ">
             <nav class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
 
-                {{-- Brand (spinner saat diklik) --}}
-                <a href="{{ route('admin.dashboard') }}"
-                   onclick="__navGo(this, this.href); return false;"
-                   class="flex items-center gap-3" style="text-decoration: none;">
-                    <span class="font-serif text-xl" style="color: #1A1A1A; letter-spacing: -0.01em;">SIAPTIKA</span>
-                    <span class="h-4 w-px" style="background-color: #E8E4DF;"></span>
-                    <span class="small-caps" style="font-size: 0.65rem;">Panel Admin</span>
-                </a>
+                {{-- Left Group: Brand Logo --}}
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('admin.dashboard') }}"
+                       onclick="__navGo(this, this.href); return false;"
+                       class="flex items-center gap-3" style="text-decoration: none;">
+                        <span class="font-serif text-xl" style="color: #1A1A1A; letter-spacing: -0.01em;">SIAPTIKA</span>
+                        <span class="h-4 w-px" style="background-color: #E8E4DF;"></span>
+                        <span class="small-caps" style="font-size: 0.65rem;">Panel Admin</span>
+                    </a>
+                </div>
 
-                {{-- Nav Links + Logout --}}
-                <div class="flex items-center gap-5">
+                {{-- Right Group: Sync Controls + Nav Links + Profile + Logout --}}
+                <div class="flex items-center gap-4">
 
-                    {{-- Navigation Links --}}
+                    {{-- Refresh Controls (Menempel langsung di sebelah kiri Button Navigasi) --}}
+                    <div class="hidden sm:flex items-center gap-2">
+                        <span id="sync-timestamp-text" class="text-xs font-mono text-[#6B6B6B] tracking-tight">
+                            Disinkronkan --:--:--
+                        </span>
+                        <button type="button" id="btn-manual-sync" onclick="triggerManualSync(this)" title="Sinkronkan & Muat Ulang Data"
+                                class="flex items-center justify-center p-1.5 rounded-lg text-[#6B6B6B] hover:text-[#1A1A1A] hover:bg-[#F5F3F0] transition-all duration-150 cursor-pointer"
+                                style="outline: none; border: none; background: none;">
+                            <svg id="sync-icon" class="w-4 h-4 text-[#B8860B] transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <span class="h-4 w-px hidden sm:block" style="background-color: #E8E4DF;"></span>
+
+                    {{-- Navigation Links (Dashboard, Kegiatan, Arsip) --}}
                     <nav class="hidden sm:flex items-center gap-1">
                         <a id="nav-dashboard" href="{{ route('admin.dashboard') }}"
                            onclick="__navGo(this, this.href); return false;"
@@ -217,14 +238,12 @@
                         </a>
                     </nav>
 
-                    <span class="h-4 w-px hidden sm:block" style="background-color: #E8E4DF;"></span>
+                    <span class="h-4 w-px hidden md:block" style="background-color: #E8E4DF;"></span>
 
-                    {{-- User name --}}
+                    {{-- User Name & Logout --}}
                     <span class="text-xs hidden md:block" style="color: #6B6B6B; font-family: 'Source Sans 3', system-ui, sans-serif;">
                         {{ Auth::user()->name }}
                     </span>
-
-                    {{-- Logout Button --}}
                     <form id="form-logout" method="POST" action="{{ route('admin.logout') }}">
                         @csrf
                         <button id="btn-logout" type="submit" class="logout-btn" title="Keluar dari Akun">
@@ -307,14 +326,82 @@
         }
     </script>
 
-    {{-- ─── Logout Loading ─────────────────────────────────────── --}}
+    {{-- ─── Sync Timestamp & Splash Screen Handler ───────────────── --}}
     <script>
+        function getFormattedTime() {
+            var now = new Date();
+            var hrs  = String(now.getHours()).padStart(2, '0');
+            var mins = String(now.getMinutes()).padStart(2, '0');
+            var secs = String(now.getSeconds()).padStart(2, '0');
+            return hrs + ':' + mins + ':' + secs;
+        }
+
+        function updateSyncTimestampDisplay() {
+            var currentTime = getFormattedTime();
+            try { sessionStorage.setItem('siaptika_last_synced', currentTime); } catch (_) {}
+            var el = document.getElementById('sync-timestamp-text');
+            if (el) el.textContent = 'Disinkronkan ' + currentTime;
+        }
+
+        function triggerManualSync(btn) {
+            var icon = document.getElementById('sync-icon');
+            if (icon) icon.classList.add('animate-spin');
+            showGlobalLoading('Menyinkronkan data terbaru…');
+            setTimeout(function() {
+                window.location.reload();
+            }, 250);
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
+            updateSyncTimestampDisplay();
+
             var logoutForm = document.getElementById('form-logout');
             if (logoutForm) {
                 logoutForm.addEventListener('submit', function () {
                     showGlobalLoading('Keluar dari akun…');
                 });
+            }
+
+            // Splash Screen Admin (Hanya tampil setelah selesai Login)
+            var splash = document.getElementById('admin-splash-screen');
+            var shouldShowSplash = window.__shouldShowAdminSplash;
+
+            if (splash) {
+                if (shouldShowSplash) {
+                    sessionStorage.removeItem('siaptika_show_splash_admin');
+                    var progressBar = document.getElementById('admin-splash-screen-bar');
+                    var statusText  = document.getElementById('admin-splash-screen-status');
+                    var percentText = document.getElementById('admin-splash-screen-percent');
+
+                    var progress = 0;
+                    var interval = setInterval(function() {
+                        progress += Math.floor(Math.random() * 12) + 8;
+                        if (progress > 100) progress = 100;
+
+                        if (progressBar) progressBar.style.width = progress + '%';
+                        if (percentText) percentText.textContent = progress + '%';
+
+                        if (statusText) {
+                            if (progress < 30) statusText.textContent = 'Menghubungkan ke basis data...';
+                            else if (progress < 65) statusText.textContent = 'Menyiapkan data kegiatan & arsip...';
+                            else if (progress < 95) statusText.textContent = 'Menata antarmuka dashboard...';
+                            else statusText.textContent = 'Sistem Siap!';
+                        }
+
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            setTimeout(function() {
+                                splash.style.opacity = '0';
+                                splash.style.pointerEvents = 'none';
+                                setTimeout(function() {
+                                    splash.style.display = 'none';
+                                }, 450);
+                            }, 250);
+                        }
+                    }, 90);
+                } else {
+                    splash.style.display = 'none';
+                }
             }
         });
     </script>

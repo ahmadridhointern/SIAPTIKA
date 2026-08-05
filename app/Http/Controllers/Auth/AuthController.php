@@ -40,7 +40,8 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('admin.dashboard'));
+        return redirect()->intended(route('admin.dashboard'))
+            ->with('just_logged_in', true);
     }
 
     /**

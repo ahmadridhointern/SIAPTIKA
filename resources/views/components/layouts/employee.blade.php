@@ -33,6 +33,8 @@
 </head>
 <body style="background-color: #FAFAF8; min-height: 100vh;">
 
+    <x-splash mode="Pegawai" splashId="employee-splash-screen" />
+
     {{-- ─── Global Loading Overlay ──────────────────────────────── --}}
     <div id="global-loading-overlay"
          style="display:none; position:fixed; inset:0; z-index:9999;
@@ -175,36 +177,58 @@
         ">
             <nav class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
 
-                {{-- Brand --}}
-                <a href="{{ route('employee.dashboard') }}"
-                   onclick="__navGo(this, this.href); return false;"
-                   class="flex items-center gap-3" style="text-decoration: none;">
-                    <span class="font-serif text-xl" style="color: #1A1A1A; letter-spacing: -0.01em;">SIAPTIKA</span>
-                    <span class="h-4 w-px" style="background-color: #E8E4DF;"></span>
-                    <span class="small-caps" style="font-size: 0.65rem;">Portal Pegawai</span>
-                </a>
+                {{-- Left Group: Brand Logo --}}
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('employee.dashboard') }}"
+                       onclick="__navGo(this, this.href); return false;"
+                       class="flex items-center gap-3" style="text-decoration: none;">
+                        <span class="font-serif text-xl" style="color: #1A1A1A; letter-spacing: -0.01em;">SIAPTIKA</span>
+                        <span class="h-4 w-px" style="background-color: #E8E4DF;"></span>
+                        <span class="small-caps" style="font-size: 0.65rem;">Portal Pegawai</span>
+                    </a>
+                </div>
 
-                {{-- Navigation Links --}}
-                <nav class="flex items-center gap-1">
-                    <a id="nav-dashboard"
-                       href="{{ route('employee.dashboard') }}"
-                       onclick="__navGo(this, this.href); return false;"
-                       class="nav-link-item {{ request()->routeIs('employee.dashboard') ? 'nav-active' : '' }}">
-                        Dashboard
-                    </a>
-                    <a id="nav-kegiatan"
-                       href="{{ route('employee.activities.index') }}"
-                       onclick="__navGo(this, this.href); return false;"
-                       class="nav-link-item {{ request()->routeIs('employee.activities.*') ? 'nav-active' : '' }}">
-                        Kegiatan
-                    </a>
-                    <a id="nav-arsip"
-                       href="{{ route('employee.archive.index') }}"
-                       onclick="__navGo(this, this.href); return false;"
-                       class="nav-link-item {{ request()->routeIs('employee.archive.*') ? 'nav-active' : '' }}">
-                        Arsip
-                    </a>
-                </nav>
+                {{-- Right Group: Sync Controls + Nav Links --}}
+                <div class="flex items-center gap-4">
+
+                    {{-- Refresh Controls (Menempel langsung di sebelah kiri Button Navigasi) --}}
+                    <div class="hidden sm:flex items-center gap-2">
+                        <span id="sync-timestamp-text" class="text-xs font-mono text-[#6B6B6B] tracking-tight">
+                            Disinkronkan --:--:--
+                        </span>
+                        <button type="button" id="btn-manual-sync" onclick="triggerManualSync(this)" title="Sinkronkan & Muat Ulang Data"
+                                class="flex items-center justify-center p-1.5 rounded-lg text-[#6B6B6B] hover:text-[#1A1A1A] hover:bg-[#F5F3F0] transition-all duration-150 cursor-pointer"
+                                style="outline: none; border: none; background: none;">
+                            <svg id="sync-icon" class="w-4 h-4 text-[#B8860B] transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <span class="h-4 w-px hidden sm:block" style="background-color: #E8E4DF;"></span>
+
+                    {{-- Navigation Links (Dashboard, Kegiatan, Arsip) --}}
+                    <nav class="flex items-center gap-1">
+                        <a id="nav-dashboard"
+                           href="{{ route('employee.dashboard') }}"
+                           onclick="__navGo(this, this.href); return false;"
+                           class="nav-link-item {{ request()->routeIs('employee.dashboard') ? 'nav-active' : '' }}">
+                            Dashboard
+                        </a>
+                        <a id="nav-kegiatan"
+                           href="{{ route('employee.activities.index') }}"
+                           onclick="__navGo(this, this.href); return false;"
+                           class="nav-link-item {{ request()->routeIs('employee.activities.*') ? 'nav-active' : '' }}">
+                            Kegiatan
+                        </a>
+                        <a id="nav-arsip"
+                           href="{{ route('employee.archive.index') }}"
+                           onclick="__navGo(this, this.href); return false;"
+                           class="nav-link-item {{ request()->routeIs('employee.archive.*') ? 'nav-active' : '' }}">
+                            Arsip
+                        </a>
+                    </nav>
+                </div>
 
             </nav>
         </header>
@@ -219,6 +243,79 @@
     </div>
 
     @stack('modals')
+
+    {{-- ─── Sync Timestamp & Splash Screen Handler ───────────────── --}}
+    <script>
+        function getFormattedTime() {
+            var now = new Date();
+            var hrs  = String(now.getHours()).padStart(2, '0');
+            var mins = String(now.getMinutes()).padStart(2, '0');
+            var secs = String(now.getSeconds()).padStart(2, '0');
+            return hrs + ':' + mins + ':' + secs;
+        }
+
+        function updateSyncTimestampDisplay() {
+            var currentTime = getFormattedTime();
+            try { sessionStorage.setItem('siaptika_last_synced', currentTime); } catch (_) {}
+            var el = document.getElementById('sync-timestamp-text');
+            if (el) el.textContent = 'Disinkronkan ' + currentTime;
+        }
+
+        function triggerManualSync(btn) {
+            var icon = document.getElementById('sync-icon');
+            if (icon) icon.classList.add('animate-spin');
+            showGlobalLoading('Menyinkronkan data portal pegawai…');
+            setTimeout(function() {
+                window.location.reload();
+            }, 250);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            updateSyncTimestampDisplay();
+
+            // Splash Screen Mode Pegawai (Tampil saat masuk ke url / sebelum dashboard muncul)
+            var splash = document.getElementById('employee-splash-screen');
+            var isFirstVisitInSession = sessionStorage.getItem('siaptika_employee_splash_shown') !== 'true';
+
+            if (splash) {
+                if (isFirstVisitInSession) {
+                    sessionStorage.setItem('siaptika_employee_splash_shown', 'true');
+                    var progressBar = document.getElementById('employee-splash-screen-bar');
+                    var statusText  = document.getElementById('employee-splash-screen-status');
+                    var percentText = document.getElementById('employee-splash-screen-percent');
+
+                    var progress = 0;
+                    var interval = setInterval(function() {
+                        progress += Math.floor(Math.random() * 12) + 8;
+                        if (progress > 100) progress = 100;
+
+                        if (progressBar) progressBar.style.width = progress + '%';
+                        if (percentText) percentText.textContent = progress + '%';
+
+                        if (statusText) {
+                            if (progress < 30) statusText.textContent = 'Menghubungkan ke server SIAPTIKA...';
+                            else if (progress < 65) statusText.textContent = 'Mengambil data agenda kegiatan & dokumen...';
+                            else if (progress < 95) statusText.textContent = 'Menyiapkan portal pegawai...';
+                            else statusText.textContent = 'Sistem Siap!';
+                        }
+
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            setTimeout(function() {
+                                splash.style.opacity = '0';
+                                splash.style.pointerEvents = 'none';
+                                setTimeout(function() {
+                                    splash.style.display = 'none';
+                                }, 450);
+                            }, 250);
+                        }
+                    }, 90);
+                } else {
+                    splash.style.display = 'none';
+                }
+            }
+        });
+    </script>
 
 </body>
 </html>

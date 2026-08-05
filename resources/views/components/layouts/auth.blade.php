@@ -6,6 +6,11 @@
     <meta name="description" content="SIAPTIKA — Sistem Informasi Administrasi Kegiatan Bidang APTIKA, Dinas Kominfotik Provinsi Riau">
     <title>{{ $title ?? 'Login' }} — SIAPTIKA</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        @keyframes btnSpin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body class="min-h-screen flex items-center justify-center px-4 py-16" style="background-color: #FAFAF8;">
 
