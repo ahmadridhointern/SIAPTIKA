@@ -29,13 +29,13 @@
     </div>
 
     {{-- Stats Grid --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10" data-gsap="stagger-cards">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
 
         {{-- Card 1: Total Kegiatan --}}
-        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between gsap-card transition-all duration-200" data-gsap-hover="elevate">
+        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between hover:-translate-y-1 transition-all duration-200">
             <div>
                 <span class="small-caps text-[0.65rem] tracking-[0.12em] block mb-2">Total Kegiatan</span>
-                <span class="font-serif text-5xl text-[#1A1A1A] font-light leading-none">
+                <span class="font-serif text-5xl text-[#1A1A1A] font-light leading-none" data-counter="{{ $totalKegiatan }}">
                     {{ $totalKegiatan }}
                 </span>
             </div>
@@ -45,10 +45,10 @@
         </div>
 
         {{-- Card 2: Hari Ini --}}
-        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between gsap-card transition-all duration-200" data-gsap-hover="elevate">
+        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between hover:-translate-y-1 transition-all duration-200">
             <div>
                 <span class="small-caps text-[0.65rem] tracking-[0.12em] block mb-2">Hari Ini</span>
-                <span class="font-serif text-5xl {{ $kegiatanHariIni > 0 ? 'text-[#B8860B]' : 'text-[#1A1A1A]' }} font-medium leading-none">
+                <span class="font-serif text-5xl {{ $kegiatanHariIni > 0 ? 'text-[#B8860B]' : 'text-[#1A1A1A]' }} font-medium leading-none" data-counter="{{ $kegiatanHariIni }}">
                     {{ $kegiatanHariIni }}
                 </span>
             </div>
@@ -58,10 +58,10 @@
         </div>
 
         {{-- Card 3: Mendatang --}}
-        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between gsap-card transition-all duration-200" data-gsap-hover="elevate">
+        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between hover:-translate-y-1 transition-all duration-200">
             <div>
                 <span class="small-caps text-[0.65rem] tracking-[0.12em] block mb-2">Mendatang</span>
-                <span class="font-serif text-5xl text-[#1A1A1A] font-light leading-none">
+                <span class="font-serif text-5xl text-[#1A1A1A] font-light leading-none" data-counter="{{ $kegiatanMendatang }}">
                     {{ $kegiatanMendatang }}
                 </span>
             </div>
@@ -71,10 +71,10 @@
         </div>
 
         {{-- Card 4: Total Arsip --}}
-        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between gsap-card transition-all duration-200" data-gsap-hover="elevate">
+        <div class="card-serif card-serif-accent p-6 flex flex-col justify-between hover:-translate-y-1 transition-all duration-200">
             <div>
                 <span class="small-caps text-[0.65rem] tracking-[0.12em] block mb-2">Total Arsip</span>
-                <span class="font-serif text-5xl text-[#1A1A1A] font-light leading-none">
+                <span class="font-serif text-5xl text-[#1A1A1A] font-light leading-none" data-counter="{{ $totalArsip }}">
                     {{ $totalArsip }}
                 </span>
             </div>
