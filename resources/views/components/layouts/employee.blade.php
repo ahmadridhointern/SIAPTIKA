@@ -279,6 +279,14 @@
             try { sessionStorage.removeItem('siaptika_employee_splash_shown'); } catch (_) {}
 
             var splash = document.getElementById('employee-splash-screen');
+            var progressBar = document.getElementById('employee-splash-screen-bar');
+            var statusText  = document.getElementById('employee-splash-screen-status');
+            var percentText = document.getElementById('employee-splash-screen-percent');
+
+            if (progressBar) { progressBar.style.transition = 'none'; progressBar.style.width = '0%'; }
+            if (percentText) percentText.textContent = '0%';
+            if (statusText)  statusText.textContent = 'Menghubungkan ke server SIAPTIKA...';
+
             if (splash) {
                 splash.style.display = 'flex';
                 splash.style.opacity = '1';
@@ -287,7 +295,7 @@
 
             setTimeout(function() {
                 window.location.reload();
-            }, 100);
+            }, 80);
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -304,32 +312,40 @@
                     var statusText  = document.getElementById('employee-splash-screen-status');
                     var percentText = document.getElementById('employee-splash-screen-percent');
 
+                    if (progressBar) { progressBar.style.transition = 'none'; progressBar.style.width = '0%'; }
+                    if (percentText) percentText.textContent = '0%';
+                    if (statusText)  statusText.textContent = 'Menghubungkan ke server SIAPTIKA...';
+
                     var progress = 0;
-                    var interval = setInterval(function() {
-                        progress += Math.floor(Math.random() * 12) + 8;
-                        if (progress > 100) progress = 100;
+                    setTimeout(function() {
+                        if (progressBar) progressBar.style.transition = 'width 0.15s ease-out';
+                        
+                        var interval = setInterval(function() {
+                            progress += Math.floor(Math.random() * 12) + 8;
+                            if (progress > 100) progress = 100;
 
-                        if (progressBar) progressBar.style.width = progress + '%';
-                        if (percentText) percentText.textContent = progress + '%';
+                            if (progressBar) progressBar.style.width = progress + '%';
+                            if (percentText) percentText.textContent = progress + '%';
 
-                        if (statusText) {
-                            if (progress < 30) statusText.textContent = 'Menghubungkan ke server SIAPTIKA...';
-                            else if (progress < 65) statusText.textContent = 'Mengambil data agenda kegiatan & dokumen...';
-                            else if (progress < 95) statusText.textContent = 'Menyiapkan portal pegawai...';
-                            else statusText.textContent = 'Sistem Siap!';
-                        }
+                            if (statusText) {
+                                if (progress < 30) statusText.textContent = 'Menghubungkan ke server SIAPTIKA...';
+                                else if (progress < 65) statusText.textContent = 'Mengambil data agenda kegiatan & dokumen...';
+                                else if (progress < 95) statusText.textContent = 'Menyiapkan portal pegawai...';
+                                else statusText.textContent = 'Sistem Siap!';
+                            }
 
-                        if (progress >= 100) {
-                            clearInterval(interval);
-                            setTimeout(function() {
-                                splash.style.opacity = '0';
-                                splash.style.pointerEvents = 'none';
+                            if (progress >= 100) {
+                                clearInterval(interval);
                                 setTimeout(function() {
-                                    splash.style.display = 'none';
-                                }, 450);
-                            }, 250);
-                        }
-                    }, 90);
+                                    splash.style.opacity = '0';
+                                    splash.style.pointerEvents = 'none';
+                                    setTimeout(function() {
+                                        splash.style.display = 'none';
+                                    }, 450);
+                                }, 250);
+                            }
+                        }, 90);
+                    }, 50);
                 } else {
                     splash.style.display = 'none';
                 }

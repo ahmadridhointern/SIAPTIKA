@@ -350,6 +350,14 @@
             try { sessionStorage.setItem('siaptika_show_splash_admin', 'true'); } catch (_) {}
 
             var splash = document.getElementById('admin-splash-screen');
+            var progressBar = document.getElementById('admin-splash-screen-bar');
+            var statusText  = document.getElementById('admin-splash-screen-status');
+            var percentText = document.getElementById('admin-splash-screen-percent');
+
+            if (progressBar) { progressBar.style.transition = 'none'; progressBar.style.width = '0%'; }
+            if (percentText) percentText.textContent = '0%';
+            if (statusText)  statusText.textContent = 'Menghubungkan ke basis data...';
+
             if (splash) {
                 splash.style.display = 'flex';
                 splash.style.opacity = '1';
@@ -358,7 +366,7 @@
 
             setTimeout(function() {
                 window.location.reload();
-            }, 100);
+            }, 80);
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -371,7 +379,7 @@
                 });
             }
 
-            // Splash Screen Admin (Hanya tampil setelah selesai Login)
+            // Splash Screen Admin (Hanya tampil setelah selesai Login / Trigger Manual Sync)
             var splash = document.getElementById('admin-splash-screen');
             var shouldShowSplash = window.__shouldShowAdminSplash;
 
@@ -382,32 +390,40 @@
                     var statusText  = document.getElementById('admin-splash-screen-status');
                     var percentText = document.getElementById('admin-splash-screen-percent');
 
+                    if (progressBar) { progressBar.style.transition = 'none'; progressBar.style.width = '0%'; }
+                    if (percentText) percentText.textContent = '0%';
+                    if (statusText)  statusText.textContent = 'Menghubungkan ke basis data...';
+
                     var progress = 0;
-                    var interval = setInterval(function() {
-                        progress += Math.floor(Math.random() * 12) + 8;
-                        if (progress > 100) progress = 100;
+                    setTimeout(function() {
+                        if (progressBar) progressBar.style.transition = 'width 0.15s ease-out';
+                        
+                        var interval = setInterval(function() {
+                            progress += Math.floor(Math.random() * 12) + 8;
+                            if (progress > 100) progress = 100;
 
-                        if (progressBar) progressBar.style.width = progress + '%';
-                        if (percentText) percentText.textContent = progress + '%';
+                            if (progressBar) progressBar.style.width = progress + '%';
+                            if (percentText) percentText.textContent = progress + '%';
 
-                        if (statusText) {
-                            if (progress < 30) statusText.textContent = 'Menghubungkan ke basis data...';
-                            else if (progress < 65) statusText.textContent = 'Menyiapkan data kegiatan & arsip...';
-                            else if (progress < 95) statusText.textContent = 'Menata antarmuka dashboard...';
-                            else statusText.textContent = 'Sistem Siap!';
-                        }
+                            if (statusText) {
+                                if (progress < 30) statusText.textContent = 'Menghubungkan ke basis data...';
+                                else if (progress < 65) statusText.textContent = 'Menyiapkan data kegiatan & arsip...';
+                                else if (progress < 95) statusText.textContent = 'Menata antarmuka dashboard...';
+                                else statusText.textContent = 'Sistem Siap!';
+                            }
 
-                        if (progress >= 100) {
-                            clearInterval(interval);
-                            setTimeout(function() {
-                                splash.style.opacity = '0';
-                                splash.style.pointerEvents = 'none';
+                            if (progress >= 100) {
+                                clearInterval(interval);
                                 setTimeout(function() {
-                                    splash.style.display = 'none';
-                                }, 450);
-                            }, 250);
-                        }
-                    }, 90);
+                                    splash.style.opacity = '0';
+                                    splash.style.pointerEvents = 'none';
+                                    setTimeout(function() {
+                                        splash.style.display = 'none';
+                                    }, 450);
+                                }, 250);
+                            }
+                        }, 90);
+                    }, 50);
                 } else {
                     splash.style.display = 'none';
                 }
