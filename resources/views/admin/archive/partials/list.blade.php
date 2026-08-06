@@ -106,7 +106,7 @@
                     <th scope="col" class="px-6 py-3.5 font-mono text-[0.7rem] uppercase tracking-wider text-[#6B6B6B] font-medium text-right">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-[#E8E4DF]" data-gsap="stagger-rows">
+            <tbody class="divide-y divide-[#E8E4DF]">
                 @foreach($documents as $doc)
                     @php
                         $ext = strtoupper(pathinfo($doc->file_name, PATHINFO_EXTENSION));

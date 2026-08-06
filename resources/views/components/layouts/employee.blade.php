@@ -33,7 +33,18 @@
 </head>
 <body style="background-color: #FAFAF8; min-height: 100vh;">
 
+    <script>
+        (function() {
+            window.__shouldShowEmployeeSplash = sessionStorage.getItem('siaptika_employee_splash_shown') !== 'true';
+        })();
+    </script>
     <x-splash mode="Pegawai" splashId="employee-splash-screen" />
+    <script>
+        if (!window.__shouldShowEmployeeSplash) {
+            var s = document.getElementById('employee-splash-screen');
+            if (s) s.style.display = 'none';
+        }
+    </script>
 
     {{-- ─── Global Loading Overlay ──────────────────────────────── --}}
     <div id="global-loading-overlay"
@@ -264,10 +275,19 @@
         function triggerManualSync(btn) {
             var icon = document.getElementById('sync-icon');
             if (icon) icon.classList.add('animate-spin');
-            showGlobalLoading('Menyinkronkan data portal pegawai…');
+            
+            try { sessionStorage.removeItem('siaptika_employee_splash_shown'); } catch (_) {}
+
+            var splash = document.getElementById('employee-splash-screen');
+            if (splash) {
+                splash.style.display = 'flex';
+                splash.style.opacity = '1';
+                splash.style.pointerEvents = 'all';
+            }
+
             setTimeout(function() {
                 window.location.reload();
-            }, 250);
+            }, 100);
         }
 
         document.addEventListener('DOMContentLoaded', function () {

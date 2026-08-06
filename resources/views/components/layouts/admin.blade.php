@@ -346,10 +346,19 @@
         function triggerManualSync(btn) {
             var icon = document.getElementById('sync-icon');
             if (icon) icon.classList.add('animate-spin');
-            showGlobalLoading('Menyinkronkan data terbaru…');
+            
+            try { sessionStorage.setItem('siaptika_show_splash_admin', 'true'); } catch (_) {}
+
+            var splash = document.getElementById('admin-splash-screen');
+            if (splash) {
+                splash.style.display = 'flex';
+                splash.style.opacity = '1';
+                splash.style.pointerEvents = 'all';
+            }
+
             setTimeout(function() {
                 window.location.reload();
-            }, 250);
+            }, 100);
         }
 
         document.addEventListener('DOMContentLoaded', function () {

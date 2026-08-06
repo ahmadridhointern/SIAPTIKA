@@ -1,7 +1,7 @@
 <x-layouts.admin title="Daftar Kegiatan">
 
     {{-- Page Header --}}
-    <div class="mb-10" data-gsap="fade-down">
+    <div class="mb-10">
         <div class="flex items-center gap-4 mb-4">
             <span class="small-caps">Administrasi APTIKA</span>
             <span class="h-px flex-1 bg-[#E8E4DF]"></span>
@@ -16,7 +16,7 @@
                 </p>
             </div>
             <div class="flex-shrink-0">
-                <button onclick="openModal('create-modal')" class="btn-primary" data-gsap-hover="scale">
+                <button onclick="openModal('create-modal')" class="btn-primary">
                     + Tambah Kegiatan
                 </button>
             </div>
@@ -508,9 +508,6 @@
         const el = document.getElementById(id);
         if (el) {
             el.classList.remove('hidden');
-            if (window.SIAPTIKA_GSAP && window.SIAPTIKA_GSAP.animateModal) {
-                window.SIAPTIKA_GSAP.animateModal(id);
-            }
             document.body.style.overflow = 'hidden';
             const appContent = document.getElementById('app-content');
             if (appContent) {

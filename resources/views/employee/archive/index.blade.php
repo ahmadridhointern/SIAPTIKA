@@ -246,9 +246,6 @@
             const el = document.getElementById(id);
             if (el) {
                 el.classList.remove('hidden');
-                if (window.SIAPTIKA_GSAP && window.SIAPTIKA_GSAP.animateModal) {
-                    window.SIAPTIKA_GSAP.animateModal(id);
-                }
                 document.body.style.overflow = 'hidden';
                 const appContent = document.getElementById('app-content');
                 if (appContent) appContent.classList.add('modal-open-filter');
