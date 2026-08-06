@@ -843,13 +843,13 @@
 
             if (msgEl) {
                 if (isPartialDate) {
-                    msgEl.textContent = '* Wajib memasukkan Tanggal Dari dan Tanggal Sampai pada mode Rentang.';
+                    msgEl.textContent = '* Isi tanggal dari dan tanggal sampai pada mode rentang.';
                     msgEl.classList.remove('hidden');
                 } else if (isRangeBeforeDate) {
-                    msgEl.textContent = '* Tanggal Sampai tidak boleh sebelum Tanggal Dari.';
+                    msgEl.textContent = '* Tanggal sampai tidak boleh sebelum tanggal dari.';
                     msgEl.classList.remove('hidden');
                 } else if (isRangeSameDate) {
-                    msgEl.textContent = '* Pada mode Rentang, Tanggal Sampai tidak boleh sama dengan Tanggal Dari. Silakan gunakan mode "1 Hari".';
+                    msgEl.textContent = '* Pada mode rentang, tanggal sampai tidak boleh sama dengan tanggal dari. Gunakan mode 1 Hari untuk tanggal yang sama.';
                     msgEl.classList.remove('hidden');
                 } else {
                     msgEl.classList.add('hidden');

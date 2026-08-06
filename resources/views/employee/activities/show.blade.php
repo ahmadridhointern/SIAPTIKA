@@ -39,7 +39,7 @@
                 {{-- Header Kartu: Info Pembuat --}}
                 <div class="px-8 py-4 border-b border-[#F5F3F0] flex flex-wrap items-center justify-between gap-x-6 gap-y-1 hover:bg-[#FAFAF8] transition-colors duration-150">
                     <span class="text-xs text-[#6B6B6B] font-mono">
-                        Dibuat oleh: <span class="text-[#1A1A1A]">{{ $activity->user->name ?? '—' }}</span>
+                        Dibuat oleh: <span class="text-[#1A1A1A]">{{ $activity->user->name ?? '-' }}</span>
                     </span>
                     <span class="text-xs text-[#6B6B6B] font-mono">
                         <time datetime="{{ $activity->created_at->format('Y-m-d\TH:i') }}">
@@ -68,7 +68,7 @@
                         <div class="p-3 -m-3 rounded-lg hover:bg-[#FAFAF8] transition-colors duration-150">
                             <span class="small-caps text-[0.65rem] block mb-2">Tempat / Ruangan</span>
                             <div class="text-[#1A1A1A] font-medium text-base leading-snug">{{ $activity->location }}</div>
-                            <div class="text-[#6B6B6B] text-xs mt-1 leading-relaxed">Bidang APTIKA — Diskominfotik Riau</div>
+                            <div class="text-[#6B6B6B] text-xs mt-1 leading-relaxed">Bidang APTIKA, Diskominfotik Riau</div>
                         </div>
 
                         <div class="p-3 -m-3 rounded-lg hover:bg-[#FAFAF8] transition-colors duration-150">

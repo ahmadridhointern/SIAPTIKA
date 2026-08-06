@@ -13,7 +13,7 @@
         <ul class="px-5 py-3 space-y-1">
             @foreach($errors->all() as $error)
                 <li class="text-sm text-red-700 flex items-start gap-2">
-                    <span class="text-red-400 mt-0.5 flex-shrink-0">—</span>
+                    <span class="text-red-400 mt-0.5 flex-shrink-0">•</span>
                     {{ $error }}
                 </li>
             @endforeach

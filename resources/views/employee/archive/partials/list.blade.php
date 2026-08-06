@@ -13,7 +13,7 @@
         if (request('date_from') === request('date_to')) {
             $activeFilters[] = 'Unggah: ' . \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y');
         } else {
-            $activeFilters[] = 'Unggah: ' . \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') . ' – ' . \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y');
+            $activeFilters[] = 'Unggah: ' . \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') . ' s.d. ' . \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y');
         }
     }
 
@@ -21,12 +21,12 @@
         if (request('activity_date_from') === request('activity_date_to')) {
             $activeFilters[] = 'Tgl Kegiatan: ' . \Carbon\Carbon::parse(request('activity_date_from'))->format('d/m/Y');
         } else {
-            $activeFilters[] = 'Tgl Kegiatan: ' . \Carbon\Carbon::parse(request('activity_date_from'))->format('d/m/Y') . ' – ' . \Carbon\Carbon::parse(request('activity_date_to'))->format('d/m/Y');
+            $activeFilters[] = 'Tgl Kegiatan: ' . \Carbon\Carbon::parse(request('activity_date_from'))->format('d/m/Y') . ' s.d. ' . \Carbon\Carbon::parse(request('activity_date_to'))->format('d/m/Y');
         }
     }
 
     if (request('sort') === 'oldest')        $activeFilters[] = 'Urutan: Terlama Diunggah';
-    if (request('sort') === 'az')            $activeFilters[] = 'Urutan: A → Z';
+    if (request('sort') === 'az')            $activeFilters[] = 'Urutan: Abjad A-Z';
     if (request('sort') === 'activity_date') $activeFilters[] = 'Urutan: Tgl Kegiatan';
 @endphp
 
@@ -37,7 +37,7 @@
             Tidak ada berkas ditemukan
         @else
             Menampilkan
-            <span class="font-semibold text-[#1A1A1A]">{{ $documents->firstItem() }}–{{ $documents->lastItem() }}</span>
+            <span class="font-semibold text-[#1A1A1A]">{{ $documents->firstItem() }} s.d. {{ $documents->lastItem() }}</span>
             dari
             <span class="font-semibold text-[#1A1A1A]">{{ $documents->total() }}</span> berkas
             @if(request('search'))

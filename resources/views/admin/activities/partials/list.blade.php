@@ -13,12 +13,12 @@
         if (request('date_from') === request('date_to')) {
             $activeFilters[] = 'Tanggal: ' . \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y');
         } else {
-            $activeFilters[] = 'Tanggal: ' . \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') . ' – ' . \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y');
+            $activeFilters[] = 'Tanggal: ' . \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') . ' s.d. ' . \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y');
         }
     }
 
     if (request('sort') === 'oldest')        $activeFilters[] = 'Urutan: Terlama';
-    if (request('sort') === 'az')            $activeFilters[] = 'Urutan: A → Z';
+    if (request('sort') === 'az')            $activeFilters[] = 'Urutan: Abjad A-Z';
 
     if (request('has_documents') === '1')    $activeFilters[] = 'Ada Arsip';
 @endphp
@@ -27,7 +27,7 @@
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 px-1">
     <p class="text-xs font-mono text-[#6B6B6B]">
         Menampilkan
-        <span class="font-semibold text-[#1A1A1A]">{{ $activities->firstItem() ?? 0 }}–{{ $activities->lastItem() ?? 0 }}</span>
+        <span class="font-semibold text-[#1A1A1A]">{{ $activities->firstItem() ?? 0 }} s.d. {{ $activities->lastItem() ?? 0 }}</span>
         dari
         <span class="font-semibold text-[#1A1A1A]">{{ $activities->total() }}</span> kegiatan
         @if(request('search'))

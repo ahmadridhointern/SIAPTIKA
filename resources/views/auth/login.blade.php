@@ -88,9 +88,8 @@
 
     </div>
 
-    {{-- Footer note --}}
     <p class="text-center mt-6 text-xs" style="color: #6B6B6B; font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.05em;">
-        Hanya Administrator yang dapat mengakses sistem ini.
+        Akses khusus untuk Administrator sistem.
     </p>
 
     <script>
@@ -129,7 +128,7 @@
 
                         var errAlert = document.createElement('div');
                         errAlert.className = 'mb-5 alert-error';
-                        errAlert.textContent = 'Proses masuk memakan waktu terlalu lama (timeout). Silakan periksa koneksi internet Anda dan coba lagi.';
+                        errAlert.textContent = 'Waktu permintaan habis (timeout). Silakan periksa koneksi internet Anda dan coba lagi.';
                         form.parentNode.insertBefore(errAlert, form);
                     }, 20000);
 

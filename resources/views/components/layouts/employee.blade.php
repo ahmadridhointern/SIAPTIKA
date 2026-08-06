@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="SIAPTIKA — Portal Pegawai Bidang APTIKA">
-    <title>{{ $title ?? 'Dashboard' }} — SIAPTIKA Pegawai</title>
+    <meta name="description" content="SIAPTIKA | Portal Pegawai Bidang APTIKA">
+    <title>{{ $title ?? 'Dashboard' }} | SIAPTIKA Pegawai</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         /* Force explicit disabled button styling & cursor */
@@ -328,10 +328,10 @@
                             if (percentText) percentText.textContent = progress + '%';
 
                             if (statusText) {
-                                if (progress < 30) statusText.textContent = 'Menghubungkan ke server SIAPTIKA...';
-                                else if (progress < 65) statusText.textContent = 'Mengambil data agenda kegiatan & dokumen...';
-                                else if (progress < 95) statusText.textContent = 'Menyiapkan portal pegawai...';
-                                else statusText.textContent = 'Sistem Siap!';
+                                if (progress < 30) statusText.textContent = 'Menghubungkan ke sistem...';
+                                else if (progress < 65) statusText.textContent = 'Memuat data kegiatan dan dokumen...';
+                                else if (progress < 95) statusText.textContent = 'Menyiapkan halaman portal...';
+                                else statusText.textContent = 'Sistem siap!';
                             }
 
                             if (progress >= 100) {

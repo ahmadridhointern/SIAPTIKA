@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="SIAPTIKA — Panel Admin">
-    <title>{{ $title ?? 'Dashboard' }} — SIAPTIKA Admin</title>
+    <meta name="description" content="SIAPTIKA | Panel Admin">
+    <title>{{ $title ?? 'Dashboard' }} | SIAPTIKA Admin</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         /* Force explicit disabled button styling & cursor */
@@ -406,10 +406,10 @@
                             if (percentText) percentText.textContent = progress + '%';
 
                             if (statusText) {
-                                if (progress < 30) statusText.textContent = 'Menghubungkan ke basis data...';
-                                else if (progress < 65) statusText.textContent = 'Menyiapkan data kegiatan & arsip...';
-                                else if (progress < 95) statusText.textContent = 'Menata antarmuka dashboard...';
-                                else statusText.textContent = 'Sistem Siap!';
+                                if (progress < 30) statusText.textContent = 'Menghubungkan ke sistem...';
+                                else if (progress < 65) statusText.textContent = 'Memuat data kegiatan dan dokumen...';
+                                else if (progress < 95) statusText.textContent = 'Menyiapkan halaman utama...';
+                                else statusText.textContent = 'Sistem siap!';
                             }
 
                             if (progress >= 100) {

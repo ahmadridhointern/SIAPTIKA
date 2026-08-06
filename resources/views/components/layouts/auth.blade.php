@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="SIAPTIKA — Sistem Informasi Administrasi Kegiatan Bidang APTIKA, Dinas Kominfotik Provinsi Riau">
-    <title>{{ $title ?? 'Login' }} — SIAPTIKA</title>
+    <meta name="description" content="SIAPTIKA | Sistem Informasi Administrasi Kegiatan Bidang APTIKA, Dinas Kominfotik Provinsi Riau">
+    <title>{{ $title ?? 'Login' }} | SIAPTIKA</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         @keyframes btnSpin {

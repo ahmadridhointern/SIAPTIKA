@@ -11,7 +11,7 @@
                 Arsip Dokumen
             </h1>
             <p class="mt-2 text-sm text-[#6B6B6B]">
-                Kelola seluruh berkas dokumen arsip kegiatan Bidang APTIKA — Diskominfotik Riau.
+                Kelola seluruh berkas dokumen arsip kegiatan Bidang APTIKA, Diskominfotik Riau.
             </p>
         </div>
     </div>
@@ -577,13 +577,13 @@
 
             if (msgDate) {
                 if (singleUploadDate) {
-                    msgDate.textContent = '* Wajib memasukkan Tanggal Unggah Dari dan Sampai pada mode Rentang.';
+                    msgDate.textContent = '* Isi tanggal unggah dari dan sampai pada mode rentang.';
                     msgDate.classList.remove('hidden');
                 } else if (rangeBeforeUploadDate) {
-                    msgDate.textContent = '* Tanggal Unggah Sampai tidak boleh sebelum Tanggal Unggah Dari.';
+                    msgDate.textContent = '* Tanggal unggah sampai tidak boleh sebelum tanggal unggah dari.';
                     msgDate.classList.remove('hidden');
                 } else if (rangeSameUploadDate) {
-                    msgDate.textContent = '* Mode Rentang Tanggal Unggah membutuhkan tanggal yang berbeda. Gunakan mode "1 Hari" untuk tanggal sama.';
+                    msgDate.textContent = '* Pada mode rentang, tanggal unggah sampai tidak boleh sama dengan tanggal unggah dari. Gunakan mode 1 Hari untuk tanggal yang sama.';
                     msgDate.classList.remove('hidden');
                 } else {
                     msgDate.classList.add('hidden');
@@ -592,13 +592,13 @@
 
             if (msgAct) {
                 if (singleActDate) {
-                    msgAct.textContent = '* Wajib memasukkan Tanggal Kegiatan Dari dan Sampai pada mode Rentang.';
+                    msgAct.textContent = '* Isi tanggal kegiatan dari dan sampai pada mode rentang.';
                     msgAct.classList.remove('hidden');
                 } else if (rangeBeforeActDate) {
-                    msgAct.textContent = '* Tanggal Kegiatan Sampai tidak boleh sebelum Tanggal Kegiatan Dari.';
+                    msgAct.textContent = '* Tanggal kegiatan sampai tidak boleh sebelum tanggal kegiatan dari.';
                     msgAct.classList.remove('hidden');
                 } else if (rangeSameActDate) {
-                    msgAct.textContent = '* Mode Rentang Tanggal Kegiatan membutuhkan tanggal yang berbeda. Gunakan mode "1 Hari" untuk tanggal sama.';
+                    msgAct.textContent = '* Pada mode rentang, tanggal kegiatan sampai tidak boleh sama dengan tanggal kegiatan dari. Gunakan mode 1 Hari untuk tanggal yang sama.';
                     msgAct.classList.remove('hidden');
                 } else {
                     msgAct.classList.add('hidden');
