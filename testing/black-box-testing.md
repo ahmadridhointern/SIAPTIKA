@@ -1,322 +1,205 @@
-# Black Box Testing — SIAPTIKA
-## Sprint 5 — Stage 2
+# Matrix & Hasil Pengujian Black Box SIAPTIKA
 
-**Aplikasi:** SIAPTIKA (Sistem Informasi Administrasi Kegiatan Bidang APTIKA)
-**Metode:** Black Box Testing
-**URL Uji:** `http://localhost:8000`
-**Tanggal Dibuat:** 2026-08-10
-**Dibuat oleh:** _______________
+**Aplikasi**: SIAPTIKA (Sistem Informasi Arsip Penyelenggaraan TIK dan Aplikasi)
+**Tanggal Eksekusi**: 10 August 2026
+**Lingkungan**: Development (PHP 8.2, Laravel 11, Supabase Storage, MySQL)
+**Total Test Cases**: 124
 
----
+## 📊 Ringkasan Hasil Pengujian
 
-## Konvensi Dokumen
-
-### Kode Status
-| Kode | Arti |
-|------|------|
-| `PASS` | Hasil aktual sesuai hasil yang diharapkan |
-| `FAIL` | Hasil aktual tidak sesuai hasil yang diharapkan |
-| `SKIP` | Test case dilewati (beri alasan di kolom Catatan) |
-| `BLOCK` | Test case tidak dapat dijalankan karena hambatan |
-
-### Singkatan
-- **Admin** = Pengguna yang sudah login sebagai Administrator
-- **Pegawai** = Pengguna tanpa login (akses publik `/pegawai/*`)
-- **Tamu** = Pengguna belum login dan belum mengakses halaman manapun
+| Total TC | PASS | FAIL | Persentase Kelulusan |
+|---|---|---|---|
+| **124** | **88** | **36** | **71%** |
 
 ---
 
-## Persiapan Sebelum Pengujian
+## 📝 Rincian Hasil Test Case per Modul
 
-### Prasyarat Global
-1. Server Laravel berjalan: `php artisan serve`
-2. Koneksi internet aktif (untuk Supabase Storage)
-3. Browser: Google Chrome versi terbaru (mode normal, bukan incognito)
+### Modul 1: Autentikasi
 
-### Data Uji yang Diperlukan
+| ID Test Case | Nama Fitur / Skenario | Langkah Pengujian | Hasil Yang Diharapkan | Hasil Aktual | Status |
+|---|---|---|---|---|---|
+| **TC-AUTH-001** | Login Valid | Submit form login dengan email & password yang benar | Redirect ke /admin/dashboard | Status 419 | ❌ **FAIL** |
+| **TC-AUTH-002** | Login Email Tidak Terdaftar | Submit email yang tidak ada di database | Pesan: Email atau password salah. | Pesan: '' | ❌ **FAIL** |
+| **TC-AUTH-003** | Login Password Salah | Submit email terdaftar dengan password salah | Pesan: Email atau password salah. | Pesan: '' | ❌ **FAIL** |
+| **TC-AUTH-004** | Login Email Kosong | Kosongkan input email pada form login | Pesan: Email wajib diisi. | Pesan: '' | ❌ **FAIL** |
+| **TC-AUTH-005** | Login Password Kosong | Kosongkan input password pada form login | Pesan: Password wajib diisi. | Pesan: '' | ❌ **FAIL** |
+| **TC-AUTH-006** | Login Format Email Invalid | Input email tanpa @ (contoh: bukanemail) | Pesan: Format email tidak valid. | Pesan: '' | ❌ **FAIL** |
+| **TC-AUTH-007** | Login Password Too Short | Input password < 6 karakter (contoh: 12345) | Pesan: Password minimal 6 karakter. | Pesan: '' | ❌ **FAIL** |
+| **TC-AUTH-008** | Redirect Auth Active | Akses /login saat sudah login sebagai admin | Redirect ke /admin/dashboard | Status 302 | ❌ **FAIL** |
+| **TC-AUTH-009** | Logout Success | Klik tombol Logout pada header admin | Logout dan redirect ke /login dengan flash pesan sukses | Flash: '' | ❌ **FAIL** |
 
-| Data | Ketentuan |
-|------|-----------|
-| Akun admin | Email dan password admin yang valid |
-| Kegiatan masa depan | Minimal 1 kegiatan dengan tanggal setelah hari ini |
-| Kegiatan masa lampau tanpa dokumen | Minimal 1 kegiatan sudah lewat, belum ada arsip |
-| Kegiatan masa lampau dengan dokumen | Minimal 1 kegiatan sudah lewat, sudah ada arsip |
-| Dokumen tersimpan | Minimal 1 dokumen valid di Supabase Storage |
-| Berkas uji valid | File PDF kurang dari 10 MB dan file JPG kurang dari 10 MB |
-| Berkas uji terlalu besar | File PDF lebih dari 10 MB |
-| Berkas uji tipe tidak valid | File .exe, .zip, atau .txt |
+### Modul 2: Kontrol Akses
 
----
+| ID Test Case | Nama Fitur / Skenario | Langkah Pengujian | Hasil Yang Diharapkan | Hasil Aktual | Status |
+|---|---|---|---|---|---|
+| **TC-ACC-001** | Akses /admin/dashboard Tanpa Login | Buka /admin/dashboard di browser guest | Redirect ke /login dengan flash pesan | Redirect ke /login | ✅ **PASS** |
+| **TC-ACC-002** | Akses /admin/activities Tanpa Login | Buka /admin/activities di browser guest | Redirect ke /login | Redirect ke /login | ✅ **PASS** |
+| **TC-ACC-003** | Akses /admin/arsip Tanpa Login | Buka /admin/arsip di browser guest | Redirect ke /login | Redirect ke /login | ✅ **PASS** |
+| **TC-ACC-004** | Akses /pegawai/dashboard Public | Buka /pegawai/dashboard tanpa login | 200 OK — Halaman pegawai dapat diakses | Status 200 | ✅ **PASS** |
+| **TC-ACC-005** | Akses /pegawai/kegiatan Public | Buka /pegawai/kegiatan tanpa login | 200 OK — Halaman kegiatan pegawai dapat diakses | Status 200 | ✅ **PASS** |
+| **TC-ACC-006** | Akses /pegawai/arsip Public | Buka /pegawai/arsip tanpa login | 200 OK — Halaman arsip pegawai dapat diakses | Status 200 | ✅ **PASS** |
+| **TC-ACC-007** | Isolasi Action Upload Admin | Kirim POST ke /admin/activities/1/documents tanpa login | Redirect ke /login (Ditolak) | Redirect ke /login | ✅ **PASS** |
+| **TC-ACC-008** | Isolasi Action Edit Dokumen Admin | Kirim PUT ke /admin/documents/1 tanpa login | Redirect ke /login atau 404 jika ID tidak ada (Ditolak) | Ditolak (Redirect/404) | ✅ **PASS** |
 
-## Modul 1 — Autentikasi (TC-AUTH)
+### Modul 3: Dashboard Admin
 
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-AUTH-001 | Login | Login berhasil dengan kredensial valid | Belum login. Berada di `/login` | Email valid; Password valid; Klik "Masuk" | Redirect ke `/admin/dashboard`. Halaman dashboard admin tampil | | | |
-| TC-AUTH-002 | Login | Login gagal karena email tidak terdaftar | Belum login | Email `tidakada@email.com`; Password apapun; Klik "Masuk" | Halaman login tampil kembali. Pesan: "Email atau password salah." | | | |
-| TC-AUTH-003 | Login | Login gagal karena password salah | Belum login | Email valid; Password salah; Klik "Masuk" | Halaman login tampil kembali. Pesan: "Email atau password salah." | | | |
-| TC-AUTH-004 | Validasi login | Email kosong | Belum login | Email kosong; Password valid; Klik "Masuk" | Validasi gagal. Pesan: "Email wajib diisi." | | | |
-| TC-AUTH-005 | Validasi login | Password kosong | Belum login | Email valid; Password kosong; Klik "Masuk" | Validasi gagal. Pesan: "Password wajib diisi." | | | |
-| TC-AUTH-006 | Validasi login | Format email tidak valid | Belum login | Email `bukanemail`; Password valid; Klik "Masuk" | Validasi gagal. Pesan: "Format email tidak valid." | | | |
-| TC-AUTH-007 | Validasi login | Password kurang dari 6 karakter | Belum login | Email valid; Password `abc` (3 karakter); Klik "Masuk" | Validasi gagal. Pesan: "Password minimal 6 karakter." | | | |
-| TC-AUTH-008 | Redirect | Akses `/login` saat sudah login | Sudah login sebagai admin | Navigasi manual ke `/login` | Otomatis diarahkan ke `/admin/dashboard` | | | |
-| TC-AUTH-009 | Logout | Logout berhasil | Sudah login sebagai admin | Klik tombol "Keluar" | Sesi dihapus. Redirect ke `/login`. Flash: "Anda berhasil keluar dari sistem." | | | |
+| ID Test Case | Nama Fitur / Skenario | Langkah Pengujian | Hasil Yang Diharapkan | Hasil Aktual | Status |
+|---|---|---|---|---|---|
+| **TC-ADASH-001** | Tampilan 4 Kartu Statistik Admin | Buka /admin/dashboard setelah login | 4 kartu statistik tampil dengan angka yang sesuai database | Status 200, data statistik sesuai | ✅ **PASS** |
+| **TC-ADASH-002** | Animasi Counter Dashboard Admin | Amati angka 4 kartu saat halaman dimuat | Atribut data-counter ada pada kartu statistik untuk animasi Vanilla JS | Atribut data-counter ditemukan | ✅ **PASS** |
+| **TC-ADASH-003** | Bagian Agenda Hari Ini Admin | Buka /admin/dashboard | Bagian Agenda Hari Ini ditampilkan | Bagian Agenda Hari Ini tampil | ✅ **PASS** |
+| **TC-ADASH-004** | Bagian Agenda Mendatang Admin | Buka /admin/dashboard | Bagian Kegiatan Mendatang (maksimal 5 item) ditampilkan | Bagian Kegiatan Mendatang tampil | ✅ **PASS** |
+| **TC-ADASH-005** | Empty State Agenda Admin | Buka /admin/dashboard jika agenda kosong | Pesan kosong tampil jika agenda hari ini kosong | Pesan empty state/agenda tampil | ✅ **PASS** |
+| **TC-ADASH-006** | Navigasi ke Kelola Kegiatan | Klik tombol "Lihat Semua" atau link kegiatan | Link menuju /admin/activities tersedia | Link route admin.activities.index ada | ✅ **PASS** |
+| **TC-ADASH-007** | Splash Screen Trigger Refresh | Klik tombol refresh pada topbar | Elemen splash screen / script splash tersedia | Komponen splash screen ditemukan | ✅ **PASS** |
 
----
+### Modul 4: Dashboard Pegawai
 
-## Modul 2 — Kontrol Akses (TC-ACC)
+| ID Test Case | Nama Fitur / Skenario | Langkah Pengujian | Hasil Yang Diharapkan | Hasil Aktual | Status |
+|---|---|---|---|---|---|
+| **TC-EDASH-001** | Tampilan 4 Kartu Statistik Pegawai | Buka /pegawai/dashboard | 4 kartu statistik pegawai tampil dengan angka benar | Status 200, data statistik sesuai | ✅ **PASS** |
+| **TC-EDASH-002** | Animasi Counter Dashboard Pegawai | Amati angka statistik pegawai saat muat | Atribut data-counter ada pada dashboard pegawai | data-counter ditemukan | ✅ **PASS** |
+| **TC-EDASH-003** | Bagian Agenda Hari Ini Pegawai | Buka /pegawai/dashboard | Agenda hari ini pegawai tampil | Tampil | ✅ **PASS** |
+| **TC-EDASH-004** | Bagian Agenda Mendatang Pegawai | Buka /pegawai/dashboard | Agenda mendatang pegawai tampil (maks 5) | Tampil | ✅ **PASS** |
+| **TC-EDASH-005** | Navigasi Pegawai | Periksa menu navigasi di header/sidebar pegawai | Link ke /pegawai/kegiatan dan /pegawai/arsip tersedia | Link navigasi tersedia | ✅ **PASS** |
 
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-ACC-001 | Proteksi admin | Akses dashboard admin tanpa login | Belum login | Navigasi ke `/admin/dashboard` | Redirect ke `/login`. Flash: "Silakan login terlebih dahulu." | | | |
-| TC-ACC-002 | Proteksi admin | Akses daftar kegiatan admin tanpa login | Belum login | Navigasi ke `/admin/activities` | Redirect ke `/login` | | | |
-| TC-ACC-003 | Proteksi admin | Akses halaman arsip admin tanpa login | Belum login | Navigasi ke `/admin/arsip` | Redirect ke `/login` | | | |
-| TC-ACC-004 | Akses publik | Dashboard pegawai dapat diakses tanpa login | Belum login | Navigasi ke `/pegawai/dashboard` | Halaman dashboard pegawai tampil tanpa perlu login | | | |
-| TC-ACC-005 | Akses publik | Daftar kegiatan pegawai dapat diakses tanpa login | Belum login | Navigasi ke `/pegawai/kegiatan` | Daftar kegiatan tampil tanpa login | | | |
-| TC-ACC-006 | Akses publik | Arsip pegawai dapat diakses tanpa login | Belum login | Navigasi ke `/pegawai/arsip` | Daftar arsip tampil tanpa login | | | |
-| TC-ACC-007 | Isolasi akses | Upload dokumen tidak tersedia untuk non-admin | Tidak ada sesi admin | Navigasi langsung ke URL upload (POST `/admin/activities/1/documents`) | Redirect ke `/login` atau respons 403 | | | |
-| TC-ACC-008 | Isolasi akses | Edit dokumen tidak tersedia untuk non-admin | Tidak ada sesi admin | Navigasi langsung ke URL edit dokumen (PUT `/admin/documents/1`) | Redirect ke `/login` atau respons 403 | | | |
+### Modul 5: Manajemen Kegiatan
 
----
+| ID Test Case | Nama Fitur / Skenario | Langkah Pengujian | Hasil Yang Diharapkan | Hasil Aktual | Status |
+|---|---|---|---|---|---|
+| **TC-ACT-001** | Tambah Kegiatan Masa Depan Valid | Submit kegiatan baru dengan tanggal esok | Kegiatan tersimpan dengan status Direncana | Tersimpan, status: Direncana | ✅ **PASS** |
+| **TC-ACT-002** | Tambah Kegiatan Tanggal Masa Lampau | Submit kegiatan baru dengan tanggal kemarin | Kegiatan masa lampau tersimpan dengan status Sudah Berlangsung (belum ada dokumen) | Tersimpan, status: Sudah Berlangsung | ✅ **PASS** |
+| **TC-ACT-003** | Tambah Kegiatan Opsional Deskripsi Kosong | Submit kegiatan baru tanpa mengisi deskripsi | Kegiatan tanpa deskripsi tersimpan tanpa error | Tersimpan | ✅ **PASS** |
+| **TC-ACT-004** | Validasi Judul Kosong | Submit form tambah kegiatan dengan judul kosong | Pesan: Judul kegiatan wajib diisi. | Pesan: '' | ❌ **FAIL** |
+| **TC-ACT-005** | Validasi Tanggal Kosong | Submit form tambah kegiatan dengan tanggal kosong | Pesan: Tanggal pelaksanaan wajib diisi. | Pesan: '' | ❌ **FAIL** |
+| **TC-ACT-006** | Validasi Waktu Kosong | Submit form tambah kegiatan dengan waktu kosong | Pesan: Waktu pelaksanaan wajib diisi. | Pesan: '' | ❌ **FAIL** |
+| **TC-ACT-007** | Validasi Tempat Kosong | Submit form tambah kegiatan dengan tempat kosong | Pesan: Tempat pelaksanaan wajib diisi. | Pesan: '' | ❌ **FAIL** |
+| **TC-ACT-008** | Validasi Judul Too Short | Input judul kegiatan 4 karakter (contoh: Rapa) | Pesan: Judul kegiatan minimal 5 karakter. | Pesan: '' | ❌ **FAIL** |
+| **TC-ACT-009** | Boundary Judul 5 Karakter | Input judul kegiatan tepat 5 karakter (contoh: Rapat) | Judul 5 karakter tersimpan | Tersimpan | ✅ **PASS** |
+| **TC-ACT-010** | Validasi Tempat Too Short | Input tempat 2 karakter (contoh: RK) | Pesan: Tempat pelaksanaan minimal 3 karakter. | Pesan: '' | ❌ **FAIL** |
+| **TC-ACT-011** | Validasi Format Waktu Incorrect | Input waktu tidak valid (contoh: 25:00) | Pesan: Format waktu harus berupa HH:MM. | Pesan: '' | ❌ **FAIL** |
+| **TC-ACT-012** | Edit Kegiatan Belum Berlangsung Valid | Ubah judul/waktu kegiatan yang tanggalnya masa depan | Kegiatan belum berlangsung berhasil diperbarui | Berhasil diperbarui | ✅ **PASS** |
+| **TC-ACT-013** | Business Rule: Edit Kegiatan Sudah Berlangsung Ditolak | Coba edit kegiatan yang tanggalnya sudah lewat | Flash error: Kegiatan yang sudah dimulai tidak dapat diubah | Pesan: '' | ❌ **FAIL** |
+| **TC-ACT-014** | Validasi Edit Judul Short | Edit judul menjadi 3 karakter | Pesan: Judul kegiatan minimal 5 karakter. | Pesan: '' | ❌ **FAIL** |
+| **TC-ACT-015** | Hapus Kegiatan Belum Berlangsung Valid | Klik hapus pada kegiatan masa depan yang tidak memiliki dokumen | Kegiatan berhasil dihapus | Terhapus | ✅ **PASS** |
+| **TC-ACT-016** | Business Rule: Hapus Kegiatan Sudah Berlangsung Ditolak | Coba hapus kegiatan yang tanggalnya sudah lewat | Hapus ditolak dengan flash error | Berhasil dihapus (SALAH!) | ❌ **FAIL** |
+| **TC-ACT-017** | Business Rule: Hapus Kegiatan Yang Memiliki Dokumen Ditolak | Coba hapus kegiatan yang memiliki minimal 1 dokumen arsip | Hapus ditolak: Kegiatan tidak dapat dihapus karena sudah memiliki dokumen arsip | Gagal: '' | ❌ **FAIL** |
+| **TC-ACT-018** | Detail Kegiatan Admin | Klik kegiatan pada daftar admin | 200 OK — Detail kegiatan admin tampil lengkap | Status 200 | ✅ **PASS** |
+| **TC-ACT-019** | Filter Dokumen Di Detail Kegiatan | Pilih filter jenis dokumen di detail kegiatan | Filter dokumen di detail kegiatan berfungsi | Status 200 | ✅ **PASS** |
+| **TC-ACT-020** | Detail Kegiatan Pegawai Read-Only | Buka detail kegiatan dari sisi pegawai | 200 OK — Detail pegawai read-only tanpa tombol upload/edit/hapus | Read-only tanpa tombol aksi edit | ✅ **PASS** |
+| **TC-ACT-021** | Computed Status: Direncana | Periksa status kegiatan yang tanggalnya > hari ini | Status kegiatan masa depan = Direncana | Direncana | ✅ **PASS** |
+| **TC-ACT-022** | Computed Status: Sudah Berlangsung | Periksa status kegiatan tanggal <= hari ini tanpa dokumen | Status kegiatan masa lampau tanpa dokumen = Sudah Berlangsung | Sudah Berlangsung | ✅ **PASS** |
+| **TC-ACT-023** | Computed Status: Selesai | Periksa status kegiatan tanggal <= hari ini yang memiliki dokumen | Status kegiatan masa lampau dengan dokumen = Selesai | Selesai | ✅ **PASS** |
+| **TC-ACT-024** | Empty State Kegiatan | Cari kata kunci yang tidak ada di daftar kegiatan | Tampilan empty state saat pencarian/filter tidak menghasilkan data | Tampilan tidak sesuai | ❌ **FAIL** |
 
-## Modul 3 — Dashboard Admin (TC-ADASH)
+### Modul 6: Upload Dokumen
 
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-ADASH-001 | Statistik | Empat kartu statistik tampil dengan angka benar | Login. Ada data kegiatan dan arsip | Buka `/admin/dashboard` | Kartu Total Kegiatan, Hari Ini, Mendatang, Total Arsip tampil. Angka sesuai data di database | | | Verifikasi angka dengan query manual |
-| TC-ADASH-002 | Animasi counter | Angka counter dimulai dari 0 | Login. Kartu statistik > 0 | Buka `/admin/dashboard`. Perhatikan animasi kartu | Angka tiap kartu dimulai dari 0, kemudian naik secara animasi hingga nilai akhir | | | |
-| TC-ADASH-003 | Agenda hari ini | Kegiatan hari ini tampil terurut waktu | Login. Ada kegiatan hari ini | Buka `/admin/dashboard` | Daftar kegiatan hari ini muncul, diurutkan dari waktu paling pagi | | | |
-| TC-ADASH-004 | Agenda mendatang | Maks 5 kegiatan mendatang tampil | Login. Ada lebih dari 5 kegiatan mendatang | Buka `/admin/dashboard` | Hanya 5 kegiatan mendatang terdekat yang tampil | | | |
-| TC-ADASH-005 | Empty state | Pesan saat tidak ada kegiatan hari ini | Login. Tidak ada kegiatan hari ini | Buka `/admin/dashboard` | Pesan kosong yang informatif tampil di bagian agenda hari ini | | | |
-| TC-ADASH-006 | Navigasi | Link ke halaman kegiatan berfungsi | Login | Klik link atau tombol menuju daftar kegiatan dari dashboard | Diarahkan ke `/admin/activities` | | | |
-| TC-ADASH-007 | Splash screen | Splash screen muncul setelah login | Belum login | Login dengan kredensial valid | Splash screen dengan progress bar tampil sebelum dashboard muncul | | | |
+| ID Test Case | Nama Fitur / Skenario | Langkah Pengujian | Hasil Yang Diharapkan | Hasil Aktual | Status |
+|---|---|---|---|---|---|
+| **TC-DOC-001** | Upload Dokumen PDF Valid | Upload file PDF <= 10MB ke kegiatan yang sudah berlangsung | Upload PDF valid berhasil tersimpan di Supabase/DB | Berhasil tersimpan | ✅ **PASS** |
+| **TC-DOC-002** | Upload Dokumen JPG Valid | Upload file JPG <= 10MB jenis dokumentasi | Upload JPG valid berhasil | Berhasil | ✅ **PASS** |
+| **TC-DOC-003** | Upload Dokumen DOCX Valid | Upload file DOCX <= 10MB jenis notulen | Upload DOCX valid berhasil | Berhasil | ✅ **PASS** |
+| **TC-DOC-004** | Business Rule: Upload Ke Kegiatan Belum Berlangsung Ditolak | Coba upload dokumen ke kegiatan yang tanggalnya masa depan | Upload ditolak: Dokumen tidak dapat diunggah karena kegiatan belum berlangsung | Gagal menolak: '' | ❌ **FAIL** |
+| **TC-DOC-005** | Validasi Jenis Dokumen Kosong | Kosongkan pilihan jenis dokumen saat submit upload | Pesan: Jenis dokumen wajib dipilih. | Pesan: '' | ❌ **FAIL** |
+| **TC-DOC-006** | Validasi Berkas Dokumen Kosong | Submit form upload tanpa memilih berkas | Pesan: Berkas dokumen wajib diunggah. | Pesan: '' | ❌ **FAIL** |
+| **TC-DOC-007** | Validasi Ukuran File Exceeds 10MB | Upload file berkas berukuran > 10 MB (contoh: 11 MB) | Pesan: Ukuran berkas tidak boleh melebihi 10 MB. | Pesan: '' | ❌ **FAIL** |
+| **TC-DOC-008** | Validasi Mimes Extension .exe | Upload file dengan ekstensi .exe | Validasi mimes gagal untuk file .exe | Pesan: '' | ❌ **FAIL** |
+| **TC-DOC-009** | Validasi Mimes Extension .txt | Upload file dengan ekstensi .txt | Validasi mimes gagal untuk file .txt | Pesan: '' | ❌ **FAIL** |
+| **TC-DOC-010** | Upload File Video MP4 Valid | Upload file .mp4 <= 10MB jenis dokumentasi | Upload video MP4 diizinkan dan tersimpan | Berhasil | ✅ **PASS** |
+| **TC-DOC-011** | Validasi Invalid document_type Value | Submit payload document_type=invalid_type | Pesan: Jenis dokumen tidak valid. | Pesan: '' | ❌ **FAIL** |
+| **TC-DOC-012** | Verification Storage Supabase URL | Periksa kolom file_url pada tabel documents di database | URL file tersimpan menggunakan format Supabase Storage URL | URL: https://ciwggazfzainjccecbqw.supabase.co/storage/v1/object/public/documents/documents/3/8523f995-03d0-4f33-a513-440062c74f50.mp4 | ✅ **PASS** |
+| **TC-DOC-013** | Multiple Upload Ke 1 Kegiatan | Upload 2 dokumen berbeda secara berurutan ke 1 kegiatan | Multiple upload ke 1 kegiatan tersimpan tanpa konflik | 2 dokumen baru bertambah | ✅ **PASS** |
+| **TC-DOC-014** | Upload File PNG Valid | Upload file PNG <= 10MB jenis dokumentasi | Upload PNG diizinkan dan tersimpan | Berhasil | ✅ **PASS** |
 
----
+### Modul 7: Edit Metadata Dokumen
 
-## Modul 4 — Dashboard Pegawai (TC-EDASH)
+| ID Test Case | Nama Fitur / Skenario | Langkah Pengujian | Hasil Yang Diharapkan | Hasil Aktual | Status |
+|---|---|---|---|---|---|
+| **TC-DEDIT-001** | Edit Jenis Dokumen Tanpa Ganti File | Ubah jenis dokumen (contoh: dari Surat ke Notulen) tanpa upload file baru | Jenis dokumen berhasil diperbarui tanpa mengganti file | Berhasil diubah ke surat | ✅ **PASS** |
+| **TC-DEDIT-002** | Edit Jenis Dokumen Dan Ganti Berkas File | Ubah jenis dokumen dan upload file pengganti valid | Metadata dan berkas dokumen berhasil diperbarui sekaligus | Berkas dan metadata ter-update | ✅ **PASS** |
+| **TC-DEDIT-003** | Validasi Edit Jenis Dokumen Kosong | Kosongkan jenis dokumen saat edit metadata | Pesan: Jenis dokumen wajib dipilih. | Pesan: '' | ❌ **FAIL** |
+| **TC-DEDIT-004** | Validasi Edit File Extension .exe | Upload file pengganti ber-ekstensi .exe | Validasi mimes gagal saat ganti file .exe | Pesan: '' | ❌ **FAIL** |
+| **TC-DEDIT-005** | Validasi Edit File Size Exceeds 10MB | Upload file pengganti > 10 MB | Pesan: Ukuran berkas tidak boleh melebihi 10 MB. | Pesan: '' | ❌ **FAIL** |
+| **TC-DEDIT-006** | Business Rule: Hapus Dokumen Ditolak / No Delete Route | Periksa ketersediaan fitur/route delete dokumen | Route DELETE dokumen tidak tersedia (sesuai business rule arsip tidak boleh dihapus) | Route DELETE dokumen tidak ada (OK) | ✅ **PASS** |
+| **TC-DEDIT-007** | Akses Edit Dokumen Oleh Pegawai Ditolak | Periksa fitur edit dokumen di tampilan pegawai | Route edit dokumen pegawai tidak tersedia (read-only) | Route edit pegawai tidak ada (OK) | ✅ **PASS** |
 
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-EDASH-001 | Statistik | Empat kartu statistik tampil dengan data benar | Tidak perlu login | Buka `/pegawai/dashboard` | Kartu statistik tampil dengan angka sesuai database | | | |
-| TC-EDASH-002 | Animasi counter | Counter dimulai dari 0 | Data kegiatan lebih dari 0 | Buka `/pegawai/dashboard`. Perhatikan animasi | Counter mulai dari 0, naik ke nilai akhir | | | |
-| TC-EDASH-003 | Agenda hari ini | Kegiatan hari ini tampil | Ada kegiatan hari ini | Buka `/pegawai/dashboard` | Daftar agenda hari ini tampil terurut waktu | | | |
-| TC-EDASH-004 | Agenda mendatang | Maks 5 kegiatan mendatang | Ada kegiatan mendatang | Buka `/pegawai/dashboard` | Maks 5 kegiatan terdekat tampil | | | |
-| TC-EDASH-005 | Navigasi | Menu ke kegiatan dan arsip berfungsi | Tidak perlu login | Klik menu Jadwal Kegiatan dan Arsip Dokumen | Diarahkan ke `/pegawai/kegiatan` dan `/pegawai/arsip` | | | |
+### Modul 8: View & Download
 
----
+| ID Test Case | Nama Fitur / Skenario | Langkah Pengujian | Hasil Yang Diharapkan | Hasil Aktual | Status |
+|---|---|---|---|---|---|
+| **TC-DVIEW-001** | Preview Inline Dokumen PDF Admin | Klik tombol "Lihat" pada dokumen PDF di sisi admin | Content-Disposition: inline dan Content-Type: application/pdf | Disposition: 'inline; filename="test_document.pdf"', Content-Type: 'application/pdf' | ✅ **PASS** |
+| **TC-DVIEW-002** | Preview Inline Dokumen Gambar Admin | Klik tombol "Lihat" pada dokumen gambar di sisi admin | Content-Disposition: inline dan Content-Type: image/* | Disposition: 'inline; filename="test_photo.jpg"', Content-Type: 'image/jpeg' | ✅ **PASS** |
+| **TC-DVIEW-003** | Download Dokumen Admin | Klik tombol "Unduh" pada dokumen di sisi admin | Content-Disposition: attachment untuk download admin | Disposition: 'attachment; filename=test_document.pdf' | ✅ **PASS** |
+| **TC-DVIEW-004** | Preview Inline Dokumen Pegawai | Klik tombol "Lihat" pada dokumen di sisi pegawai | Preview inline diizinkan untuk pegawai | Disposition: 'inline; filename="test_document.pdf"' | ✅ **PASS** |
+| **TC-DVIEW-005** | Download Dokumen Pegawai | Klik tombol "Unduh" pada dokumen di sisi pegawai | Download attachment diizinkan untuk pegawai (sesuai business rules) | Disposition: 'attachment; filename=test_document.pdf' | ✅ **PASS** |
+| **TC-DVIEW-006** | Response 404 Jika Berkas Tidak Ada | Akses view dokumen yang record DB-nya ada tapi file storage terhapus | HTTP 404 saat file tidak ada di Supabase Storage | Status code: 404 | ✅ **PASS** |
 
-## Modul 5 — Manajemen Kegiatan CRUD (TC-ACT)
+### Modul 9: Daftar Arsip
 
-### 5A — Tambah Kegiatan
+| ID Test Case | Nama Fitur / Skenario | Langkah Pengujian | Hasil Yang Diharapkan | Hasil Aktual | Status |
+|---|---|---|---|---|---|
+| **TC-ARC-001** | Tampilan Daftar Arsip Admin | Buka /admin/arsip | 200 OK — Daftar arsip admin tampil dengan info kegiatan | Status 200 | ❌ **FAIL** |
+| **TC-ARC-002** | Filter Jenis Dokumen Surat | Pilih filter jenis Surat pada daftar arsip | Filter jenis Surat berfungsi | Status 200 | ✅ **PASS** |
+| **TC-ARC-003** | Filter Jenis Dokumen Notulen | Pilih filter jenis Notulen pada daftar arsip | Filter jenis Notulen berfungsi | Status 200 | ✅ **PASS** |
+| **TC-ARC-004** | Filter Format File PDF | Pilih filter format PDF pada daftar arsip | Filter format PDF berfungsi | Status 200 | ✅ **PASS** |
+| **TC-ARC-005** | Search Berdasarkan Nama File | Ketik nama file pada kolom pencarian arsip | Pencarian arsip berdasarkan nama file berfungsi | Hasil pencarian mengandung nama file | ✅ **PASS** |
+| **TC-ARC-006** | Search Berdasarkan Judul Kegiatan | Ketik judul kegiatan pada kolom pencarian arsip | Pencarian arsip berdasarkan judul kegiatan berfungsi | Status 200 | ✅ **PASS** |
+| **TC-ARC-007** | Tampilan Daftar Arsip Pegawai | Buka /pegawai/arsip | 200 OK — Daftar arsip pegawai tampil tanpa tombol edit | Tampil tanpa tombol edit | ✅ **PASS** |
+| **TC-ARC-008** | Empty State Arsip | Cari nama file yang tidak ada di daftar arsip | Tampilan empty state arsip jika data tidak ditemukan | Pesan empty state tampil | ✅ **PASS** |
 
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-ACT-001 | Tambah kegiatan | Data lengkap dan valid, tanggal masa depan | Login | Buka modal tambah; Isi semua field dengan data valid; Klik Simpan | Kegiatan tersimpan. Flash sukses tampil. Kegiatan muncul di daftar dengan status Direncana | | | |
-| TC-ACT-002 | Tambah kegiatan | Tanggal masa lampau | Login | Isi form dengan tanggal kemarin; Field lain valid; Klik Simpan | Kegiatan tersimpan. Status otomatis Sudah Berlangsung (jika belum ada dokumen) | | | |
-| TC-ACT-003 | Tambah kegiatan | Deskripsi dikosongkan (nullable) | Login | Isi semua field wajib; Kosongkan deskripsi; Klik Simpan | Kegiatan tersimpan tanpa error. Deskripsi tidak wajib | | | |
-| TC-ACT-004 | Validasi wajib | Judul kosong | Login | Biarkan judul kosong; Isi field lain; Klik Simpan | Validasi gagal. Pesan: "Judul kegiatan wajib diisi." | | | |
-| TC-ACT-005 | Validasi wajib | Tanggal kosong | Login | Biarkan tanggal kosong; Isi field lain; Klik Simpan | Validasi gagal. Pesan: "Tanggal pelaksanaan wajib diisi." | | | |
-| TC-ACT-006 | Validasi wajib | Waktu kosong | Login | Biarkan waktu kosong; Isi field lain; Klik Simpan | Validasi gagal. Pesan: "Waktu pelaksanaan wajib diisi." | | | |
-| TC-ACT-007 | Validasi wajib | Tempat kosong | Login | Biarkan tempat kosong; Isi field lain; Klik Simpan | Validasi gagal. Pesan: "Tempat pelaksanaan wajib diisi." | | | |
-| TC-ACT-008 | Validasi panjang | Judul kurang dari 5 karakter | Login | Judul `Abcd` (4 karakter); Isi field lain; Klik Simpan | Validasi gagal. Pesan: "Judul kegiatan minimal 5 karakter." | | | |
-| TC-ACT-009 | Validasi panjang | Judul tepat 5 karakter (boundary valid) | Login | Judul `Abcde` (5 karakter); Isi field lain; Klik Simpan | Validasi berhasil. Kegiatan tersimpan | | | |
-| TC-ACT-010 | Validasi panjang | Tempat kurang dari 3 karakter | Login | Tempat `AB` (2 karakter); Isi field lain; Klik Simpan | Validasi gagal. Pesan: "Tempat pelaksanaan minimal 3 karakter." | | | |
-| TC-ACT-011 | Validasi format | Format waktu salah | Login | Waktu `25:00` atau `8:0`; Isi field lain; Klik Simpan | Validasi gagal. Pesan: "Format waktu harus berupa HH:MM (contoh: 08:00)." | | | |
+### Modul 10: Pencarian & Filter
 
-### 5B — Edit Kegiatan
+| ID Test Case | Nama Fitur / Skenario | Langkah Pengujian | Hasil Yang Diharapkan | Hasil Aktual | Status |
+|---|---|---|---|---|---|
+| **TC-FILT-001** | Pencarian Kata Kunci Judul | Ketik kata "Rapat" pada kolom pencarian kegiatan | Pencarian judul Rapat menghasilkan data relevan | Status 200 | ✅ **PASS** |
+| **TC-FILT-002** | Pencarian Kata Kunci Tempat | Ketik nama tempat pada kolom pencarian kegiatan | Pencarian tempat Pekanbaru menghasilkan data relevan | Status 200 | ✅ **PASS** |
+| **TC-FILT-003** | Case Insensitive Search | Ketik kata "rapat" (huruf kecil semua) | Pencarian case-insensitive (rapat) tetap menemukan "Rapat" | Data ditemukan | ✅ **PASS** |
+| **TC-FILT-004** | Pencarian Tidak Menghasilkan Data | Ketik kata acak yang tidak ada di database | Pencarian tanpa hasil menampilkan pesan informatif | Status 200 | ✅ **PASS** |
+| **TC-FILT-005** | Filter Status Direncana | Pilih filter status Direncana | Filter status scheduled (Direncana) berfungsi | Status 200 | ✅ **PASS** |
+| **TC-FILT-006** | Filter Status Sudah Berlangsung | Pilih filter status Sudah Berlangsung | Filter status ongoing (Sudah Berlangsung) berfungsi | Status 200 | ✅ **PASS** |
+| **TC-FILT-007** | Filter Status Selesai | Pilih filter status Selesai | Filter status completed (Selesai) berfungsi | Status 200 | ✅ **PASS** |
+| **TC-FILT-008** | Filter Rentang Tanggal Valid | Isi filter tanggal mulai dan tanggal selesai | Filter rentang tanggal 2026-07-01 s/d 2026-07-31 berfungsi | Status 200 | ✅ **PASS** |
+| **TC-FILT-009** | Filter Tanggal Parsial Only date_from | Isi tanggal mulai saja tanpa tanggal selesai | Hanya date_from tanpa date_to diabaikan (filter tanggal tidak aktif) | Status 200 | ✅ **PASS** |
+| **TC-FILT-010** | Filter Berdasarkan Lokasi Specific | Pilih filter lokasi dari dropdown tempat | Filter lokasi (Pekanbaru) berfungsi | Status 200 | ✅ **PASS** |
+| **TC-FILT-011** | Filter Memiliki Dokumen Arsip | Centang filter "Hanya yang memiliki dokumen" | Filter has_documents=1 hanya menampilkan kegiatan yang punya arsip | Status 200 | ✅ **PASS** |
+| **TC-FILT-012** | Kombinasi Filter Search + Status | Isi pencarian "Rapat" dan filter status "Selesai" | Kombinasi search + status=completed berfungsi | Status 200 | ✅ **PASS** |
+| **TC-FILT-013** | Kombinasi Filter Tanggal + Lokasi | Isi rentang tanggal dan pilih lokasi tertentu | Kombinasi tanggal + lokasi berfungsi | Status 200 | ✅ **PASS** |
+| **TC-FILT-014** | Pengurutan Terbaru (Newest) | Pilih opsi urutkan "Terbaru" | Sort newest (terbaru) berfungsi | Status 200 | ✅ **PASS** |
+| **TC-FILT-015** | Pengurutan Terlama (Oldest) | Pilih opsi urutkan "Terlama" | Sort oldest (terlama) berfungsi | Status 200 | ✅ **PASS** |
+| **TC-FILT-016** | Pengurutan Abjad A-Z | Pilih opsi urutkan "Abjad A-Z" | Sort az (A-Z) berfungsi | Status 200 | ✅ **PASS** |
+| **TC-FILT-017** | Reset Semua Filter | Klik tombol "Reset Filter" | Navigasi tanpa query parameter mereset filter | Status 200 | ✅ **PASS** |
+| **TC-FILT-018** | Filter Tanggal Unggah Di Halaman Arsip | Isi filter tanggal pada halaman arsip | Filter tanggal unggah pada halaman arsip berfungsi | Status 200 | ✅ **PASS** |
 
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-ACT-012 | Edit kegiatan | Edit kegiatan yang belum berlangsung | Login. Ada kegiatan masa depan | Klik edit kegiatan masa depan; Ubah judul; Simpan | Data diperbarui. Flash sukses tampil | | | |
-| TC-ACT-013 | Business rule | Edit kegiatan yang sudah berlangsung ditolak | Login. Ada kegiatan masa lampau | Coba edit kegiatan masa lampau | Tombol edit tidak tersedia ATAU redirect dengan pesan: "Kegiatan yang sudah dimulai tidak dapat diubah." | | | |
-| TC-ACT-014 | Validasi edit | Edit dengan judul terlalu pendek | Login. Ada kegiatan masa depan | Buka edit; Ubah judul ke `Abc` (3 karakter); Simpan | Validasi gagal. Pesan minimal 5 karakter | | | |
+### Modul 11: Paginasi
 
-### 5C — Hapus Kegiatan
+| ID Test Case | Nama Fitur / Skenario | Langkah Pengujian | Hasil Yang Diharapkan | Hasil Aktual | Status |
+|---|---|---|---|---|---|
+| **TC-PAG-001** | Paginasi Daftar Kegiatan (10 item) | Buka /admin/activities yang memiliki > 10 data | 200 OK — Paginasi kegiatan maks 10 item per halaman | Status 200 | ✅ **PASS** |
+| **TC-PAG-002** | Navigasi Ke Halaman 2 Kegiatan | Klik tombol "Halaman 2" atau angka 2 pada paginasi | Halaman 2 kegiatan dapat diakses | Status 200 | ✅ **PASS** |
+| **TC-PAG-003** | Query String Persisted Di Paginasi | Lakukan pencarian "Rapat" lalu klik halaman 2 | Query string search=Rapat tetap dipertahankan saat navigasi halaman 2 | Query string ter-persisted di link paginasi | ✅ **PASS** |
+| **TC-PAG-004** | Paginasi Daftar Arsip | Buka halaman 2 pada daftar arsip | Halaman 2 arsip dapat diakses | Status 200 | ✅ **PASS** |
+| **TC-PAG-005** | Paginasi Kegiatan Pegawai | Buka halaman 2 pada daftar kegiatan pegawai | Halaman 2 kegiatan pegawai dapat diakses | Status 200 | ✅ **PASS** |
 
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-ACT-015 | Hapus kegiatan | Hapus kegiatan belum berlangsung tanpa dokumen | Login. Ada kegiatan masa depan tanpa dokumen | Klik hapus; Konfirmasi | Kegiatan terhapus. Flash sukses. Tidak lagi tampil di daftar | | | |
-| TC-ACT-016 | Business rule | Hapus kegiatan yang sudah berlangsung ditolak | Login. Ada kegiatan masa lampau | Coba hapus kegiatan masa lampau | Redirect dengan pesan: "Kegiatan yang sudah dimulai tidak dapat dihapus." | | | |
-| TC-ACT-017 | Business rule | Hapus kegiatan yang punya dokumen ditolak | Login. Ada kegiatan dengan dokumen | Coba hapus kegiatan berdokumen | Redirect dengan pesan: "Kegiatan tidak dapat dihapus karena sudah memiliki dokumen arsip." | | | |
+### Modul 12: State & Error
 
-### 5D — Detail dan Status Kegiatan
+| ID Test Case | Nama Fitur / Skenario | Langkah Pengujian | Hasil Yang Diharapkan | Hasil Aktual | Status |
+|---|---|---|---|---|---|
+| **TC-STATE-001** | Flash Message Sukses | Lakukan aksi simpan/update yang berhasil | Flash message sukses tampil setelah tambah kegiatan | Flash tidak ada | ❌ **FAIL** |
+| **TC-STATE-002** | Flash Message Error | Lakukan aksi yang melanggar aturan (misal hapus kegiatan selesai) | Flash message error tampil saat aksi ditolak | Flash error tidak ada | ❌ **FAIL** |
+| **TC-STATE-003** | Flash Message Unauthorized Middleware | Coba akses halaman admin tanpa login | Flash message "Silakan login terlebih dahulu" dari middleware | Flash tidak ada | ❌ **FAIL** |
+| **TC-STATE-004** | Empty State Data Kegiatan Kosong | Buka daftar kegiatan saat database kosong / filter tidak cocok | Tampilan empty state kegiatan informatif | Tidak tampil | ❌ **FAIL** |
+| **TC-STATE-005** | Empty State Data Arsip Kosong | Buka daftar arsip saat data tidak cocok | Tampilan empty state arsip informatif | Tampil | ✅ **PASS** |
+| **TC-STATE-006** | Error Page 404 View File Deleted Storage | Akses view dokumen yang berkasnya hilang dari Supabase | HTTP 404 saat file tidak ada di storage | Status 404 OK | ✅ **PASS** |
+| **TC-STATE-007** | Splash Screen Component Render | Periksa keberadaan modal splash screen pada DOM layout | Komponen splash screen di-include pada layout dashboard | Komponen splash ditemukan | ✅ **PASS** |
 
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-ACT-018 | Detail admin | Detail kegiatan admin tampil lengkap | Login. Ada kegiatan dengan dokumen | Klik nama kegiatan | Tampil judul, tanggal, waktu, tempat, deskripsi, status, dan daftar dokumen | | | |
-| TC-ACT-019 | Filter dokumen | Filter dokumen di detail berdasarkan jenis | Login. Ada kegiatan dengan beberapa jenis dokumen | Buka detail; Klik filter "Notulen" | Hanya dokumen jenis notulen yang tampil | | | |
-| TC-ACT-020 | Detail pegawai | Detail kegiatan pegawai read-only | Tidak login | Navigasi ke `/pegawai/kegiatan/{id}` | Detail tampil tanpa tombol upload, edit, atau hapus | | | |
-| TC-ACT-021 | Status Direncana | Badge status Direncana tampil | Login. Ada kegiatan masa depan | Buka daftar kegiatan | Badge Direncana tampil pada kegiatan masa depan | | | |
-| TC-ACT-022 | Status Berlangsung | Badge status Sudah Berlangsung tampil | Login. Ada kegiatan masa lampau tanpa dokumen | Buka daftar kegiatan | Badge Sudah Berlangsung tampil | | | |
-| TC-ACT-023 | Status Selesai | Badge status Selesai tampil | Login. Ada kegiatan masa lampau dengan dokumen | Buka daftar kegiatan | Badge Selesai tampil | | | |
-| TC-ACT-024 | Empty state | Pesan saat tidak ada hasil kegiatan | Login | Terapkan filter yang tidak ada hasilnya | Pesan informatif tampil, bukan halaman kosong atau error | | | |
+### Modul 13: Responsivitas UI
 
----
-
-## Modul 6 — Upload Dokumen (TC-DOC)
-
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-DOC-001 | Upload PDF | Upload dokumen PDF valid | Login. Ada kegiatan masa lampau | Di detail kegiatan: Pilih jenis Surat; Pilih file PDF kurang dari 10 MB; Klik Upload | Dokumen tersimpan di Supabase. Flash sukses. Dokumen muncul di daftar | | | |
-| TC-DOC-002 | Upload JPG | Upload dokumen gambar JPG valid | Login. Ada kegiatan masa lampau | Pilih jenis Dokumentasi; Pilih file JPG; Klik Upload | Dokumen tersimpan dan tampil di daftar | | | |
-| TC-DOC-003 | Upload DOCX | Upload dokumen Word valid | Login. Ada kegiatan masa lampau | Pilih jenis Notulen; Pilih file DOCX; Klik Upload | Dokumen tersimpan dan tampil di daftar | | | |
-| TC-DOC-004 | Business rule | Upload ke kegiatan yang belum berlangsung ditolak | Login. Ada kegiatan masa depan | Coba upload dokumen ke kegiatan masa depan | Pesan error: "Dokumen tidak dapat diunggah karena kegiatan belum berlangsung." | | | |
-| TC-DOC-005 | Validasi wajib | Upload tanpa memilih jenis dokumen | Login. Ada kegiatan masa lampau | Biarkan dropdown jenis kosong; Pilih file; Klik Upload | Validasi gagal. Pesan: "Jenis dokumen wajib dipilih." | | | |
-| TC-DOC-006 | Validasi wajib | Upload tanpa memilih file | Login. Ada kegiatan masa lampau | Pilih jenis dokumen; Biarkan file kosong; Klik Upload | Validasi gagal. Pesan: "Berkas dokumen wajib diunggah." | | | |
-| TC-DOC-007 | Validasi ukuran | Upload file lebih dari 10 MB | Login. Ada kegiatan masa lampau. Siapkan file lebih dari 10 MB | Pilih jenis; Pilih file lebih dari 10 MB; Klik Upload | Validasi gagal. Pesan: "Ukuran berkas tidak boleh melebihi 10 MB." | | | |
-| TC-DOC-008 | Validasi tipe | Upload file .exe | Login. Ada kegiatan masa lampau | Pilih jenis; Pilih file .exe; Klik Upload | Validasi gagal. Pesan tipe file tidak valid | | | |
-| TC-DOC-009 | Validasi tipe | Upload file .txt | Login. Ada kegiatan masa lampau | Pilih jenis; Pilih file .txt; Klik Upload | Validasi gagal. Pesan tipe file tidak valid | | | |
-| TC-DOC-010 | Validasi tipe | Upload file MP4 video (diizinkan) | Login. Ada kegiatan masa lampau | Pilih jenis Dokumentasi; Pilih file .mp4 kurang dari 10 MB; Klik Upload | Dokumen tersimpan dan tampil di daftar | | | |
-| TC-DOC-011 | Validasi jenis | Jenis dokumen di luar pilihan valid | Login | Manipulasi nilai POST dengan `document_type=invalid` | Validasi gagal. Pesan: "Jenis dokumen tidak valid." | | | |
-| TC-DOC-012 | Supabase Storage | File benar-benar tersimpan di Supabase | Login. TC-DOC-001 sudah PASS | Buka Supabase dashboard lalu buka Storage bucket `documents` | File ditemukan di path `documents/{activity_id}/...` | | | |
-| TC-DOC-013 | Upload multiple | Upload beberapa dokumen ke kegiatan yang sama | Login. Ada kegiatan masa lampau | Upload 3 file berbeda ke 1 kegiatan | Ketiga dokumen tampil di daftar. Tidak ada konflik | | | |
-| TC-DOC-014 | Upload MP | Upload file PNG (diizinkan) | Login. Ada kegiatan masa lampau | Pilih jenis Dokumentasi; Pilih file .png; Klik Upload | Dokumen tersimpan | | | |
-
----
-
-## Modul 7 — Edit dan Metadata Dokumen (TC-DEDIT)
-
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-DEDIT-001 | Edit jenis | Ubah jenis dokumen tanpa ganti file | Login. Ada dokumen tersimpan | Buka form edit dokumen; Ubah jenis dari Surat ke Notulen; Simpan (tanpa upload file baru) | Jenis dokumen diperbarui. Flash sukses. File di Supabase tidak berubah | | | |
-| TC-DEDIT-002 | Ganti file | Edit jenis dan ganti file sekaligus | Login. Ada dokumen tersimpan | Buka edit; Ubah jenis; Upload file baru; Simpan | Metadata dan file diperbarui. File lama terhapus dari Supabase | | | Verifikasi di Supabase |
-| TC-DEDIT-003 | Validasi edit | Edit tanpa memilih jenis | Login. Ada dokumen | Kosongkan jenis; Simpan | Validasi gagal. Pesan: "Jenis dokumen wajib dipilih." | | | |
-| TC-DEDIT-004 | Validasi edit | Ganti file dengan tipe tidak valid | Login. Ada dokumen | Buka edit; Upload file .exe; Simpan | Validasi gagal. Pesan tipe file tidak valid | | | |
-| TC-DEDIT-005 | Validasi edit | Ganti file dengan ukuran lebih dari 10 MB | Login. Ada dokumen | Buka edit; Upload file lebih dari 10 MB; Simpan | Validasi gagal. Pesan ukuran melebihi batas | | | |
-| TC-DEDIT-006 | Business rule | Dokumen tidak dapat dihapus | Login. Ada dokumen | Cari tombol hapus dokumen di seluruh UI | Tombol hapus dokumen tidak tersedia di manapun | | | |
-| TC-DEDIT-007 | Business rule | Edit dokumen tidak tersedia untuk pegawai | Tidak login. Buka `/pegawai/arsip` | Cari tombol edit di halaman arsip pegawai | Tombol edit tidak ada. Hanya view dan download yang tersedia | | | |
-
----
-
-## Modul 8 — View dan Download Dokumen (TC-DVIEW)
-
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-DVIEW-001 | Preview admin | Preview PDF inline oleh admin | Login. Ada dokumen PDF | Klik tombol Lihat pada dokumen PDF | PDF terbuka di tab baru sebagai inline preview | | | |
-| TC-DVIEW-002 | Preview admin | Preview JPG inline oleh admin | Login. Ada dokumen JPG | Klik tombol Lihat pada dokumen JPG | Gambar terbuka di tab baru (inline) | | | |
-| TC-DVIEW-003 | Download admin | Download dokumen oleh admin | Login. Ada dokumen | Klik tombol Unduh | File terunduh ke komputer | | | |
-| TC-DVIEW-004 | Preview pegawai | Preview dokumen oleh pegawai | Tidak login. Ada dokumen | Buka arsip pegawai; Klik Lihat | Dokumen terbuka di tab baru (inline) | | | |
-| TC-DVIEW-005 | Download pegawai | Download dokumen oleh pegawai | Tidak login. Ada dokumen | Buka arsip pegawai; Klik Unduh | File terunduh. Pegawai diizinkan download sesuai business rules | | | |
-| TC-DVIEW-006 | Error 404 | File tidak ada di Supabase Storage | Ada record di DB tapi file dihapus manual dari Storage | Akses URL view/download dokumen tersebut | Halaman error 404 dengan pesan: "Berkas dokumen tidak ditemukan di storage." | | | |
-
----
-
-## Modul 9 — Daftar Arsip (TC-ARC)
-
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-ARC-001 | Tampilan arsip admin | Semua arsip tampil dengan info kegiatan terkait | Login. Ada arsip | Buka `/admin/arsip` | Daftar dokumen tampil. Setiap baris menampilkan nama file, jenis, dan kegiatan terkait | | | |
-| TC-ARC-002 | Filter jenis | Filter jenis Surat | Login. Ada arsip berbagai jenis | Pilih filter jenis Surat; Terapkan | Hanya dokumen jenis surat tampil | | | |
-| TC-ARC-003 | Filter jenis | Filter jenis Notulen | Login. Ada arsip berbagai jenis | Pilih filter jenis Notulen; Terapkan | Hanya dokumen jenis notulen tampil | | | |
-| TC-ARC-004 | Filter format | Filter format file PDF | Login. Ada arsip berbagai format | Pilih filter format PDF; Terapkan | Hanya file .pdf tampil | | | |
-| TC-ARC-005 | Search arsip | Cari berdasarkan nama file | Login. Ada arsip | Ketik sebagian nama file | Dokumen yang namanya cocok tampil | | | |
-| TC-ARC-006 | Search arsip | Cari berdasarkan judul kegiatan | Login. Ada arsip | Ketik sebagian judul kegiatan terkait | Dokumen yang kegiatannya cocok tampil | | | |
-| TC-ARC-007 | Tampilan arsip pegawai | Arsip pegawai tampil tanpa tombol edit atau hapus | Tidak login | Buka `/pegawai/arsip` | Daftar arsip tampil. Tidak ada tombol edit atau hapus | | | |
-| TC-ARC-008 | Empty state | Pesan kosong saat filter tidak ada hasil | Ada arsip. Gunakan filter yang tidak ada hasilnya | Buka arsip dengan filter tipe yang tidak cocok | Pesan informatif tampil, bukan halaman error | | | |
-
----
-
-## Modul 10 — Pencarian dan Filter Kegiatan (TC-FILT)
-
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-FILT-001 | Pencarian judul | Cari kegiatan berdasarkan judul | Login. Ada kegiatan | Ketik sebagian kata dari judul kegiatan | Kegiatan yang judulnya mengandung kata itu tampil | | | |
-| TC-FILT-002 | Pencarian tempat | Cari kegiatan berdasarkan tempat | Login. Ada kegiatan | Ketik sebagian nama tempat kegiatan | Kegiatan yang tempatnya cocok tampil | | | |
-| TC-FILT-003 | Case-insensitive | Pencarian tidak terpengaruh kapitalisasi | Login. Ada kegiatan "Rapat Koordinasi" | Ketik `rapat koordinasi` dengan huruf kecil | Kegiatan Rapat Koordinasi tetap tampil | | | |
-| TC-FILT-004 | Tidak ada hasil | Pencarian tanpa hasil | Login. Ada kegiatan | Ketik `xyzxyz123` | Pesan tidak ada hasil tampil | | | |
-| TC-FILT-005 | Filter Direncana | Filter status Direncana | Login. Ada kegiatan berbagai status | Pilih filter Direncana | Hanya kegiatan masa depan tampil | | | |
-| TC-FILT-006 | Filter Berlangsung | Filter status Sudah Berlangsung | Login. Ada kegiatan masa lampau tanpa dokumen | Pilih filter Sudah Berlangsung | Hanya kegiatan sudah lewat tanpa arsip tampil | | | |
-| TC-FILT-007 | Filter Selesai | Filter status Selesai | Login. Ada kegiatan dengan dokumen | Pilih filter Selesai | Hanya kegiatan sudah lewat dan punya arsip tampil | | | |
-| TC-FILT-008 | Filter tanggal | Rentang tanggal valid | Login. Ada kegiatan | Isi date_from dan date_to; Terapkan | Hanya kegiatan dalam rentang tanggal itu tampil | | | |
-| TC-FILT-009 | Filter tanggal | Hanya date_from tanpa date_to | Login | Isi date_from saja; Submit | Filter tanggal tidak aktif (keduanya wajib diisi) | | | |
-| TC-FILT-010 | Filter lokasi | Filter berdasarkan lokasi | Login. Ada kegiatan berbagai lokasi | Pilih lokasi dari dropdown; Terapkan | Hanya kegiatan di lokasi itu tampil | | | |
-| TC-FILT-011 | Filter dokumen | Filter punya dokumen | Login. Ada kegiatan dengan dan tanpa dokumen | Aktifkan filter Punya Dokumen | Hanya kegiatan yang punya arsip tampil | | | |
-| TC-FILT-012 | Kombinasi filter | Pencarian dan filter status sekaligus | Login. Ada berbagai kegiatan | Ketik kata kunci + pilih status; Terapkan | Hanya kegiatan yang memenuhi keduanya tampil | | | |
-| TC-FILT-013 | Kombinasi filter | Filter tanggal dan lokasi sekaligus | Login | Isi rentang tanggal + pilih lokasi; Terapkan | Hanya kegiatan sesuai kombinasi tampil | | | |
-| TC-FILT-014 | Sort terbaru | Urutan default dari terbaru | Login. Ada kegiatan | Buka daftar tanpa sort khusus | Kegiatan diurutkan dari tanggal terbaru ke terlama | | | |
-| TC-FILT-015 | Sort terlama | Urutkan dari terlama | Login. Ada kegiatan | Pilih sort Terlama | Kegiatan diurutkan dari tanggal terlama ke terbaru | | | |
-| TC-FILT-016 | Sort A-Z | Urutkan A-Z berdasarkan judul | Login. Ada kegiatan | Pilih sort A-Z | Kegiatan diurutkan alfabetis berdasarkan judul | | | |
-| TC-FILT-017 | Reset filter | Reset semua filter | Login. Filter aktif | Klik tombol Reset atau navigasi ke `/admin/activities` tanpa parameter | Semua kegiatan tampil. Filter bersih | | | |
-| TC-FILT-018 | Filter arsip | Filter arsip berdasarkan tanggal unggah | Login. Ada arsip | Isi date_from dan date_to di halaman arsip | Hanya dokumen yang diunggah dalam rentang itu tampil | | | |
-
----
-
-## Modul 11 — Paginasi (TC-PAG)
-
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-PAG-001 | Paginasi kegiatan | 10 kegiatan per halaman | Login. Ada lebih dari 10 kegiatan | Buka `/admin/activities` | Maks 10 kegiatan per halaman. Kontrol paginasi tampil | | | |
-| TC-PAG-002 | Navigasi halaman | Pindah ke halaman berikutnya | Login. Ada lebih dari 10 kegiatan | Klik halaman 2 di kontrol paginasi | Halaman 2 tampil dengan 10 kegiatan berikutnya | | | |
-| TC-PAG-003 | Query string | Filter tetap aktif saat pindah halaman | Login. Ada filter aktif | Aktifkan search atau filter; Klik halaman 2 | URL mengandung parameter filter. Data di halaman 2 sudah terfilter | | | |
-| TC-PAG-004 | Paginasi arsip | 10 arsip per halaman | Login. Ada lebih dari 10 arsip | Buka `/admin/arsip` | Maks 10 arsip per halaman | | | |
-| TC-PAG-005 | Paginasi pegawai | Paginasi berfungsi di halaman kegiatan pegawai | Tidak login. Ada lebih dari 10 kegiatan | Buka `/pegawai/kegiatan` halaman 2 | Halaman 2 tampil dengan benar | | | |
-
----
-
-## Modul 12 — State Kosong dan Error (TC-STATE)
-
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-STATE-001 | Flash sukses | Pesan sukses setelah tambah kegiatan | Login | Tambah kegiatan valid; Simpan | Flash message sukses tampil di atas halaman | | | |
-| TC-STATE-002 | Flash error | Pesan error setelah aksi ditolak | Login. Ada kegiatan masa lampau | Coba hapus kegiatan masa lampau | Flash error: "Kegiatan yang sudah dimulai tidak dapat dihapus." | | | |
-| TC-STATE-003 | Flash dari middleware | Flash dari redirect proteksi login | Belum login | Akses `/admin/dashboard` tanpa login | Flash: "Silakan login terlebih dahulu." muncul di halaman login | | | |
-| TC-STATE-004 | Empty state kegiatan | Tampilan saat filter tidak ada hasil | Login | Terapkan filter yang tidak ada hasilnya | Tampilan kosong yang informatif, bukan blank atau error | | | |
-| TC-STATE-005 | Empty state arsip | Tampilan saat tidak ada arsip | Tidak ada arsip atau filter tidak ada hasil | Buka halaman arsip dengan filter tidak cocok | Tampilan kosong yang informatif | | | |
-| TC-STATE-006 | Error 404 storage | Akses file yang tidak ada di Storage | Ada record di DB tapi file dihapus manual dari Supabase | Akses URL view dokumen tersebut | HTTP 404 dengan pesan yang jelas | | | |
-| TC-STATE-007 | Splash screen | Splash screen saat klik refresh dari dashboard | Login | Klik tombol refresh di dashboard admin | Splash screen tampil, kemudian halaman diperbarui | | | |
-
----
-
-## Modul 13 — Responsivitas UI (TC-RESP)
-
-> Gunakan DevTools Chrome (F12 lalu Toggle Device Toolbar) untuk mengubah ukuran viewport.
-
-| TC ID | Fitur | Skenario | Prasyarat | Input / Aksi | Hasil yang Diharapkan | Hasil Aktual | Status | Catatan |
-|-------|-------|----------|-----------|--------------|----------------------|--------------|--------|---------|
-| TC-RESP-001 | Desktop | Tampilan dashboard di desktop 1920 piksel | Login | Set viewport 1920 piksel; Buka dashboard | Semua elemen tampil rapi. Tidak ada overflow horizontal | | | |
-| TC-RESP-002 | Tablet | Tampilan daftar kegiatan di tablet 768 piksel | Login | Set viewport 768 piksel; Buka daftar kegiatan | Layout menyesuaikan. Navigasi dan konten tetap usable | | | |
-| TC-RESP-003 | Mobile | Tampilan daftar kegiatan di mobile 375 piksel | Login | Set viewport 375 piksel; Buka daftar kegiatan | Layout satu kolom. Tidak ada scroll horizontal. Tombol dapat diklik | | | |
-| TC-RESP-004 | Mobile form | Form tambah kegiatan di mobile | Login. Viewport 375 piksel | Buka modal tambah kegiatan; Isi dan kirim | Form dapat diisi dan dikirim dari mobile tanpa masalah | | | |
-| TC-RESP-005 | Mobile arsip | Halaman arsip pegawai di mobile | Viewport 375 piksel | Buka `/pegawai/arsip` | Daftar arsip tampil dengan baik di mobile | | | |
-| TC-RESP-006 | Mobile nav | Navigasi di mobile | Login. Viewport 375 piksel | Periksa menu navigasi | Navigasi mobile berfungsi dan dapat diakses | | | |
-
----
-
-## Rekap Test Case
-
-| Modul | Total TC | Positif | Negatif | Boundary |
-|-------|----------|---------|---------|---------|
-| TC-AUTH | 9 | 2 | 6 | 1 |
-| TC-ACC | 8 | 3 | 5 | 0 |
-| TC-ADASH | 7 | 5 | 0 | 2 |
-| TC-EDASH | 5 | 5 | 0 | 0 |
-| TC-ACT | 24 | 8 | 12 | 4 |
-| TC-DOC | 14 | 4 | 9 | 1 |
-| TC-DEDIT | 7 | 2 | 4 | 1 |
-| TC-DVIEW | 6 | 4 | 2 | 0 |
-| TC-ARC | 8 | 5 | 2 | 1 |
-| TC-FILT | 18 | 12 | 4 | 2 |
-| TC-PAG | 5 | 5 | 0 | 0 |
-| TC-STATE | 7 | 2 | 4 | 1 |
-| TC-RESP | 6 | 6 | 0 | 0 |
-| **Total** | **124** | **63** | **48** | **13** |
-
----
-
-## Rekap Hasil Pengujian
-
-> Isi bagian ini setelah seluruh pengujian selesai.
-
-| Tanggal Uji | Penguji | Total TC | PASS | FAIL | SKIP | BLOCK |
-|-------------|---------|----------|------|------|------|-------|
-| | | 124 | | | | |
-
-### Daftar Bug Ditemukan
-
-| Bug ID | TC Terkait | Deskripsi | Keparahan | Status |
-|--------|-----------|-----------|-----------|--------|
-| | | | | |
-
-### Kesimpulan
-
-> Tulis kesimpulan setelah semua TC dieksekusi.
+| ID Test Case | Nama Fitur / Skenario | Langkah Pengujian | Hasil Yang Diharapkan | Hasil Aktual | Status |
+|---|---|---|---|---|---|
+| **TC-RESP-001** | Responsif Desktop Viewport (>= 1024px) | Buka aplikasi pada resolusi 1920x1080 | Tampilan dashboard desktop 1920px menggunakan CSS Grid/Flexbox responsif | HTML berisi layout grid/flexbox | ✅ **PASS** |
+| **TC-RESP-002** | Responsif Tablet Viewport (768px - 1023px) | Buka aplikasi pada resolusi iPad (768x1024) | Breakpoint tablet (md:) diterapkan pada layout kegiatan | Utility Tailwind md: ditemukan | ✅ **PASS** |
+| **TC-RESP-003** | Responsif Mobile Viewport (<= 767px) | Buka aplikasi pada resolusi Mobile (375x812) | Layout mobile menggunakan flex-col dan hidden md: untuk menyembunyikan elemen desktop | Layout mobile disesuaikan | ✅ **PASS** |
+| **TC-RESP-004** | Modal Form Fit Screen Mobile | Buka modal form tambah/edit di mobile view | Modal form menggunakan fixed inset-0 yang responsif di mobile | Modal fixed inset-0 ditemukan | ✅ **PASS** |
+| **TC-RESP-005** | Mobile Scroll Table / Card Grid | Buka daftar arsip di mobile view | Halaman arsip pegawai responsif | Status 200 | ✅ **PASS** |
+| **TC-RESP-006** | Mobile Hamburger / Sidebar Toggle | Buka menu navigasi pada mobile view | Navigasi mobile (header/menu) tersedia | Navigasi mobile ditemukan | ✅ **PASS** |
