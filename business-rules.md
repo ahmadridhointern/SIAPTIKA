@@ -57,6 +57,8 @@ Melihat jadwal
 
 Melihat arsip
 
+Mengunduh dokumen arsip
+
 Pegawai tidak dapat:
 
 Login
@@ -67,7 +69,25 @@ Edit
 
 Delete
 
-Download arsip
+---
+
+## Status Kegiatan
+
+Status kegiatan ditentukan otomatis oleh sistem berdasarkan tanggal, waktu, dan ketersediaan dokumen arsip:
+
+- Direncana: kegiatan belum berlangsung (tanggal + waktu belum lewat)
+- Sudah Berlangsung: kegiatan sudah lewat tetapi belum ada dokumen arsip
+- Selesai: kegiatan sudah lewat dan sudah memiliki dokumen arsip
+
+Admin tidak dapat mengubah status secara manual.
+
+---
+
+## Tanggal Kegiatan
+
+Admin dapat membuat kegiatan dengan tanggal di masa depan maupun masa lampau.
+
+Tidak ada batasan tanggal minimum atau maksimum.
 
 ---
 
