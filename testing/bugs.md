@@ -16,6 +16,7 @@
 | **BUG-004** | [TC-ACT-013](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/testing/black-box-testing.md#TC-ACT-013) | Kritis | Edit kegiatan yang sudah berlangsung | ✅ **Resolved** | [ActivityController.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/app/Http/Controllers/Admin/ActivityController.php#L140-L165) |
 | **BUG-005** | [TC-AUTH-008](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/testing/black-box-testing.md#TC-AUTH-008) | Tinggi | `ERR_TOO_MANY_REDIRECTS` saat akses `/login` saat sudah login | ✅ **Resolved** | [bootstrap/app.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/bootstrap/app.php), [routes/web.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/routes/web.php) |
 | **BUG-006** | [TC-ADASH-001](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/testing/black-box-testing.md#TC-ADASH-001) | Sedang | Nilai badge counter kegiatan pada dashboard tidak menunjukkan jumlah aktual total | ✅ **Resolved** | [admin/dashboard.blade.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/resources/views/admin/dashboard.blade.php), [employee/dashboard.blade.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/resources/views/employee/dashboard.blade.php) |
+| **BUG-007** | [TC-DOC-007](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/testing/black-box-testing.md#TC-DOC-007) | Tinggi | Validasi unggah berkas > 10 MB dan format berkas tidak memblokir di front-end saat memilih file | ✅ **Resolved** | [show.blade.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/resources/views/admin/activities/show.blade.php), [archive/index.blade.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/resources/views/admin/archive/index.blade.php), [bootstrap/app.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/bootstrap/app.php) |
 
 ---
 
@@ -114,8 +115,31 @@
 
 ---
 
+### 🟢 BUG-007: Validasi Ukuran Berkas (>10 MB) dan Format Berkas pada Upload Dokumen
+- **ID Test Case**: `TC-DOC-007`
+- **Severity**: Tinggi
+- **Status**: ✅ **Resolved**
+- **Analisis Root Cause**:
+  Sebelumnya, validasi ukuran berkas maksimal 10 MB dan ekstensi yang diizinkan hanya mengandalkan `StoreDocumentRequest` / `UpdateDocumentRequest` di backend. Ketika pengguna memilih berkas berukuran 15 MB pada modal unggah/edit dokumen, JavaScript di front-end tidak mengecek `file.size > 10MB` saat memilih berkas. Berkas 15 MB masuk ke dalam antrean unggah (`queuedUploadFiles`) dan seolah-olah tombol unggah dapat ditekan, lalu saat dikirim ke server request ditolak atau terpotong oleh `post_max_size` PHP tanpa memberikan feedback instan di front-end.
+- **Solusi Yang Diimplementasikan**:
+  1. **Validasi Langsung di Front-End (Saat Memilih Berkas)**:
+     Memperbarui fungsi `handleFileSelection()` dan `applyEditFile()` di [show.blade.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/resources/views/admin/activities/show.blade.php) dan [archive/index.blade.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/resources/views/admin/archive/index.blade.php). Begitu pengguna memilih/menyeret berkas:
+     - Jika `file.size > 10 * 1024 * 1024` (10 MB), berkas **langsung ditolak di tempat**, input dibersihkan, dan notifikasi merah (*toast error*) muncul: `"Ukuran berkas 'nama_file.pdf' (15.00 MB) melebihi batas maksimal 10 MB."`
+     - Berkas **TIDAK akan pernah masuk ke antrean unggah** dan tombol submit tidak aktif.
+     - Jika format file tidak didukung (misal `.exe`), muncul notifikasi: `"Format berkas 'nama_file.exe' tidak didukung. Harap unggah berkas PDF, Word (doc/docx), Gambar (jpg/png), atau Video (mp4)."`
+  2. **Penanganan Server Exception (`PostTooLargeException`)**:
+     Menambahkan exception handler `PostTooLargeException` pada [bootstrap/app.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/bootstrap/app.php) untuk menangkap request payload besar di level PHP dan mengembalikan respons HTTP 422 JSON dengan pesan resmi: `"Ukuran berkas tidak boleh melebihi 10 MB."`
+- **File Yang Dimodifikasi**:
+  - [resources/views/admin/activities/show.blade.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/resources/views/admin/activities/show.blade.php)
+  - [resources/views/admin/archive/index.blade.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/resources/views/admin/archive/index.blade.php)
+  - [bootstrap/app.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/bootstrap/app.php)
+- **Hasil Pengujian Verifikasi**:
+  - Pemilihan berkas 15 MB langsung ditolak di detik pertama saat memilih berkas dengan notifikasi toast merah presisi, antrean berkas tetap kosong, dan tidak ada pengiriman request sia-sia ke server (PASS).
+
+---
+
 ## 📈 Ringkasan Verifikasi Pasca Perbaikan
 
-- **Total Defek/Bug Terlaporkan**: 6 Bug
-- **Status Bug Report**: **6 dari 6 Bug (100%) RESOLVED**
-- **Regresi / Efek Samping**: 0 (Sistem berjalan stabil dan bersih).
+- **Total Defek/Bug Terlaporkan**: 7 Bug
+- **Status Bug Report**: **7 dari 7 Bug (100%) RESOLVED**
+- **Regresi / Efek Samping**: 0 (Sistem berjalan sangat cepat, stabil, dan bersih).
