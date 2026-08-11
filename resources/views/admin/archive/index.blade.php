@@ -331,6 +331,7 @@
                                     PDF, Word, JPG, PNG, atau MP4 (Maks. 10MB)
                                 </p>
                             </div>
+                            <p id="edit-doc-error-msg" class="hidden mt-1.5 text-[0.68rem] text-red-600 font-mono font-medium leading-tight text-center"></p>
 
                             <input id="edit_upload_file" name="file" type="file"
                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4"
@@ -857,7 +858,12 @@
             var editZone    = document.getElementById('edit-drop-zone');
             var newCard     = document.getElementById('edit-new-file-card');
             var statusBadge = document.getElementById('new-file-status-badge');
+            var errEl       = document.getElementById('edit-doc-error-msg');
 
+            if (errEl) {
+                errEl.classList.add('hidden');
+                errEl.textContent = '';
+            }
             if (editInput) editInput.value = '';
             if (editBtn) {
                 editBtn.disabled = true;
@@ -877,12 +883,6 @@
             }
         };
 
-        function displayUploadError(msg) {
-            if (typeof showToastError === 'function') {
-                showToastError(msg);
-            }
-        }
-
         window.applyEditFile = function(file) {
             var editBtn     = document.getElementById('btn-submit-edit-doc');
             var editZone    = document.getElementById('edit-drop-zone');
@@ -892,6 +892,12 @@
             var newSizeEl   = document.getElementById('edit-new-filesize');
             var newExtEl    = document.getElementById('edit-new-file-ext');
             var editInput   = document.getElementById('edit_upload_file');
+            var errEl       = document.getElementById('edit-doc-error-msg');
+
+            if (errEl) {
+                errEl.classList.add('hidden');
+                errEl.textContent = '';
+            }
 
             if (!file) {
                 cancelNewFileSelection();
@@ -906,16 +912,20 @@
             if (!allowedExts.includes(ext)) {
                 if (editInput) editInput.value = '';
                 cancelNewFileSelection();
-                var errMsg = "Format berkas '" + file.name + "' tidak didukung. Harap unggah berkas PDF, Word (doc/docx), Gambar (jpg/png), atau Video (mp4).";
-                displayUploadError(errMsg);
+                if (errEl) {
+                    errEl.textContent = '* Format berkas tidak didukung.';
+                    errEl.classList.remove('hidden');
+                }
                 return;
             }
 
             if (file.size > maxSizeBytes) {
                 if (editInput) editInput.value = '';
                 cancelNewFileSelection();
-                var errMsg = "Ukuran berkas '" + file.name + "' (" + sizeMb + " MB) melebihi batas maksimal 10 MB.";
-                displayUploadError(errMsg);
+                if (errEl) {
+                    errEl.textContent = '* Ukuran berkas melebihi 10 MB.';
+                    errEl.classList.remove('hidden');
+                }
                 return;
             }
 

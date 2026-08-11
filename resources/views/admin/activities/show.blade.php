@@ -521,6 +521,7 @@
                                     PDF, Word, JPG, PNG, atau MP4 (Maks. 10MB)
                                 </p>
                             </div>
+                            <p id="edit-doc-error-msg" class="hidden mt-1.5 text-[0.68rem] text-red-600 font-mono font-medium leading-tight text-center"></p>
 
                             <input id="edit_upload_file" name="file" type="file"
                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4"
@@ -610,6 +611,7 @@
                                        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;"
                                        onchange="handleFileInputChange('surat', this)">
                             </div>
+                            <p id="error-msg-surat" class="hidden mt-1 text-[0.62rem] text-red-600 font-mono font-medium leading-tight text-center"></p>
                         </div>
 
                         {{-- 2. Notulen --}}
@@ -631,6 +633,7 @@
                                        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;"
                                        onchange="handleFileInputChange('notulen', this)">
                             </div>
+                            <p id="error-msg-notulen" class="hidden mt-1 text-[0.62rem] text-red-600 font-mono font-medium leading-tight text-center"></p>
                         </div>
 
                         {{-- 3. Dokumentasi --}}
@@ -653,6 +656,7 @@
                                        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;"
                                        onchange="handleFileInputChange('dokumentasi', this)">
                             </div>
+                            <p id="error-msg-dokumentasi" class="hidden mt-1 text-[0.62rem] text-red-600 font-mono font-medium leading-tight text-center"></p>
                         </div>
 
                     </div>
@@ -915,7 +919,12 @@
         var editZone    = document.getElementById('edit-drop-zone');
         var newCard     = document.getElementById('edit-new-file-card');
         var statusBadge = document.getElementById('new-file-status-badge');
+        var errEl       = document.getElementById('edit-doc-error-msg');
 
+        if (errEl) {
+            errEl.classList.add('hidden');
+            errEl.textContent = '';
+        }
         if (editInput) editInput.value = '';
         if (editBtn) {
             editBtn.disabled = true;
@@ -935,12 +944,6 @@
         }
     };
 
-    function displayUploadError(msg) {
-        if (typeof showToastError === 'function') {
-            showToastError(msg);
-        }
-    }
-
     window.applyEditFile = function(file) {
         var editBtn     = document.getElementById('btn-submit-edit-doc');
         var editZone    = document.getElementById('edit-drop-zone');
@@ -950,6 +953,12 @@
         var newSizeEl   = document.getElementById('edit-new-filesize');
         var newExtEl    = document.getElementById('edit-new-file-ext');
         var editInput   = document.getElementById('edit_upload_file');
+        var errEl       = document.getElementById('edit-doc-error-msg');
+
+        if (errEl) {
+            errEl.classList.add('hidden');
+            errEl.textContent = '';
+        }
 
         if (!file) {
             cancelNewFileSelection();
@@ -964,16 +973,20 @@
         if (!allowedExts.includes(ext)) {
             if (editInput) editInput.value = '';
             cancelNewFileSelection();
-            var errMsg = "Format berkas '" + file.name + "' tidak didukung. Harap unggah berkas PDF, Word (doc/docx), Gambar (jpg/png), atau Video (mp4).";
-            displayUploadError(errMsg);
+            if (errEl) {
+                errEl.textContent = '* Format berkas tidak didukung.';
+                errEl.classList.remove('hidden');
+            }
             return;
         }
 
         if (file.size > maxSizeBytes) {
             if (editInput) editInput.value = '';
             cancelNewFileSelection();
-            var errMsg = "Ukuran berkas '" + file.name + "' (" + sizeMb + " MB) melebihi batas maksimal 10 MB.";
-            displayUploadError(errMsg);
+            if (errEl) {
+                errEl.textContent = '* Ukuran berkas melebihi 10 MB.';
+                errEl.classList.remove('hidden');
+            }
             return;
         }
 
@@ -1069,6 +1082,13 @@
 
     function handleFileSelection(category, fileList) {
         if (!fileList || fileList.length === 0) return;
+
+        var errEl = document.getElementById('error-msg-' + category);
+        if (errEl) {
+            errEl.classList.add('hidden');
+            errEl.textContent = '';
+        }
+
         var filesArr = Array.from(fileList);
         var allowedExts = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'mp4'];
         var maxSizeBytes = 10 * 1024 * 1024; // 10 MB
@@ -1076,19 +1096,22 @@
         for (var i = 0; i < filesArr.length; i++) {
             var file = filesArr[i];
             var ext = file.name.split('.').pop().toLowerCase();
-            var sizeMb = (file.size / (1024 * 1024)).toFixed(2);
 
             // Validasi Format
             if (!allowedExts.includes(ext)) {
-                var errMsgFormat = "Format berkas '" + file.name + "' tidak didukung. Harap unggah berkas PDF, Word (doc/docx), Gambar (jpg/png), atau Video (mp4).";
-                displayUploadError(errMsgFormat);
+                if (errEl) {
+                    errEl.textContent = '* Format berkas tidak didukung.';
+                    errEl.classList.remove('hidden');
+                }
                 continue;
             }
 
             // Validasi Ukuran (> 10MB)
             if (file.size > maxSizeBytes) {
-                var errMsgSize = "Ukuran berkas '" + file.name + "' (" + sizeMb + " MB) melebihi batas maksimal 10 MB.";
-                displayUploadError(errMsgSize);
+                if (errEl) {
+                    errEl.textContent = '* Ukuran berkas melebihi 10 MB.';
+                    errEl.classList.remove('hidden');
+                }
                 continue;
             }
 
