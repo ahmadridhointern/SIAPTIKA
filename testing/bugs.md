@@ -2,18 +2,20 @@
 
 **Dokumen**: Laporan Perbaikan Bug (Bug Resolution Report)
 **Tanggal Update**: 11 August 2026
-**Status Project**: ✅ Perbaikan Selesai (Stage 4 Completed)
+**Status Project**: ✅ Seluruh Perbaikan Bug Selesai (Stage 4 Completed)
 
 ---
 
 ## 📌 Rincian Hasil Perbaikan Bug (Bug Resolution Summary)
 
-| ID Bug | Test Case | Severity | Deskripsi Singkat | Status | Method / File Terkait |
+| ID Bug | Test Case / Modul | Severity | Deskripsi Singkat Defek | Status | Method / File Terkait |
 | :--- | :--- | :--- | :--- | :---: | :--- |
 | **BUG-001** | [TC-ACT-016](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/testing/black-box-testing.md#TC-ACT-016) | Kritis | Hapus kegiatan yang sudah berlangsung | ✅ **Resolved** | [ActivityController.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/app/Http/Controllers/Admin/ActivityController.php#L171-L192) |
 | **BUG-002** | [TC-ACT-017](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/testing/black-box-testing.md#TC-ACT-017) | Kritis | Hapus kegiatan yang sudah memiliki dokumen | ✅ **Resolved** | [ActivityController.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/app/Http/Controllers/Admin/ActivityController.php#L171-L192) |
 | **BUG-003** | [TC-DOC-004](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/testing/black-box-testing.md#TC-DOC-004) | Kritis | Upload dokumen ke kegiatan belum berlangsung | ✅ **Resolved** | [DocumentController.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/app/Http/Controllers/Admin/DocumentController.php#L46-L56) |
 | **BUG-004** | [TC-ACT-013](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/testing/black-box-testing.md#TC-ACT-013) | Kritis | Edit kegiatan yang sudah berlangsung | ✅ **Resolved** | [ActivityController.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/app/Http/Controllers/Admin/ActivityController.php#L140-L165) |
+| **BUG-005** | [TC-AUTH-008](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/testing/black-box-testing.md#TC-AUTH-008) | Tinggi | `ERR_TOO_MANY_REDIRECTS` saat akses `/login` saat sudah login | ✅ **Resolved** | [bootstrap/app.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/bootstrap/app.php), [routes/web.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/routes/web.php) |
+| **BUG-006** | [TC-ADASH-001](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/testing/black-box-testing.md#TC-ADASH-001) | Sedang | Nilai badge counter kegiatan pada dashboard tidak menunjukkan jumlah aktual total | ✅ **Resolved** | [admin/dashboard.blade.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/resources/views/admin/dashboard.blade.php), [employee/dashboard.blade.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/resources/views/employee/dashboard.blade.php) |
 
 ---
 
@@ -79,9 +81,41 @@
 
 ---
 
+### 🟢 BUG-005: Redirect Loop `ERR_TOO_MANY_REDIRECTS` Pada Halaman Login Saat Sudah Login
+- **ID Test Case**: `TC-AUTH-008`
+- **Severity**: Tinggi
+- **Status**: ✅ **Resolved**
+- **Analisis Root Cause**:
+  Pada Laravel 11, middleware built-in `guest` (`RedirectIfAuthenticated`) mengarahkan user yang sudah terautentikasi ke route default `'/'`. Di [routes/web.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/routes/web.php), route `'/'` berisi penanganan `return redirect()->route('login')`. Akibatnya, saat user yang sudah login mengakses `/login`, middleware me-redirect ke `/`, lalu route `/` me-redirect kembali ke `/login`, menyebabkan perulangan tak terbatas (Infinite 302 Redirect Loop: `/login` ↔ `/`) yang mengakibatkan browser menampilkan `ERR_TOO_MANY_REDIRECTS`.
+- **Solusi Yang Diimplementasikan**:
+  1. Mengonfigurasi `$middleware->redirectTo(guests: '/login', users: '/admin/dashboard')` pada [bootstrap/app.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/bootstrap/app.php) sehingga middleware `guest` mengarahkan pengguna terautentikasi langsung ke `/admin/dashboard`.
+  2. Memperbarui penanganan route `'/'` pada [routes/web.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/routes/web.php) untuk memeriksa `auth()->check()`. Jika user sudah login, mengarahkan ke `/admin/dashboard`, sebaliknya ke `/login`.
+- **File Yang Dimodifikasi**:
+  - [bootstrap/app.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/bootstrap/app.php)
+  - [routes/web.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/routes/web.php)
+- **Hasil Pengujian Verifikasi**:
+  - GET `/login` saat sudah login ➡️ HTTP 302 Redirect langsung ke `http://localhost:8000/admin/dashboard` (PASS — Tidak ada lagi redirect loop, pengguna tidak perlu hapus cookie).
+
+---
+
+### 🟢 BUG-006: Ketidaksesuaian Angka Badge Counter Bagian Kegiatan di Dashboard
+- **ID Test Case**: `TC-ADASH-001`
+- **Severity**: Sedang
+- **Status**: ✅ **Resolved**
+- **Analisis Root Cause**:
+  Pada komponen Blade dashboard ([admin/dashboard.blade.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/resources/views/admin/dashboard.blade.php) dan [employee/dashboard.blade.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/resources/views/employee/dashboard.blade.php)), badge counter di sebelah judul section *"Agenda Hari Ini"* dan *"Kegiatan Mendatang"* sebelumnya memanggil `$agendaMendatang->count()`. Karena koleksi `$agendaMendatang` dibatasi sebanyak 5 item (`take(5)`), badge counter hanya menampilkan angka `5`, meskipun total kegiatan mendatang di database berjumlah 35.
+- **Solusi Yang Diimplementasikan**:
+  Mengubah ekspresi badge counter pada kedua tampilan Blade dashboard menjadi `{{ $kegiatanHariIni }}` dan `{{ $kegiatanMendatang }}` yang menampung jumlah aktual total seluruh kegiatan dari database.
+- **File Yang Dimodifikasi**:
+  - [resources/views/admin/dashboard.blade.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/resources/views/admin/dashboard.blade.php)
+  - [resources/views/employee/dashboard.blade.php](file:///c:/Project/KERJA%20PRAKTEK/SIAPTIKA/resources/views/employee/dashboard.blade.php)
+- **Hasil Pengujian Verifikasi**:
+  - Badge counter *"Kegiatan Mendatang"* di dashboard kini menampilkan angka **35** (sesuai jumlah aktual kegiatan mendatang di database).
+
+---
+
 ## 📈 Ringkasan Verifikasi Pasca Perbaikan
 
-- **Total Test Cases**: 124 TC
-- **Status Test Case Kritis**: 100% PASS
-- **Status Bug Report**: 4 dari 4 Bug Kritis (100%) **RESOLVED**
-- **Efek Samping / Regresi**: 0 (Tidak ada regresi fungsi atau perubahan pada skema database/UI).
+- **Total Defek/Bug Terlaporkan**: 6 Bug
+- **Status Bug Report**: **6 dari 6 Bug (100%) RESOLVED**
+- **Regresi / Efek Samping**: 0 (Sistem berjalan stabil dan bersih).
