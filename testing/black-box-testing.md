@@ -7,9 +7,9 @@
 
 ## 📊 Ringkasan Hasil Pengujian
 
-| Total TC | PASS | FAIL | Persentase Kelulusan |
-|---|---|---|---|
-| **124** | **88** | **36** | **71%** |
+| Total TC | PASS | FAIL | Persentase Kelulusan | Status Bug Kritis |
+|---|---|---|---|---|
+| **124** | **97** | **27** | **78%** | ✅ **100% Resolved (4/4)** |
 
 ---
 
@@ -80,11 +80,11 @@
 | **TC-ACT-010** | Validasi Tempat Too Short | Input tempat 2 karakter (contoh: RK) | Pesan: Tempat pelaksanaan minimal 3 karakter. | Pesan: '' | ❌ **FAIL** |
 | **TC-ACT-011** | Validasi Format Waktu Incorrect | Input waktu tidak valid (contoh: 25:00) | Pesan: Format waktu harus berupa HH:MM. | Pesan: '' | ❌ **FAIL** |
 | **TC-ACT-012** | Edit Kegiatan Belum Berlangsung Valid | Ubah judul/waktu kegiatan yang tanggalnya masa depan | Kegiatan belum berlangsung berhasil diperbarui | Berhasil diperbarui | ✅ **PASS** |
-| **TC-ACT-013** | Business Rule: Edit Kegiatan Sudah Berlangsung Ditolak | Coba edit kegiatan yang tanggalnya sudah lewat | Flash error: Kegiatan yang sudah dimulai tidak dapat diubah | Pesan: '' | ❌ **FAIL** |
+| **TC-ACT-013** | Business Rule: Edit Kegiatan Sudah Berlangsung Ditolak | Coba edit kegiatan yang tanggalnya sudah lewat | Flash error: Kegiatan yang sudah dimulai tidak dapat diubah | Ditolak. Pesan: 'Kegiatan yang sudah dimulai tidak dapat diubah.' | ✅ **PASS** |
 | **TC-ACT-014** | Validasi Edit Judul Short | Edit judul menjadi 3 karakter | Pesan: Judul kegiatan minimal 5 karakter. | Pesan: '' | ❌ **FAIL** |
 | **TC-ACT-015** | Hapus Kegiatan Belum Berlangsung Valid | Klik hapus pada kegiatan masa depan yang tidak memiliki dokumen | Kegiatan berhasil dihapus | Terhapus | ✅ **PASS** |
-| **TC-ACT-016** | Business Rule: Hapus Kegiatan Sudah Berlangsung Ditolak | Coba hapus kegiatan yang tanggalnya sudah lewat | Hapus ditolak dengan flash error | Berhasil dihapus (SALAH!) | ❌ **FAIL** |
-| **TC-ACT-017** | Business Rule: Hapus Kegiatan Yang Memiliki Dokumen Ditolak | Coba hapus kegiatan yang memiliki minimal 1 dokumen arsip | Hapus ditolak: Kegiatan tidak dapat dihapus karena sudah memiliki dokumen arsip | Gagal: '' | ❌ **FAIL** |
+| **TC-ACT-016** | Business Rule: Hapus Kegiatan Sudah Berlangsung Ditolak | Coba hapus kegiatan yang tanggalnya sudah lewat | Hapus ditolak dengan flash error | Ditolak. Pesan: 'Kegiatan yang sudah dimulai tidak dapat dihapus.' | ✅ **PASS** |
+| **TC-ACT-017** | Business Rule: Hapus Kegiatan Yang Memiliki Dokumen Ditolak | Coba hapus kegiatan yang memiliki minimal 1 dokumen arsip | Hapus ditolak: Kegiatan tidak dapat dihapus karena sudah memiliki dokumen arsip | Ditolak. Pesan: 'Kegiatan tidak dapat dihapus karena sudah memiliki dokumen arsip.' | ✅ **PASS** |
 | **TC-ACT-018** | Detail Kegiatan Admin | Klik kegiatan pada daftar admin | 200 OK — Detail kegiatan admin tampil lengkap | Status 200 | ✅ **PASS** |
 | **TC-ACT-019** | Filter Dokumen Di Detail Kegiatan | Pilih filter jenis dokumen di detail kegiatan | Filter dokumen di detail kegiatan berfungsi | Status 200 | ✅ **PASS** |
 | **TC-ACT-020** | Detail Kegiatan Pegawai Read-Only | Buka detail kegiatan dari sisi pegawai | 200 OK — Detail pegawai read-only tanpa tombol upload/edit/hapus | Read-only tanpa tombol aksi edit | ✅ **PASS** |
@@ -100,7 +100,7 @@
 | **TC-DOC-001** | Upload Dokumen PDF Valid | Upload file PDF <= 10MB ke kegiatan yang sudah berlangsung | Upload PDF valid berhasil tersimpan di Supabase/DB | Berhasil tersimpan | ✅ **PASS** |
 | **TC-DOC-002** | Upload Dokumen JPG Valid | Upload file JPG <= 10MB jenis dokumentasi | Upload JPG valid berhasil | Berhasil | ✅ **PASS** |
 | **TC-DOC-003** | Upload Dokumen DOCX Valid | Upload file DOCX <= 10MB jenis notulen | Upload DOCX valid berhasil | Berhasil | ✅ **PASS** |
-| **TC-DOC-004** | Business Rule: Upload Ke Kegiatan Belum Berlangsung Ditolak | Coba upload dokumen ke kegiatan yang tanggalnya masa depan | Upload ditolak: Dokumen tidak dapat diunggah karena kegiatan belum berlangsung | Gagal menolak: '' | ❌ **FAIL** |
+| **TC-DOC-004** | Business Rule: Upload Ke Kegiatan Belum Berlangsung Ditolak | Coba upload dokumen ke kegiatan yang tanggalnya masa depan | Upload ditolak: Dokumen tidak dapat diunggah karena kegiatan belum berlangsung | Ditolak. Pesan: 'Dokumen tidak dapat diunggah karena kegiatan belum berlangsung.' | ✅ **PASS** |
 | **TC-DOC-005** | Validasi Jenis Dokumen Kosong | Kosongkan pilihan jenis dokumen saat submit upload | Pesan: Jenis dokumen wajib dipilih. | Pesan: '' | ❌ **FAIL** |
 | **TC-DOC-006** | Validasi Berkas Dokumen Kosong | Submit form upload tanpa memilih berkas | Pesan: Berkas dokumen wajib diunggah. | Pesan: '' | ❌ **FAIL** |
 | **TC-DOC-007** | Validasi Ukuran File Exceeds 10MB | Upload file berkas berukuran > 10 MB (contoh: 11 MB) | Pesan: Ukuran berkas tidak boleh melebihi 10 MB. | Pesan: '' | ❌ **FAIL** |

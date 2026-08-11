@@ -45,7 +45,7 @@ class DocumentController extends Controller
      */
     public function store(StoreDocumentRequest $request, Activity $activity): \Illuminate\Http\JsonResponse|RedirectResponse
     {
-        if ($activity->activity_date->gt(today())) {
+        if (! $activity->is_started) {
             $errorMsg = 'Dokumen tidak dapat diunggah karena kegiatan belum berlangsung.';
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json(['success' => false, 'message' => $errorMsg], 422);

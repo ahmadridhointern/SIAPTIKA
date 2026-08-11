@@ -171,16 +171,16 @@ class ActivityController extends Controller
      */
     public function destroy(Activity $activity): RedirectResponse
     {
-        // Aturan Bisnis: Kegiatan yang sudah dimulai tidak boleh dihapus
-        if ($activity->is_started) {
-            return redirect()->route('admin.activities.index')
-                ->with('error', 'Kegiatan yang sudah dimulai tidak dapat dihapus.');
-        }
-
         // Aturan Bisnis: Kegiatan yang sudah memiliki dokumen tidak boleh dihapus
         if ($activity->documents()->count() > 0) {
             return redirect()->route('admin.activities.index')
                 ->with('error', 'Kegiatan tidak dapat dihapus karena sudah memiliki dokumen arsip.');
+        }
+
+        // Aturan Bisnis: Kegiatan yang sudah dimulai tidak boleh dihapus
+        if ($activity->is_started) {
+            return redirect()->route('admin.activities.index')
+                ->with('error', 'Kegiatan yang sudah dimulai tidak dapat dihapus.');
         }
 
         $activity->delete();
