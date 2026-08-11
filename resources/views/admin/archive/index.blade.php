@@ -881,7 +881,6 @@
             if (typeof showToastError === 'function') {
                 showToastError(msg);
             }
-            alert("⚠️ " + msg);
         }
 
         window.applyEditFile = function(file) {
