@@ -326,10 +326,10 @@ body>main,
 
 .toast-container {
     position: fixed;
-    top: calc(var(--header-height) + 0.625rem);
+    top: 1.5rem;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 300;
+    z-index: 99999 !important;
     display: flex;
     flex-direction: column;
     align-items: center;

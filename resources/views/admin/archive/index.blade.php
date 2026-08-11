@@ -877,6 +877,13 @@
             }
         };
 
+        function displayUploadError(msg) {
+            if (typeof showToastError === 'function') {
+                showToastError(msg);
+            }
+            alert("⚠️ " + msg);
+        }
+
         window.applyEditFile = function(file) {
             var editBtn     = document.getElementById('btn-submit-edit-doc');
             var editZone    = document.getElementById('edit-drop-zone');
@@ -901,11 +908,7 @@
                 if (editInput) editInput.value = '';
                 cancelNewFileSelection();
                 var errMsg = "Format berkas '" + file.name + "' tidak didukung. Harap unggah berkas PDF, Word (doc/docx), Gambar (jpg/png), atau Video (mp4).";
-                if (typeof showToastError === 'function') {
-                    showToastError(errMsg);
-                } else {
-                    alert(errMsg);
-                }
+                displayUploadError(errMsg);
                 return;
             }
 
@@ -913,11 +916,7 @@
                 if (editInput) editInput.value = '';
                 cancelNewFileSelection();
                 var errMsg = "Ukuran berkas '" + file.name + "' (" + sizeMb + " MB) melebihi batas maksimal 10 MB.";
-                if (typeof showToastError === 'function') {
-                    showToastError(errMsg);
-                } else {
-                    alert(errMsg);
-                }
+                displayUploadError(errMsg);
                 return;
             }
 

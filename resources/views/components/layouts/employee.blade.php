@@ -142,11 +142,15 @@
                 container.className = 'toast-container';
                 container.id = 'toast-container';
                 container.setAttribute('aria-live', 'polite');
+                container.style.cssText = 'z-index: 99999 !important; position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;';
                 document.body.appendChild(container);
+            } else {
+                container.style.zIndex = '99999';
             }
             var toast = document.createElement('div');
             toast.className = 'toast toast-error';
             toast.setAttribute('role', 'alert');
+            toast.style.cssText = 'pointer-events: auto; z-index: 99999 !important;';
             toast.innerHTML = '<svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">' +
                 '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>' +
                 '</svg><span>' + message + '</span>';
