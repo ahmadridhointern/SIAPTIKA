@@ -93,9 +93,9 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
                     <h2 class="font-serif text-2xl text-[#1A1A1A]">Agenda Hari Ini</h2>
-                    @if($agendaHariIni->count() > 0)
+                    @if($kegiatanHariIni > 0)
                         <span class="inline-flex items-center justify-center min-w-[1.6rem] h-6 px-1.5 text-xs font-mono font-bold rounded-lg bg-[#B8860B]/10 text-[#B8860B] border border-[#B8860B]/20">
-                            {{ $agendaHariIni->count() }}
+                            {{ $kegiatanHariIni }}
                         </span>
                     @endif
                 </div>
@@ -161,9 +161,9 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
                     <h2 class="font-serif text-2xl text-[#1A1A1A]">Kegiatan Mendatang</h2>
-                    @if($agendaMendatang->count() > 0)
+                    @if($kegiatanMendatang > 0)
                         <span class="inline-flex items-center justify-center min-w-[1.6rem] h-6 px-1.5 text-xs font-mono font-bold rounded-lg bg-[#B8860B]/10 text-[#B8860B] border border-[#B8860B]/20">
-                            {{ $agendaMendatang->count() }}
+                            {{ $kegiatanMendatang }}
                         </span>
                     @endif
                 </div>
