@@ -943,9 +943,39 @@
         var newNameEl   = document.getElementById('edit-new-filename');
         var newSizeEl   = document.getElementById('edit-new-filesize');
         var newExtEl    = document.getElementById('edit-new-file-ext');
+        var editInput   = document.getElementById('edit_upload_file');
 
         if (!file) {
             cancelNewFileSelection();
+            return;
+        }
+
+        var allowedExts = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'mp4'];
+        var maxSizeBytes = 10 * 1024 * 1024; // 10 MB
+        var ext = file.name.split('.').pop().toLowerCase();
+        var sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+
+        if (!allowedExts.includes(ext)) {
+            if (editInput) editInput.value = '';
+            cancelNewFileSelection();
+            var errMsg = "Format berkas '" + file.name + "' tidak didukung. Harap unggah berkas PDF, Word (doc/docx), Gambar (jpg/png), atau Video (mp4).";
+            if (typeof showToastError === 'function') {
+                showToastError(errMsg);
+            } else {
+                alert(errMsg);
+            }
+            return;
+        }
+
+        if (file.size > maxSizeBytes) {
+            if (editInput) editInput.value = '';
+            cancelNewFileSelection();
+            var errMsg = "Ukuran berkas '" + file.name + "' (" + sizeMb + " MB) melebihi batas maksimal 10 MB.";
+            if (typeof showToastError === 'function') {
+                showToastError(errMsg);
+            } else {
+                alert(errMsg);
+            }
             return;
         }
 
@@ -964,10 +994,10 @@
         }
 
         if (newNameEl) newNameEl.textContent = file.name;
-        if (newSizeEl) newSizeEl.textContent = 'Ukuran: ' + (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+        if (newSizeEl) newSizeEl.textContent = 'Ukuran: ' + sizeMb + ' MB';
         if (newExtEl) {
-            var ext = file.name.split('.').pop().toUpperCase();
-            newExtEl.textContent = ext.length <= 4 ? ext : 'FILE';
+            var extUpper = ext.toUpperCase();
+            newExtEl.textContent = extUpper.length <= 4 ? extUpper : 'FILE';
         }
 
         if (statusBadge) {
@@ -1042,8 +1072,36 @@
     function handleFileSelection(category, fileList) {
         if (!fileList || fileList.length === 0) return;
         var filesArr = Array.from(fileList);
+        var allowedExts = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'mp4'];
+        var maxSizeBytes = 10 * 1024 * 1024; // 10 MB
+
         for (var i = 0; i < filesArr.length; i++) {
             var file = filesArr[i];
+            var ext = file.name.split('.').pop().toLowerCase();
+            var sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+
+            // Validasi Format
+            if (!allowedExts.includes(ext)) {
+                var errMsgFormat = "Format berkas '" + file.name + "' tidak didukung. Harap unggah berkas PDF, Word (doc/docx), Gambar (jpg/png), atau Video (mp4).";
+                if (typeof showToastError === 'function') {
+                    showToastError(errMsgFormat);
+                } else {
+                    alert(errMsgFormat);
+                }
+                continue;
+            }
+
+            // Validasi Ukuran (> 10MB)
+            if (file.size > maxSizeBytes) {
+                var errMsgSize = "Ukuran berkas '" + file.name + "' (" + sizeMb + " MB) melebihi batas maksimal 10 MB.";
+                if (typeof showToastError === 'function') {
+                    showToastError(errMsgSize);
+                } else {
+                    alert(errMsgSize);
+                }
+                continue;
+            }
+
             var fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
             queuedUploadFiles.push({
                 id: fileId,

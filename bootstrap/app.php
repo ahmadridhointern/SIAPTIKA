@@ -24,4 +24,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );
+        $exceptions->render(function (\Illuminate\Http\Exceptions\PostTooLargeException $e, Request $request) {
+            $msg = 'Ukuran berkas tidak boleh melebihi 10 MB.';
+            if ($request->expectsJson() || $request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $msg,
+                    'errors'  => ['file' => [$msg]]
+                ], 422);
+            }
+            return redirect()->back()->withErrors(['file' => $msg])->with('error', $msg);
+        });
     })->create();
