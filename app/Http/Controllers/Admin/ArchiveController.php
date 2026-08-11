@@ -65,14 +65,14 @@ class ArchiveController extends Controller
         // Pengurutan
         $sort = $request->input('sort', 'newest');
         match ($sort) {
-            'oldest'        => $query->orderBy('created_at', 'asc'),
-            'az'            => $query->orderBy('file_name', 'asc'),
-            'activity_date' => $query->orderByDesc(
+            'oldest', 'created_oldest' => $query->orderBy('created_at', 'asc'),
+            'az'                       => $query->orderBy('file_name', 'asc'),
+            'activity_date'            => $query->orderByDesc(
                 \App\Models\Activity::select('activity_date')
                     ->whereColumn('activities.id', 'documents.activity_id')
                     ->limit(1)
             ),
-            default         => $query->orderBy('created_at', 'desc'),
+            default                    => $query->orderBy('created_at', 'desc'),
         };
 
         $documents = $query->paginate(10)->withQueryString();

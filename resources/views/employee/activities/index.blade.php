@@ -178,8 +178,10 @@
                 <div>
                     <label for="sort" class="block mb-1.5 text-xs font-mono uppercase tracking-wider text-[#6B6B6B]">Urutkan Berdasarkan</label>
                     <select id="sort" name="sort" class="sort-select adv-filter-field">
-                        <option value="newest" {{ request('sort', 'newest') === 'newest' ? 'selected' : '' }}>Terbaru</option>
-                        <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Terlama</option>
+                        <option value="newest" {{ request('sort', 'newest') === 'newest' ? 'selected' : '' }}>Pelaksanaan Terbaru</option>
+                        <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Pelaksanaan Terlama</option>
+                        <option value="created_newest" {{ request('sort') === 'created_newest' ? 'selected' : '' }}>Baru Ditambahkan (Tanggal Dibuat)</option>
+                        <option value="created_oldest" {{ request('sort') === 'created_oldest' ? 'selected' : '' }}>Dibuat Terlama (Tanggal Dibuat)</option>
                         <option value="az" {{ request('sort') === 'az' ? 'selected' : '' }}>Judul (A → Z)</option>
                     </select>
                 </div>

@@ -220,10 +220,10 @@
                         Urutkan Berdasarkan
                     </label>
                     <select id="sort" name="sort" class="input-serif adv-filter-field">
-                        <option value="newest" {{ request('sort', 'newest') === 'newest' ? 'selected' : '' }}>Terbaru Diunggah</option>
-                        <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Terlama Diunggah</option>
+                        <option value="newest" {{ request('sort', 'newest') === 'newest' ? 'selected' : '' }}>Baru Ditambahkan (Terbaru Diunggah)</option>
+                        <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Diunggah Terlama</option>
                         <option value="activity_date" {{ request('sort') === 'activity_date' ? 'selected' : '' }}>Tanggal Kegiatan Terbaru</option>
-                        <option value="az" {{ request('sort') === 'az' ? 'selected' : '' }}>Nama File (A → Z)</option>
+                        <option value="az" {{ request('sort') === 'az' ? 'selected' : '' }}>Nama Berkas (A → Z)</option>
                     </select>
                 </div>
             </div>

@@ -17,8 +17,10 @@
         }
     }
 
-    if (request('sort') === 'oldest')        $activeFilters[] = 'Urutan: Terlama';
-    if (request('sort') === 'az')            $activeFilters[] = 'Urutan: Abjad A-Z';
+    if (request('sort') === 'oldest')         $activeFilters[] = 'Urutan: Pelaksanaan Terlama';
+    if (request('sort') === 'created_newest') $activeFilters[] = 'Urutan: Baru Ditambahkan';
+    if (request('sort') === 'created_oldest') $activeFilters[] = 'Urutan: Dibuat Terlama';
+    if (request('sort') === 'az')             $activeFilters[] = 'Urutan: Abjad A-Z';
 
     if (request('has_documents') === '1')    $activeFilters[] = 'Ada Arsip';
 @endphp

@@ -218,10 +218,10 @@
                 <div>
                     <label for="sort" class="block mb-1.5 text-xs font-mono uppercase tracking-wider text-[#6B6B6B]">Urutkan Berdasarkan</label>
                     <select id="sort" name="sort" class="sort-select adv-filter-field">
-                        <option value="newest" {{ request('sort', 'newest') === 'newest' ? 'selected' : '' }}>Terbaru Diunggah</option>
-                        <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Terlama Diunggah</option>
-                        <option value="az" {{ request('sort') === 'az' ? 'selected' : '' }}>Nama File A → Z</option>
-                        <option value="activity_date" {{ request('sort') === 'activity_date' ? 'selected' : '' }}>Tgl Kegiatan Terbaru</option>
+                        <option value="newest" {{ request('sort', 'newest') === 'newest' ? 'selected' : '' }}>Baru Ditambahkan (Terbaru Diunggah)</option>
+                        <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Diunggah Terlama</option>
+                        <option value="activity_date" {{ request('sort') === 'activity_date' ? 'selected' : '' }}>Tanggal Kegiatan Terbaru</option>
+                        <option value="az" {{ request('sort') === 'az' ? 'selected' : '' }}>Nama Berkas (A → Z)</option>
                     </select>
                 </div>
             </div>

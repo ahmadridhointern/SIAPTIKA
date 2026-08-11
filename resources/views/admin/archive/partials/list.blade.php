@@ -25,7 +25,7 @@
         }
     }
 
-    if (request('sort') === 'oldest')        $activeFilters[] = 'Urutan: Terlama Diunggah';
+    if (request('sort') === 'oldest')        $activeFilters[] = 'Urutan: Diunggah Terlama';
     if (request('sort') === 'az')            $activeFilters[] = 'Urutan: Abjad A-Z';
     if (request('sort') === 'activity_date') $activeFilters[] = 'Urutan: Tgl Kegiatan';
 @endphp

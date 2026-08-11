@@ -60,9 +60,11 @@ class ActivityController extends Controller
         // Pengurutan
         $sort = $request->input('sort', 'newest');
         match ($sort) {
-            'oldest' => $query->orderBy('activity_date', 'asc')->orderBy('time', 'asc'),
-            'az'     => $query->orderBy('title', 'asc'),
-            default  => $query->orderBy('activity_date', 'desc')->orderBy('time', 'desc'),
+            'oldest'         => $query->orderBy('activity_date', 'asc')->orderBy('time', 'asc'),
+            'created_newest' => $query->orderBy('created_at', 'desc'),
+            'created_oldest' => $query->orderBy('created_at', 'asc'),
+            'az'             => $query->orderBy('title', 'asc'),
+            default          => $query->orderBy('activity_date', 'desc')->orderBy('time', 'desc'),
         };
 
         // Ambil data dengan pagination
