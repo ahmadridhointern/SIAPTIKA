@@ -659,16 +659,15 @@
         const displayEl = document.getElementById(displayId);
         if (!dateEl || !timeEl || !statusEl || !displayEl) return;
 
+        // Warna teks selalu seragam (#888888, normal)
+        displayEl.style.color = '#888888';
+        displayEl.style.fontWeight = 'normal';
+
         if (!dateEl.value || !timeEl.value) {
             statusEl.value = '';
             displayEl.value = 'Silakan masukkan tanggal dan waktu kegiatan terlebih dahulu';
-            displayEl.style.color = '#888888';
-            displayEl.style.fontWeight = 'normal';
             return;
         }
-
-        displayEl.style.color = '#1A1A1A';
-        displayEl.style.fontWeight = '500';
 
         // Compare full datetime (including hour/minute)
         const selected = new Date(dateEl.value + 'T' + timeEl.value);
