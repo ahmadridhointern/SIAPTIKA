@@ -662,13 +662,13 @@
         if (!dateEl.value || !timeEl.value) {
             statusEl.value = '';
             displayEl.value = 'Silakan masukkan tanggal dan waktu kegiatan terlebih dahulu';
-            displayEl.classList.add('text-red-600');
-            displayEl.classList.remove('text-[#888888]');
+            displayEl.style.color = '#888888';
+            displayEl.style.fontWeight = 'normal';
             return;
         }
 
-        displayEl.classList.remove('text-red-600');
-        displayEl.classList.add('text-[#888888]');
+        displayEl.style.color = '#1A1A1A';
+        displayEl.style.fontWeight = '500';
 
         // Compare full datetime (including hour/minute)
         const selected = new Date(dateEl.value + 'T' + timeEl.value);
@@ -676,9 +676,10 @@
 
         if (selected > now) {
             statusEl.value = 'scheduled';
+            displayEl.value = 'Direncana (Kegiatan belum berlangsung)';
         } else {
             statusEl.value = 'completed';
-            displayEl.value = 'Selesai (Waktu kegiatan sudah lewat)';
+            displayEl.value = 'Sudah Berlangsung / Selesai (Waktu kegiatan sudah lewat)';
         }
     }
 
@@ -1121,8 +1122,12 @@
         ['c-title', 'c-date', 'c-time', 'c-location'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
-                el.addEventListener('input', validateCreateModalForm);
-                el.addEventListener('change', validateCreateModalForm);
+                const handler = function() {
+                    syncStatusFromDate('c-date', 'c-time', 'c-status', 'c-status-display');
+                    validateCreateModalForm();
+                };
+                el.addEventListener('input', handler);
+                el.addEventListener('change', handler);
             }
         });
         validateCreateModalForm();
@@ -1131,8 +1136,12 @@
         ['e-title', 'e-date', 'e-time', 'e-location', 'e-description', 'e-status'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
-                el.addEventListener('input', validateEditModalForm);
-                el.addEventListener('change', validateEditModalForm);
+                const handler = function() {
+                    syncStatusFromDate('e-date', 'e-time', 'e-status', 'e-status-display');
+                    validateEditModalForm();
+                };
+                el.addEventListener('input', handler);
+                el.addEventListener('change', handler);
             }
         });
 
