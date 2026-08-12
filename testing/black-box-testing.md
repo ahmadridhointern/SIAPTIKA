@@ -3,31 +3,38 @@
 **Aplikasi**: SIAPTIKA (Sistem Informasi Arsip Penyelenggaraan TIK dan Aplikasi)
 **Tanggal Eksekusi**: 10 August 2026
 **Lingkungan**: Development (PHP 8.2, Laravel 11, Supabase Storage, MySQL)
-**Total Test Cases**: 124
+**Total Test Cases**: 131
 
 ## 📊 Ringkasan Hasil Pengujian
 
 |Total TC|PASS|FAIL|Persentase Kelulusan|Status Bug Kritis|
 |-|-|-|-|-|
-|**124**|**124**|**0**|**100%**|✅ **100% Resolved (4/4)**|
+|**131**|**131**|**0**|**100%**|✅ **100% Resolved (4/4)**|
 
 \---
 
 ## 📝 Rincian Hasil Test Case per Modul
 
-### Modul 1: Autentikasi
+### Modul 1: Autentikasi Administrator (ID + Password)
 
 |ID Test Case|Nama Fitur / Skenario|Langkah Pengujian|Hasil Yang Diharapkan|Hasil Aktual|Status|
 |-|-|-|-|-|-|
-|**TC-AUTH-001**|Login Valid|Submit form login dengan email \& password yang benar|Redirect ke /admin/dashboard|Status 302|✅ **PASS**|
-|**TC-AUTH-002**|Login Email Tidak Terdaftar|Submit email yang tidak ada di database|Pesan: Email atau password salah.|Pesan: 'Email atau password salah.'|✅ **PASS**|
-|**TC-AUTH-003**|Login Password Salah|Submit email terdaftar dengan password salah|Pesan: Email atau password salah.|Pesan: 'Email atau password salah.'|✅ **PASS**|
-|**TC-AUTH-004**|Login Email Kosong|Kosongkan input email pada form login|Pesan: Email wajib diisi.|Pesan: 'Email wajib diisi.'|✅ **PASS**|
+|**TC-AUTH-001**|Login Valid Administrator|Submit login dengan ID `ADM001` & password yang benar|Login sukses, redirect ke `/admin/dashboard`|Status 302, Redirect to `/admin/dashboard`|✅ **PASS**|
+|**TC-AUTH-002**|Login ID Tidak Terdaftar|Submit ID `WRONG001` yang tidak ada di database|Pesan: ID Administrator atau password salah.|Pesan: 'ID Administrator atau password salah.'|✅ **PASS**|
+|**TC-AUTH-003**|Login Password Salah|Submit ID `ADM001` dengan password salah|Pesan: ID Administrator atau password salah.|Pesan: 'ID Administrator atau password salah.'|✅ **PASS**|
+|**TC-AUTH-004**|Login ID Kosong|Kosongkan input ID Administrator pada form login|Pesan: ID Administrator wajib diisi.|Pesan: 'ID Administrator wajib diisi.'|✅ **PASS**|
 |**TC-AUTH-005**|Login Password Kosong|Kosongkan input password pada form login|Pesan: Password wajib diisi.|Pesan: 'Password wajib diisi.'|✅ **PASS**|
-|**TC-AUTH-006**|Login Format Email Invalid|Input email tanpa @ (contoh: bukanemail)|Pesan: Format email tidak valid.|Pesan: 'Format email tidak valid.'|✅ **PASS**|
-|**TC-AUTH-007**|Login Password Too Short|Input password < 6 karakter (contoh: 12345)|Pesan: Password minimal 6 karakter.|Pesan: 'Password minimal 6 karakter.'|✅ **PASS**|
-|**TC-AUTH-008**|Redirect Auth Active|Akses /login saat sudah login sebagai admin|Redirect ke /admin/dashboard|Status 302|✅ **PASS**|
-|**TC-AUTH-009**|Logout Success|Klik tombol Logout pada header admin|Logout dan redirect ke /login dengan flash pesan sukses|Status 302|✅ **PASS**|
+|**TC-AUTH-006**|Email Tidak Diterima Kredensial|Kirim email `admin@siaptika.id` sebagai identifier login|Login ditolak, email bukan lagi credential login|Ditolak aman (Kolom email sudah dihapus dari DB)|✅ **PASS**|
+|**TC-AUTH-007**|Sensitivitas Karakter ID|Input `ADM001` vs `adm001` vs `Adm001`|Cocok tepat dengan string `ADM001` di DB|`ADM001` cocok tepat, penanganan konsisten|✅ **PASS**|
+|**TC-AUTH-008**|Uji Penetrasi SQL Injection|Input ID dengan string `' OR '1'='1` atau `' OR 1=1 --`|Input di-escape aman, login ditolak tanpa error DB|Ditolak aman, tidak ada error SQL|✅ **PASS**|
+|**TC-AUTH-009**|Uji Input Panjang (>255 karakter)|Input 1000 karakter pada ID & Password|Validasi menolak input panjang (`max:255`), server aman|Validasi gagal aman, status 302|✅ **PASS**|
+|**TC-AUTH-010**|Persistensi Sesi|Login sukses, refresh halaman, navigasi antar route admin|Sesi tetap terautentikasi tanpa meminta login ulang|Sesi tetap terautentikasi (Auth::check() true)|✅ **PASS**|
+|**TC-AUTH-011**|Akses Tanpa Otorisasi|Buka `/admin/dashboard` di browser tanpa login|Ditolak, redirect ke `/login`|Status 302, Redirect to `/login`|✅ **PASS**|
+|**TC-AUTH-012**|Logout Administrator|Klik tombol Logout pada header admin|Sesi dihancurkan, redirect ke `/login` dengan pesan sukses|Status 302, Redirect to `/login`|✅ **PASS**|
+|**TC-AUTH-013**|Proteksi CSRF Token|Kirim POST `/login` tanpa token `_token`|Laravel menolak request tanpa token CSRF valid|Middleware ValidateCsrfToken aktif|✅ **PASS**|
+|**TC-AUTH-014**|Verifikasi Schema & Data Database|Periksa tabel `users` di PostgreSQL Supabase|1 akun admin (`ADM001`), email dihapus, password hashed|1 row admin (`ADM001`), email dropped, PK `users.id` utuh|✅ **PASS**|
+|**TC-AUTH-015**|Pengujian Regresi Fitur Eksisting|Uji Dashboard, Activity CRUD, Dokumen, & Pegawai|Seluruh fitur eksisting beroperasi normal tanpa kendala|Status 200 OK pada seluruh modul|✅ **PASS**|
+|**TC-AUTH-016**|Pembersihan Kode Auth Email Lama|Grep pencarian kode autentikasi email di seluruh projek|Tidak ada logika autentikasi email lama yang tersisa|Kode autentikasi murni berbasis `login_id`|✅ **PASS**|
 
 ### Modul 2: Kontrol Akses
 
