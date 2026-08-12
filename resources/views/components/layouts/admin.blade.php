@@ -236,7 +236,7 @@
                     <span class="h-4 w-px hidden sm:block" style="background-color: #E8E4DF;"></span>
 
                     {{-- Navigation Links (Dashboard, Kegiatan, Arsip) --}}
-                    <nav class="hidden sm:flex items-center gap-1">
+                    <nav class="flex items-center gap-1">
                         <a id="nav-dashboard" href="{{ route('admin.dashboard') }}"
                            onclick="__navGo(this, this.href); return false;"
                            class="nav-link-item {{ request()->routeIs('admin.dashboard') ? 'nav-active' : '' }}">

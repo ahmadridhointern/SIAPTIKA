@@ -67,8 +67,11 @@ class Activity extends Model
     {
         // Normalize HH:MM → HH:MM:SS
         $timeString = strlen($this->time) === 5 ? $this->time . ':00' : $this->time;
+        $dateString = $this->activity_date instanceof Carbon
+            ? $this->activity_date->toDateString()
+            : substr((string) $this->activity_date, 0, 10);
 
-        return Carbon::parse($this->activity_date->toDateString() . ' ' . $timeString);
+        return Carbon::parse($dateString . ' ' . $timeString);
     }
 
     /**

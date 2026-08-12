@@ -104,7 +104,7 @@
                     var rect = btn.getBoundingClientRect();
                     btn.style.width  = rect.width  + 'px';
                     btn.style.height = rect.height + 'px';
-                    btn.disabled = true;
+                    btn.style.pointerEvents = 'none';
                     btn.dataset.loading = 'true';
                     btn.innerHTML = '<span style="display:inline-flex;align-items:center;justify-content:center;width:1.2rem;height:1.2rem;border:2.5px solid #FFFFFF;border-top-color:transparent;border-radius:50%;animation:btnSpin 0.65s linear infinite;margin:0 auto;"></span>';
 
@@ -118,7 +118,7 @@
                     }
 
                     var timer = setTimeout(function() {
-                        btn.disabled = false;
+                        btn.style.pointerEvents = '';
                         btn.dataset.loading = 'false';
                         btn.style.width = '';
                         btn.style.height = '';
