@@ -2,7 +2,7 @@
 
 ## Login
 
-Hanya Admin yang login.
+Hanya Admin yang login (menggunakan ID Administrator `login_id` dan Password).
 
 Pegawai tidak login.
 

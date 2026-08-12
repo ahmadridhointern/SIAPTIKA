@@ -12,10 +12,13 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'name'     => 'Administrator',
-            'email'    => 'admin@siaptika.id',
-            'password' => 'password123',
-        ]);
+        User::updateOrCreate(
+            ['id' => 1],
+            [
+                'login_id' => 'ADM001',
+                'name'     => 'Administrator APTIKA',
+                'password' => 'password123',
+            ]
+        );
     }
 }

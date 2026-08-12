@@ -36,24 +36,24 @@
         <form id="form-login" method="POST" action="{{ route('login.post') }}" novalidate>
             @csrf
 
-            {{-- Email --}}
+            {{-- ID Administrator --}}
             <div class="mb-5">
-                <label for="email"
+                <label for="login_id"
                        class="block mb-1.5 text-sm font-medium"
                        style="font-family: 'Source Sans 3', system-ui, sans-serif; color: #1A1A1A;">
-                    Email
+                    ID Administrator
                 </label>
                 <input
-                    id="email"
-                    type="email"
-                    name="email"
-                    value="{{ old('email') }}"
-                    autocomplete="email"
-                    placeholder="admin@siaptika.id"
-                    class="input-serif @error('email') border-red-400 @enderror"
+                    id="login_id"
+                    type="text"
+                    name="login_id"
+                    value="{{ old('login_id') }}"
+                    autocomplete="username"
+                    placeholder="ADM001"
+                    class="input-serif @error('login_id') border-red-400 @enderror"
                     required
                 >
-                @error('email')
+                @error('login_id')
                     <p class="mt-1.5 text-xs" style="color: #ef4444;">{{ $message }}</p>
                 @enderror
             </div>

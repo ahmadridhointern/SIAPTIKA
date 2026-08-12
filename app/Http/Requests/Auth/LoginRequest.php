@@ -21,7 +21,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'    => ['required', 'string', 'email', 'max:255'],
+            'login_id' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:6', 'max:255'],
         ];
     }
@@ -32,10 +32,12 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required'    => 'Email wajib diisi.',
-            'email.email'       => 'Format email tidak valid.',
+            'login_id.required' => 'ID Administrator wajib diisi.',
+            'login_id.string'   => 'ID Administrator harus berupa teks.',
+            'login_id.max'      => 'ID Administrator maksimal :max karakter.',
             'password.required' => 'Password wajib diisi.',
             'password.min'      => 'Password minimal 6 karakter.',
+            'password.max'      => 'Password maksimal :max karakter.',
         ];
     }
 
@@ -45,7 +47,7 @@ class LoginRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'email'    => 'Email',
+            'login_id' => 'ID Administrator',
             'password' => 'Password',
         ];
     }
