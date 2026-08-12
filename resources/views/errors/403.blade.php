@@ -9,6 +9,14 @@
 </head>
 <body style="background-color: #FAFAF8; min-height: 100vh; display: flex; flex-direction: column;">
 
+    @php
+        $referer = request()->headers->get('referer');
+        $isAdminContext = auth()->check() 
+            || request()->is('admin*') 
+            || ($referer && str_contains($referer, '/admin'));
+        $homeUrl = $isAdminContext ? route('admin.dashboard') : route('employee.dashboard');
+    @endphp
+
     {{-- ─── Topbar ───────────────────────────────────────────────────────── --}}
     <header style="
         position: fixed;
@@ -23,16 +31,14 @@
     ">
         <nav class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <a href="{{ auth()->check() ? route('admin.dashboard') : route('employee.dashboard') }}"
-                   class="flex items-center gap-3" style="text-decoration: none;">
+                <a href="{{ $homeUrl }}" class="flex items-center gap-3" style="text-decoration: none;">
                     <span class="font-serif text-xl" style="color: #1A1A1A; letter-spacing: -0.01em;">SIAPTIKA</span>
                     <span class="h-4 w-px" style="background-color: #E8E4DF;"></span>
                     <span class="small-caps" style="font-size: 0.65rem;">Sistem Informasi Administrasi</span>
                 </a>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ auth()->check() ? route('admin.dashboard') : route('employee.dashboard') }}"
-                   class="nav-link-item" style="font-size: 0.8rem;">
+                <a href="{{ $homeUrl }}" class="nav-link-item" style="font-size: 0.8rem;">
                     ← Kembali ke Beranda
                 </a>
             </div>
@@ -73,7 +79,7 @@
 
             {{-- Action Buttons --}}
             <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-                @if(auth()->check())
+                @if($isAdminContext)
                     <a href="{{ route('admin.dashboard') }}"
                        class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
                         <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
