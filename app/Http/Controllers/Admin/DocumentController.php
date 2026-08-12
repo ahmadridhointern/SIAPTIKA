@@ -82,7 +82,7 @@ class DocumentController extends Controller
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Gagal mengunggah dokumen: ' . $e->getMessage(),
+                    'message' => 'Gagal mengunggah dokumen. Silakan coba lagi.',
                 ], 422);
             }
 

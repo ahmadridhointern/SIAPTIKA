@@ -107,7 +107,11 @@ class ActivityController extends Controller
      */
     public function store(StoreActivityRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
+        // Ambil data tervalidasi, pastikan 'status' tidak bisa dimanipulasi user.
+        // Status ditentukan otomatis oleh sistem (accessor computed_status).
+        $validated = collect($request->validated())
+            ->except('status')
+            ->toArray();
         $validated['user_id'] = Auth::id();
 
         Activity::create($validated);
@@ -162,7 +166,12 @@ class ActivityController extends Controller
                 ->with('error', 'Kegiatan yang sudah dimulai tidak dapat diubah.');
         }
 
-        $activity->update($request->validated());
+        // Pastikan 'status' tidak bisa dimanipulasi user — sistem yang menentukan.
+        $validated = collect($request->validated())
+            ->except('status')
+            ->toArray();
+
+        $activity->update($validated);
 
         return redirect()->back()
             ->with('success', 'Kegiatan berhasil diperbarui.');

@@ -23,18 +23,17 @@ class ArchiveController extends Controller
             $query->where('document_type', $request->input('type'));
         }
 
-        // Filter berdasarkan format/ekstensi berkas
-        if ($request->filled('file_format')) {
+        // Filter berdasarkan format/ekstensi berkas (whitelist format yang valid)
+        $allowedFormats = ['pdf', 'jpg', 'png', 'word', 'mp4'];
+        if ($request->filled('file_format') && in_array(strtolower($request->input('file_format')), $allowedFormats)) {
             $format = strtolower($request->input('file_format'));
             match ($format) {
                 'pdf'   => $query->where('file_name', 'ilike', '%.pdf'),
                 'jpg'   => $query->where(fn($q) => $q->where('file_name', 'ilike', '%.jpg')->orWhere('file_name', 'ilike', '%.jpeg')),
                 'png'   => $query->where('file_name', 'ilike', '%.png'),
                 'word'  => $query->where(fn($q) => $q->where('file_name', 'ilike', '%.doc')->orWhere('file_name', 'ilike', '%.docx')),
-                'excel' => $query->where(fn($q) => $q->where('file_name', 'ilike', '%.xls')->orWhere('file_name', 'ilike', '%.xlsx')),
-                'ppt'   => $query->where(fn($q) => $q->where('file_name', 'ilike', '%.ppt')->orWhere('file_name', 'ilike', '%.pptx')),
-                'zip'   => $query->where(fn($q) => $q->where('file_name', 'ilike', '%.zip')->orWhere('file_name', 'ilike', '%.rar')),
-                default => $query->where('file_name', 'ilike', "%." . $format),
+                'mp4'   => $query->where('file_name', 'ilike', '%.mp4'),
+                default => null,
             };
         }
 

@@ -25,6 +25,10 @@ class StoreActivityRequest extends FormRequest
 
     /**
      * Aturan validasi untuk data Kegiatan.
+     *
+     * Catatan: Field 'status' tidak diterima dari user input.
+     * Status ditentukan otomatis oleh sistem berdasarkan tanggal & waktu kegiatan
+     * (accessor computed_status di model Activity).
      */
     public function rules(): array
     {
@@ -34,7 +38,6 @@ class StoreActivityRequest extends FormRequest
             'time'          => ['required', 'date_format:H:i'],
             'location'      => ['required', 'string', 'min:3', 'max:255'],
             'description'   => ['nullable', 'string', 'max:2000'],
-            'status'        => ['required', 'in:scheduled,completed'],
         ];
     }
 
@@ -68,10 +71,6 @@ class StoreActivityRequest extends FormRequest
             // Deskripsi
             'description.string' => 'Deskripsi kegiatan harus berupa teks.',
             'description.max'    => 'Deskripsi kegiatan maksimal :max karakter.',
-
-            // Status
-            'status.required' => 'Status kegiatan wajib dipilih.',
-            'status.in'       => 'Status kegiatan hanya boleh berupa "scheduled" atau "completed".',
         ];
     }
 
@@ -86,7 +85,6 @@ class StoreActivityRequest extends FormRequest
             'time'          => 'Waktu Pelaksanaan',
             'location'      => 'Tempat Pelaksanaan',
             'description'   => 'Deskripsi Kegiatan',
-            'status'        => 'Status Kegiatan',
         ];
     }
 }
