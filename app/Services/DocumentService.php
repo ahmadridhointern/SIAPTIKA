@@ -165,6 +165,11 @@ class DocumentService
             return $matches[1];
         }
 
+        // Format 3 Fallback: jika sudah berupa relative path documents/...
+        if (str_starts_with($fileUrl, 'documents/')) {
+            return $fileUrl;
+        }
+
         return null;
     }
 }

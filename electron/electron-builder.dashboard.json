@@ -1,0 +1,63 @@
+{
+  "appId":       "id.riau.siaptika.dashboard",
+  "productName": "SIAPTIKA Dashboard",
+  "copyright":   "Dinas Komunikasi Informatika dan Statistik Provinsi Riau",
+  "directories": {
+    "output": "dist/dashboard"
+  },
+  "extraMetadata": {
+    "main": "dashboard/main.js"
+  },
+  "files": [
+    "dashboard/**",
+    "shared/**",
+    "node_modules/**",
+    "!node_modules/.cache"
+  ],
+  "extraFiles": [
+    {
+      "from": "runtime/php",
+      "to":   "runtime/php",
+      "filter": ["**/*"]
+    },
+    {
+      "from": "../",
+      "to":   "resources/laravel",
+      "filter": [
+        "app/**",
+        "bootstrap/**",
+        "config/**",
+        "database/**",
+        "public/**",
+        "resources/**",
+        "routes/**",
+        "storage/**",
+        "artisan",
+        "composer.json",
+        "vendor/**",
+        "!vendor/phpunit/**",
+        "!storage/logs/**",
+        "!storage/framework/sessions/**",
+        "!storage/framework/cache/**",
+        "!storage/framework/views/**"
+      ]
+    },
+    {
+      "from": "../.env",
+      "to":   "resources/laravel/.env"
+    }
+  ],
+  "win": {
+    "target": "nsis",
+    "icon": "assets/icon.ico"
+  },
+  "nsis": {
+    "oneClick":               false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut":  true,
+    "createStartMenuShortcut": true,
+    "shortcutName":           "SIAPTIKA Dashboard",
+    "installerIcon":          "assets/icon.ico",
+    "uninstallerIcon":        "assets/icon.ico"
+  }
+}

@@ -1,17 +1,19 @@
 {
-  "name": "electron",
+  "name": "siaptika-electron",
   "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
-  },
-  "keywords": [],
-  "author": "",
+  "main": "admin/main.js",
+  "description": "SIAPTIKA — Sistem Informasi Administrasi Kegiatan Bidang APTIKA",
+  "author": "Dinas Komunikasi Informatika dan Statistik Provinsi Riau",
   "license": "ISC",
   "type": "commonjs",
+  "scripts": {
+    "start:admin": "electron admin/main.js",
+    "start:dashboard": "electron dashboard/main.js",
+    "build:admin": "electron-builder --config electron-builder.admin.json",
+    "build:dashboard": "electron-builder --config electron-builder.dashboard.json"
+  },
   "devDependencies": {
-    "electron": "^latest"
+    "electron": "^43.2.0",
+    "electron-builder": "^26.15.3"
   }
 }

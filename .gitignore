@@ -28,4 +28,9 @@ Thumbs.db
 
 # Electron
 electron/node_modules/
+electron/dist/
+electron/runtime/
 electron/.gitignore
+serve.log
+serve.err
+
