@@ -239,13 +239,27 @@ async function startLaravel() {
             spawnArgs.push('-c', phpRuntime.ini);
         }
 
+        // Sertakan CA cert mandiri untuk HTTPS / Supabase Storage S3
+        if (phpRuntime.dir) {
+            const caCertPath = path.join(phpRuntime.dir, 'cacert.pem');
+            if (fs.existsSync(caCertPath)) {
+                spawnArgs.push('-d', `curl.cainfo=${caCertPath}`);
+                spawnArgs.push('-d', `openssl.cafile=${caCertPath}`);
+            }
+        }
+
         spawnArgs.push(artisanPath, 'serve', `--host=${LARAVEL_HOST}`, `--port=${LARAVEL_PORT}`);
 
         // 6. Siapkan variabel lingkungan (inject direktori PHP ke PATH & PHPRC)
         const childEnv = { ...process.env };
         if (phpRuntime.dir) {
+            const caCertPath = path.join(phpRuntime.dir, 'cacert.pem');
             childEnv.PHPRC = phpRuntime.dir;
             childEnv.PATH  = `${phpRuntime.dir};${childEnv.PATH || ''}`;
+            if (fs.existsSync(caCertPath)) {
+                childEnv.SSL_CERT_FILE  = caCertPath;
+                childEnv.CURL_CA_BUNDLE = caCertPath;
+            }
         }
 
         // 7. Siapkan berkas log server
