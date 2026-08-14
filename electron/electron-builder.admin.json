@@ -39,7 +39,15 @@
         "!storage/logs/**",
         "!storage/framework/sessions/**",
         "!storage/framework/cache/**",
-        "!storage/framework/views/**"
+        "!storage/framework/views/**",
+        "!.git/**",
+        "!tests/**",
+        "!testing/**",
+        "!node_modules/**",
+        "!docs/**",
+        "!sprint/**",
+        "!history/**",
+        "!AI/**"
       ]
     },
     {
