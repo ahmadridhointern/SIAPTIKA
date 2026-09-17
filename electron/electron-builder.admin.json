@@ -26,6 +26,7 @@
       "filter": [
         "app/**",
         "bootstrap/**",
+        "!bootstrap/cache/**",
         "config/**",
         "database/**",
         "public/**",
@@ -40,6 +41,7 @@
         "!storage/framework/sessions/**",
         "!storage/framework/cache/**",
         "!storage/framework/views/**",
+        "!storage/framework/testing/**",
         "!.git/**",
         "!tests/**",
         "!testing/**",

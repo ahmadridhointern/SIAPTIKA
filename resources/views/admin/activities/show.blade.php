@@ -184,7 +184,7 @@
                                     {{ request('type') ? 'Tidak ada dokumen untuk jenis ini' : 'Belum ada dokumen' }}
                                 </p>
                                 <p class="text-[0.65rem] text-[#9A948D] font-mono mt-1">
-                                    {{ $activity->activity_date->gt(today()) ? 'Dokumen dapat diunggah setelah kegiatan berlangsung' : 'Klik tombol di bawah untuk mengunggah' }}
+                                    {{ !$activity->is_started ? 'Dokumen dapat diunggah setelah kegiatan berlangsung' : 'Klik tombol di bawah untuk mengunggah' }}
                                 </p>
                             </div>
                         </div>
@@ -253,7 +253,7 @@
                 </div>
 
                 {{-- Tombol Unggah Dokumen --}}
-                @if($activity->activity_date->gt(today()))
+                @if(!$activity->is_started)
                     {{-- Non-Aktif jika Kegiatan Belum Berlangsung --}}
                     <button type="button"
                             disabled

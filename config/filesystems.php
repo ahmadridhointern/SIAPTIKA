@@ -84,6 +84,11 @@ return [
             'use_path_style_endpoint' => true,
             'throw'                   => true,  // Lempar exception agar error mudah di-debug
             'report'                  => true,
+            // Gunakan bundled CA bundle saat tersedia (via AWS_CA_BUNDLE env var yang
+            // di-inject oleh laravel-bridge.js). Fallback ke true (system default).
+            'http'                    => [
+                'verify' => env('AWS_CA_BUNDLE', true),
+            ],
         ],
 
     ],

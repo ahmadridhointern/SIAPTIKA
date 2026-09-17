@@ -14,9 +14,9 @@
 
 'use strict';
 
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, BrowserWindow, dialog, shell } = require('electron');
 const path = require('path');
-const { startLaravel, stopLaravel, LARAVEL_URL } = require('../shared/laravel-bridge');
+const { startLaravel, stopLaravel, getLaravelUrl } = require('../shared/laravel-bridge');
 
 // ─── Single Instance Lock ─────────────────────────────────────────────────────
 const gotTheLock = app.requestSingleInstanceLock();
@@ -66,7 +66,7 @@ if (!gotTheLock) {
         });
 
         // Muat halaman login Administrator
-        mainWindow.loadURL(`${LARAVEL_URL}/login`);
+        mainWindow.loadURL(`${getLaravelUrl()}/login`);
 
         mainWindow.on('closed', () => {
             mainWindow = null;
@@ -166,11 +166,33 @@ if (!gotTheLock) {
         } catch (_) {}
 
         if (!result.success) {
-            dialog.showErrorBox(
-                'SIAPTIKA Administrator — Gagal Memulai',
-                (result.message || 'Server aplikasi tidak dapat dimulai.') +
-                '\n\nSilakan hubungi administrator sistem.'
-            );
+            // Susun pesan error yang informatif, sertakan cuplikan log jika tersedia
+            let detail = result.message || 'Server aplikasi tidak dapat dimulai.';
+
+            if (result.logSnippet && result.logSnippet.length > 0) {
+                detail += '\n\n─── Cuplikan Log (50 baris terakhir) ───\n' + result.logSnippet;
+            }
+
+            detail += '\n\nSilakan hubungi administrator sistem.';
+
+            const buttons = result.logPath
+                ? ['Tutup Aplikasi', 'Buka Folder Log']
+                : ['Tutup Aplikasi'];
+
+            const { response } = await dialog.showMessageBox({
+                type:    'error',
+                title:   'SIAPTIKA Administrator — Gagal Memulai',
+                message: 'Server aplikasi lokal tidak dapat dimulai.',
+                detail,
+                buttons,
+                defaultId: 0,
+                cancelId:  0,
+            });
+
+            if (result.logPath && response === 1) {
+                shell.openPath(result.logPath);
+            }
+
             app.quit();
             return;
         }

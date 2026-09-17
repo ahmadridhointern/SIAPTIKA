@@ -1,0 +1,52 @@
+# DAFTAR SUMBER TAUTAN & GAMBAR
+https://diskominfotik.riau.go.id/wp-content/uploads/2026/07/Struktur_Organisasi_Diskominfotik_-_9_Juli_2026-Tanpa-NIP.png
+https://www.softwareseni.co.id/cdn/5d8a2888296e91abbdcb65f0/68623d3a89c5ba7198bb2cbe_scrum_haning.webp
+https://miro.medium.com/v2/resize:fit:1400/format:webp/0*DxAonfN3QtNnLrEE.png
+
+# DAFTAR PUSTAKA & REFERENSI ILMIAH (FORMAT APA 7th EDITION)
+
+Bass, L., Clements, P., & Kazman, R. (2021). Software architecture in practice (4th ed.). Addison-Wesley Professional.
+
+Connolly, T. M., & Begg, C. E. (2015). Database systems: A practical approach to design, implementation, and management (6th ed.). Pearson Education.
+
+Date, C. J. (2019). Database design and relational theory: Normal forms and all that jazz (2nd ed.). O'Reilly Media.
+
+Ferreira, B., Silva, W., & Mendes, E. (2018). Designing and evaluating hybrid desktop applications: An empirical investigation. Journal of Systems and Software, 144, 432–448. https://doi.org/10.1016/j.jss.2018.07.012
+
+Fowler, M. (2018). Patterns of enterprise application architecture. Addison-Wesley Professional.
+
+Griffiths, P. (2019). Electron in action: Developing desktop applications with web technologies. Manning Publications.
+
+Ikram, A., Khan, A. S., & Riaz, H. (2018). Eliciting theory of software maintenance outsourcing process: A systematic literature review. International Journal of Computer Science and Network Security, 18(9), 118–129.
+
+International Organization for Standardization. (2016). Information and documentation — Records management — Part 1: Concepts and principles (ISO Standard No. 15489-1:2016). https://www.iso.org/standard/62542.html
+
+ISO/IEC/IEEE. (2017). Systems and software engineering — Software life cycle processes (ISO/IEC/IEEE Standard No. 12207:2017). IEEE. https://doi.org/10.1109/IEEESTD.2017.8100771
+
+Laudon, K. C., & Laudon, J. P. (2020). Management information systems: Managing the digital firm (16th ed.). Pearson Education.
+
+Norman, D. (2013). The design of everyday things (Revised ed.). Basic Books.
+
+O'Brien, J. A., & Marakas, G. M. (2017). Introduction to information systems (16th ed.). McGraw-Hill Education.
+
+Pressman, R. S., & Maxim, B. R. (2020). Software engineering: A practitioner's approach (9th ed.). McGraw-Hill Education.
+
+Read, J., & Ginn, M. L. (2015). Records management (10th ed.). Cengage Learning.
+
+Rumbaugh, J., Jacobson, I., & Booch, G. (2018). The Unified Modeling Language reference manual (2nd ed.). Addison-Wesley Professional.
+
+Satzinger, J. W., Jackson, R. B., & Burd, S. D. (2016). Systems analysis and design in a changing world (7th ed.). Cengage Learning.
+
+Schwaber, K., & Sutherland, J. (2020). The Scrum guide: The definitive guide to Scrum: The rules of the game. Scrum.org.
+
+Shneiderman, B., Plaisant, C., Cohen, M., Jacobs, S., Elmqvist, N., & Diakopoulos, N. (2018). Designing the user interface: Strategies for effective human-computer interaction (6th ed.). Pearson Education.
+
+Silberschatz, A., Korth, H. F., & Sudarshan, S. (2020). Database system concepts (7th ed.). McGraw-Hill Education.
+
+Sommerville, I. (2016). Software engineering (10th ed.). Pearson Education.
+
+Stauffer, M. (2019). Laravel: Up & running: A framework for building modern PHP apps (2nd ed.). O'Reilly Media.
+
+Sutirman. (2019). Manajemen kearsipan elektronik. PT Remaja Rosdakarya.
+
+Tidwell, J., Brewer, C., & Valencia, A. (2020). Designing interfaces: Patterns for effective interaction design (3rd ed.). O'Reilly Media.

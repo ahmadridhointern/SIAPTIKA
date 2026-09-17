@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DocumentController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Employee\ActivityController as EmployeeActivityController;
 use App\Http\Controllers\Employee\ArchiveController as EmployeeArchiveController;
@@ -65,6 +66,9 @@ Route::middleware('admin.auth')->prefix('admin')->name('admin.')->group(function
         'documents/{document}/download',
         [DocumentController::class, 'download']
     )->name('documents.download');
+
+    Route::put('/settings/credentials', [SettingsController::class, 'updateCredentials'])
+        ->name('settings.credentials');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

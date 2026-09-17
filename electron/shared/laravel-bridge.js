@@ -16,19 +16,24 @@
 
 const { spawn, execSync } = require('child_process');
 const http       = require('http');
+const net        = require('net');
 const path       = require('path');
 const fs         = require('fs');
 
 // ─── Konstanta ───────────────────────────────────────────────────────────────
-const LARAVEL_HOST    = '127.0.0.1';
-const LARAVEL_PORT    = 8000;
-const LARAVEL_URL     = `http://${LARAVEL_HOST}:${LARAVEL_PORT}`;
-const HEALTH_ENDPOINT = '/up';
-const POLL_INTERVAL   = 350;   // ms
-const POLL_TIMEOUT    = 35000; // ms — batas maksimal menunggu startup (35 detik)
+const LARAVEL_HOST      = '127.0.0.1';
+const LARAVEL_PORT_BASE = 8000;           // Port awal; fallback ke 8001, 8002, ...
+const PORT_MAX_ATTEMPT  = 5;              // Maksimal percobaan port berbeda
+const HEALTH_ENDPOINT   = '/up';
+const POLL_INTERVAL     = 350;            // ms
+const POLL_TIMEOUT      = 60000;          // ms — batas maksimal menunggu startup (60 detik)
+const LOG_TAIL_LINES    = 50;             // Jumlah baris terakhir log yang ditampilkan saat error
 
-let laravelProcess = null;
-let isStarting = false;
+// State yang berubah di-runtime
+let laravelProcess  = null;
+let isStarting      = false;
+let LARAVEL_PORT    = LARAVEL_PORT_BASE;  // Dapat berubah jika port awal sibuk
+let LARAVEL_URL     = `http://${LARAVEL_HOST}:${LARAVEL_PORT}`;
 
 /**
  * Menentukan informasi binary PHP dan php.ini yang akan digunakan.
@@ -107,7 +112,7 @@ function resolveLaravelRoot() {
         }
     }
 
-    // 3. Development: root project (naik 2 level dari electron/)
+    // 3. Development: root project (naik 2 level dari electron/shared/)
     const devRoot = path.resolve(__dirname, '..', '..');
     if (fs.existsSync(path.join(devRoot, 'artisan'))) {
         return { root: devRoot, exists: true };
@@ -143,14 +148,63 @@ function ensureStorageDirectories(laravelRoot) {
 }
 
 /**
- * Melakukan permintaan HTTP GET ke endpoint health check Laravel.
+ * Memeriksa apakah sebuah port TCP sedang digunakan.
+ *
+ * @param {number} port
+ * @returns {Promise<boolean>} true jika port SEDANG DIGUNAKAN (busy)
+ */
+function isPortBusy(port) {
+    return new Promise((resolve) => {
+        const server = net.createServer();
+
+        server.once('error', (err) => {
+            // EADDRINUSE = port sudah terpakai
+            resolve(err.code === 'EADDRINUSE');
+        });
+
+        server.once('listening', () => {
+            server.close();
+            resolve(false); // Port bebas
+        });
+
+        server.listen(port, LARAVEL_HOST);
+    });
+}
+
+/**
+ * Mencari port yang tersedia mulai dari LARAVEL_PORT_BASE.
+ * Mencoba hingga PORT_MAX_ATTEMPT port berturut-turut.
+ *
+ * @returns {Promise<number|null>} Nomor port yang tersedia, atau null jika semua sibuk.
+ */
+async function findAvailablePort() {
+    for (let i = 0; i < PORT_MAX_ATTEMPT; i++) {
+        const candidate = LARAVEL_PORT_BASE + i;
+        const busy = await isPortBusy(candidate);
+        if (!busy) {
+            return candidate;
+        }
+        console.log(`[Laravel Bridge] Port ${candidate} sedang digunakan, mencoba port berikutnya...`);
+    }
+    return null;
+}
+
+/**
+ * Melakukan permintaan HTTP ke endpoint health check Laravel.
+ *
+ * Mengembalikan true jika server merespons dengan kode HTTP apapun — termasuk
+ * 503 yang dikembalikan Laravel saat DatabaseCheck gagal (misalnya koneksi
+ * Supabase lambat). Yang penting adalah php artisan serve sudah mendengarkan
+ * dan mampu melayani request; error tingkat aplikasi ditangani oleh BrowserWindow.
  *
  * @returns {Promise<boolean>}
  */
 function checkLaravelReady() {
     return new Promise((resolve) => {
-        const req = http.get(`${LARAVEL_URL}${HEALTH_ENDPOINT}`, { timeout: 2000 }, (res) => {
-            resolve(res.statusCode === 200);
+        const req = http.get(`${LARAVEL_URL}${HEALTH_ENDPOINT}`, { timeout: 5000 }, (res) => {
+            // Respons apapun (200, 302, 503, dll.) berarti server sudah aktif
+            res.resume(); // Pastikan koneksi ditutup bersih
+            resolve(res.statusCode >= 100);
         });
         req.on('error', () => resolve(false));
         req.on('timeout', () => {
@@ -180,9 +234,28 @@ async function waitForLaravel() {
 }
 
 /**
+ * Membaca N baris terakhir dari sebuah file teks.
+ * Mengembalikan string kosong jika file tidak ada atau tidak dapat dibaca.
+ *
+ * @param {string} filePath
+ * @param {number} n
+ * @returns {string}
+ */
+function readLastLines(filePath, n) {
+    try {
+        if (!fs.existsSync(filePath)) return '';
+        const content = fs.readFileSync(filePath, 'utf8');
+        const lines = content.split('\n');
+        return lines.slice(-n).join('\n').trim();
+    } catch (e) {
+        return '';
+    }
+}
+
+/**
  * Memulai server Laravel lokal menggunakan PHP runtime yang sesuai.
  *
- * @returns {Promise<{ success: boolean, error?: string, message?: string }>}
+ * @returns {Promise<{ success: boolean, error?: string, message?: string, logSnippet?: string, logPath?: string }>}
  */
 async function startLaravel() {
     // 1. Cek apakah server sudah aktif (mencegah proses ganda)
@@ -201,7 +274,7 @@ async function startLaravel() {
     isStarting = true;
 
     try {
-        const phpRuntime = resolvePhpRuntime();
+        const phpRuntime  = resolvePhpRuntime();
         const laravelInfo = resolveLaravelRoot();
 
         // 2. Validasi keberadaan biner PHP
@@ -224,19 +297,41 @@ async function startLaravel() {
             };
         }
 
+        // 4. Cari port yang tersedia
+        const availablePort = await findAvailablePort();
+        if (availablePort === null) {
+            console.error('[Laravel Bridge] Tidak ada port yang tersedia.');
+            return {
+                success: false,
+                error: 'PORT_UNAVAILABLE',
+                message: `Tidak ada port yang tersedia (port ${LARAVEL_PORT_BASE}–${LARAVEL_PORT_BASE + PORT_MAX_ATTEMPT - 1} semuanya sedang digunakan).\nTutup aplikasi lain yang mungkin menggunakan port tersebut, lalu coba lagi.`,
+            };
+        }
+
+        // Update port & URL yang akan digunakan
+        LARAVEL_PORT = availablePort;
+        LARAVEL_URL  = `http://${LARAVEL_HOST}:${LARAVEL_PORT}`;
+
         console.log('[Laravel Bridge] Binary PHP :', phpRuntime.bin);
         console.log('[Laravel Bridge] Config INI :', phpRuntime.ini || '(default)');
         console.log('[Laravel Bridge] Laravel Dir:', laravelInfo.root);
+        console.log('[Laravel Bridge] Port       :', LARAVEL_PORT);
 
-        // 4. Pastikan struktur direktori storage tersedia
+        // 5. Pastikan struktur direktori storage tersedia
         ensureStorageDirectories(laravelInfo.root);
 
-        // 5. Siapkan argumen eksekusi
+        // 6. Siapkan argumen eksekusi
         const artisanPath = path.join(laravelInfo.root, 'artisan');
-        const spawnArgs = [];
+        const spawnArgs   = [];
 
         if (phpRuntime.ini) {
             spawnArgs.push('-c', phpRuntime.ini);
+        }
+
+        // FIX: Inject extension_dir sebagai path ABSOLUT agar PHP dapat menemukan
+        // ekstensi (.dll) terlepas dari working directory yang digunakan spawn().
+        if (phpRuntime.dir) {
+            spawnArgs.push('-d', `extension_dir=${path.join(phpRuntime.dir, 'ext')}`);
         }
 
         // Sertakan CA cert mandiri untuk HTTPS / Supabase Storage S3
@@ -250,21 +345,22 @@ async function startLaravel() {
 
         spawnArgs.push(artisanPath, 'serve', `--host=${LARAVEL_HOST}`, `--port=${LARAVEL_PORT}`);
 
-        // 6. Siapkan variabel lingkungan (inject direktori PHP ke PATH & PHPRC)
+        // 7. Siapkan variabel lingkungan (inject direktori PHP ke PATH & PHPRC)
         const childEnv = { ...process.env };
         if (phpRuntime.dir) {
             const caCertPath = path.join(phpRuntime.dir, 'cacert.pem');
             childEnv.PHPRC = phpRuntime.dir;
             childEnv.PATH  = `${phpRuntime.dir};${childEnv.PATH || ''}`;
             if (fs.existsSync(caCertPath)) {
-                childEnv.SSL_CERT_FILE  = caCertPath;
-                childEnv.CURL_CA_BUNDLE = caCertPath;
+                childEnv.SSL_CERT_FILE  = caCertPath;   // Guzzle / OpenSSL
+                childEnv.CURL_CA_BUNDLE = caCertPath;   // cURL default
+                childEnv.AWS_CA_BUNDLE  = caCertPath;   // AWS SDK PHP (Guzzle verify)
             }
         }
 
-        // 7. Siapkan berkas log server
+        // 8. Siapkan berkas log server
         const logFile = path.join(laravelInfo.root, 'storage', 'logs', 'laravel-server.log');
-        let outStream = 'ignore';
+        let outStream  = 'ignore';
         try {
             outStream = fs.openSync(logFile, 'a');
         } catch (e) {
@@ -297,10 +393,17 @@ async function startLaravel() {
 
         if (!isReady) {
             console.error('[Laravel Bridge] Timeout: Server Laravel tidak merespons dalam batas waktu.');
+
+            // Baca log untuk menyertakan konteks error yang lebih detail
+            const logSnippet = readLastLines(logFile, LOG_TAIL_LINES);
+            const logDir     = path.dirname(logFile);
+
             return {
                 success: false,
                 error: 'SERVER_TIMEOUT',
                 message: 'Server aplikasi lokal tidak merespons dalam batas waktu yang ditentukan.\nSilakan periksa log di storage/logs/laravel-server.log.',
+                logSnippet,
+                logPath: logDir,
             };
         }
 
@@ -341,4 +444,14 @@ process.on('exit', () => stopLaravel());
 process.on('SIGINT', () => { stopLaravel(); process.exit(0); });
 process.on('SIGTERM', () => { stopLaravel(); process.exit(0); });
 
-module.exports = { startLaravel, stopLaravel, LARAVEL_URL };
+/**
+ * Mengembalikan URL server Laravel yang sedang aktif.
+ * Selalu memanggil ini setelah startLaravel() selesai untuk mendapatkan port yang benar.
+ *
+ * @returns {string}
+ */
+function getLaravelUrl() {
+    return LARAVEL_URL;
+}
+
+module.exports = { startLaravel, stopLaravel, getLaravelUrl };

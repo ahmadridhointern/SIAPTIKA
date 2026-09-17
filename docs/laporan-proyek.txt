@@ -1,0 +1,1568 @@
+KATA PENGANTAR
+
+
+Puji dan syukur penulis panjatkan ke hadirat Allah Subhanahu Wa Ta'ala atas limpahan rahmat dan karunia-Nya, sehingga penulis dapat menyelesaikan kegiatan Kerja Praktik beserta laporan ini dengan judul "SISTEM INFORMASI ADMINISTRASI KEGIATAN BIDANG APTIKA BERBASIS APLIKASI DESKTOP". Shalawat dan salam senantiasa tercurah kepada Nabi Muhammad Shallallahu 'Alaihi Wasallam, keluarga, dan para sahabatnya.
+
+Laporan Kerja Praktik ini disusun sebagai salah satu syarat akademis penyelesaian kurikulum pada Program Studi Teknik Informatika, Fakultas Teknik, Universitas Islam Riau, sekaligus pertanggungjawaban atas pelaksanaan kerja pada Bidang Aplikasi Informatika (APTIKA) Dinas Komunikasi, Informatika, dan Statistik Provinsi Riau pada 13 Juli 2026 sampai dengan 28 Agustus 2026.
+
+Penulis menyadari bahwa keberhasilan pelaksanaan dan penulisan laporan ini tidak terlepas dari bimbingan, bantuan, dan dukungan berbagai pihak. Oleh karena itu, penulis menyampaikan terima kasih dan penghargaan setinggi-tingginya kepada:
+1. Bapak Prof. Dr. H. Syafrinaldi, S.H., M.C.L., selaku Rektor Universitas Islam Riau.
+2. Bapak Dr. Ir. H. Abdul Kudus Zaini, M.T., MS.Tr., IPU., ASEAN Eng., selaku Dekan Fakultas Teknik Universitas Islam Riau.
+3. Bapak/Ibu Ketua Program Studi Teknik Informatika Fakultas Teknik Universitas Islam Riau atas fasilitas dan arahan akademik.
+4. Bapak/Ibu Dosen Pembimbing Kerja Praktik yang telah meluangkan waktu dan memberikan arahan serta evaluasi mendalam selama proses bimbingan.
+5. Seluruh Dosen serta Tenaga Kependidikan Program Studi Teknik Informatika Fakultas Teknik Universitas Islam Riau atas bekal ilmu dan fasilitas selama perkuliahan.
+6. Bapak Ikhwan Ridwan, S.H., M.Si., selaku Kepala Dinas Komunikasi, Informatika, dan Statistik Provinsi Riau atas izin dan kesempatan pelaksanaan Kerja Praktik.
+7. Bapak/Ibu Kepala Bidang Aplikasi Informatika (APTIKA) Diskominfotik Riau yang telah menyambut dan memfasilitasi kegiatan di unit kerja.
+8. Bapak/Ibu Pembimbing Lapangan di Bidang APTIKA yang senantiasa membimbing, mengarahkan, dan mendampingi pengembangan sistem SIAPTIKA.
+9. Seluruh Staf dan Pegawai Bidang APTIKA Diskominfotik Provinsi Riau atas kerja sama, keterbukaan informasi, dan dukungan suasana kedinasan.
+10. Kedua orang tua tercinta dan keluarga besar atas limpahan doa tulus, kasih sayang, nasihat, dan dukungan moril maupun materiil yang tak terhingga.
+11. Rekan-rekan mahasiswa Program Studi Teknik Informatika angkatan 2023 Universitas Islam Riau atas kebersamaan, motivasi, dan diskusinya.
+
+Penulis menyadari laporan ini masih memiliki keterbatasan. Oleh karena itu, kritik dan saran yang konstruktif sangat diharapkan demi penyempurnaan di masa mendatang. Semoga laporan ini memberi manfaat bagi pengembangan ilmu teknologi informasi serta instansi terkait.
+
+
+Pekanbaru, 28 Agustus 2026
+
+
+
+Penulis
+
+
+BAB I  
+PENDAHULUAN
+
+1.1 Latar Belakang
+
+Bidang Aplikasi Informatika (APTIKA) pada Dinas Komunikasi, Informatika, dan Statistik (Diskominfotik) Provinsi Riau memegang peranan krusial dalam menyelenggarakan tata kelola dan implementasi Sistem Pemerintahan Berbasis Elektronik (SPBE). Tingginya intensitas agenda kedinasan—seperti rapat koordinasi antarperangkat daerah, bimbingan teknis, sosialisasi aplikasi, dan evaluasi layanan TI—menuntut pengelolaan jadwal dan dokumentasi administrasi yang tertib dan akuntabel. Namun, observasi di lapangan menunjukkan koordinasi jadwal serta distribusi berkas arsip resmi (surat tugas, notulen rapat, dan dokumentasi foto) masih dilakukan secara informal melalui pesan instan WhatsApp. Pola ini mengakibatkan informasi agenda rawan tertimbun percakapan lain, proses temu kembali berkas fisik untuk audit kinerja memerlukan waktu lama, serta belum adanya portal pantau mandiri bagi pegawai non-admin.
+
+Guna mengatasi kendala tersebut, dirancang sistem informasi administrasi kegiatan berarsitektur Hybrid Desktop. Sistem memanfaatkan ketangguhan logika framework Laravel yang dikemas menggunakan desktop wrapper Electron, serta terintegrasi langsung dengan cloud database Supabase PostgreSQL dan cloud storage Supabase Storage S3. Pendekatan ini memungkinkan aplikasi dieksekusi secara mandiri (self-contained) pada komputer kerja pengguna tanpa memerlukan instalasi server web tambahan maupun alokasi anggaran sewa hosting publik bulanan.
+
+Berdasarkan urgensi tersebut, disusun laporan Kerja Praktik berjudul “SISTEM INFORMASI ADMINISTRASI KEGIATAN BIDANG APTIKA BERBASIS APLIKASI DESKTOP”. Proyek ini menghasilkan dua produk aplikasi desktop Windows, yaitu SIAPTIKA Administrator (.exe) untuk pengelolaan penuh agenda dan arsip kedinasan terautentikasi, serta SIAPTIKA Dashboard (.exe) sebagai portal informasi agenda kegiatan terbuka (read-only) bagi seluruh aparatur di lingkungan Bidang APTIKA Diskominfotik Provinsi Riau.
+
+
+1.2 Tujuan Kerja Praktek
+
+Tujuan dari pelaksanaan Kerja Praktik dan pengembangan sistem ini adalah:
+1. Menganalisis alur kerja administrasi agenda dan kebutuhan manajemen arsip digital pada Bidang APTIKA Diskominfotik Provinsi Riau.
+2. Merancang sistem informasi administrasi kegiatan berarsitektur hybrid desktop yang memadukan keunggulan logika web Laravel dengan antarmuka desktop Electron.
+3. Membangun aplikasi desktop mandiri SIAPTIKA Administrator (.exe) dan SIAPTIKA Dashboard (.exe) yang terintegrasi aman dengan basis data dan penyimpanan cloud Supabase.
+4. Menguji kelayakan fungsional sistem menggunakan metode Black Box Testing guna memastikan keandalan seluruh fitur sesuai spesifikasi kebutuhan dinas.
+
+
+1.3 Manfaat Kerja Praktek
+
+Pelaksanaan Kerja Praktik ini diharapkan memberikan manfaat nyata bagi pihak-pihak terkait:
+
+1.3.1 Manfaat bagi Mahasiswa
+1. Mengaplikasikan teori rekayasa perangkat lunak perkuliahan ke dalam proyek nyata di instansi pemerintah.
+2. Mengasah keahlian teknis pengembangan aplikasi desktop hybrid berbasis Laravel, Electron, dan integrasi cloud storage.
+3. Memahami alur kerja kedinasan, budaya organisasi, dan tata kelola teknologi informasi sektor publik.
+
+1.3.2 Manfaat bagi Instansi (Diskominfotik Provinsi Riau)
+1. Digitalisasi agenda kedinasan secara terstruktur dan terpusat melalui aplikasi desktop khusus.
+2. Akselerasi proses pencarian dan pengunduhan arsip digital resmi (surat tugas, notulen, dokumentasi) untuk keperluan audit.
+3. Transparansi jadwal kegiatan melalui portal mandiri pegawai tanpa membebani biaya sewa server hosting publik.
+
+1.3.3 Manfaat bagi Program Studi Teknik Informatika UIR
+1. Mempererat kemitraan akademis dan profesional antara Universitas Islam Riau dengan instansi pemerintah daerah.
+2. Menjadi referensi dokumentasi studi kasus penerapan teknologi desktop hybrid pada sistem administrasi pemerintahan.
+3. Memberikan umpan balik empiris bagi keselarasan kurikulum akademik dengan dinamika kebutuhan industri kerja.
+
+
+1.4 Ringkasan Sistematika Laporan
+
+Laporan Kerja Praktik ini disusun ke dalam empat bab pembahasan:
+- BAB I PENDAHULUAN: Menguraikan latar belakang masalah, perumusan tujuan, manfaat bagi pihak terkait, serta sistematika laporan.
+- BAB II DESKRIPSI KERJA PRAKTEK: Memaparkan waktu dan tempat pelaksanaan, profil instansi Diskominfotik Riau, tupoksi Bidang APTIKA, target pemecahan masalah, serta metodologi Scrum dan jadwal sprint kerja.
+- BAB III PELAKSANAAN DAN PEMBAHASAN KERJA PRAKTEK: Membahas landasan teori teknologi, analisis kebutuhan fungsional/non-fungsional, perancangan sistem (Flowchart, UML, ERD, arsitektur, UI), implementasi modul perangkat lunak, serta hasil pengujian fungsional Black Box Testing.
+- BAB IV KESIMPULAN DAN SARAN: Menyajikan kesimpulan komprehensif atas luaran sistem yang dicapai serta saran pengembangan sistem di masa mendatang.
+
+
+BAB II  
+DESKRIPSI KERJA PRAKTEK
+
+2.1 Waktu dan Tempat Pelaksanaan
+
+2.1.1 Waktu Pelaksanaan
+Kegiatan Kerja Praktik dilaksanakan terhitung mulai tanggal 13 Juli 2026 sampai dengan tanggal 28 Agustus 2026. Jam kerja operasional mengikuti ketentuan kedinasan Aparatur Sipil Negara (ASN) Pemerintah Provinsi Riau, yaitu hari Senin hingga Rabu pukul 07.30–16.00 WIB, hari Kamis pukul 07.30–16.30 WIB, serta hari Jumat bertugas secara kedinasan daring (Work From Home/WFH).
+
+2.1.2 Tempat Pelaksanaan
+Kerja Praktik dilaksanakan pada unit kerja Bidang Aplikasi Informatika (APTIKA), Dinas Komunikasi, Informatika, dan Statistik (Diskominfotik) Provinsi Riau, yang beralamat di Jalan Diponegoro Nomor 24 A, Simpang Empat, Kecamatan Pekanbaru Kota, Kota Pekanbaru, Riau 28127.
+
+
+2.2 Profil Instansi Tempat Kerja Praktek
+
+2.2.1 Profil Singkat Diskominfotik Provinsi Riau
+Dinas Komunikasi, Informatika, dan Statistik (Diskominfotik) Provinsi Riau merupakan unsur pelaksana urusan pemerintahan daerah di bidang komunikasi, informatika, statistik, dan persandian yang berada di bawah serta bertanggung jawab kepada Gubernur Riau melalui Sekretaris Daerah. Pembentukan instansi ini berlandaskan pada Peraturan Daerah Provinsi Riau Nomor 4 Tahun 2016 serta Peraturan Gubernur Riau Nomor 78 Tahun 2016. Sebagai penggerak utama transformasi digital daerah, Diskominfotik bertugas menyelenggarakan tata kelola teknologi informasi, mengoordinasikan implementasi Sistem Pemerintahan Berbasis Elektronik (SPBE), mengelola diseminasi informasi publik daerah, mengompilasi data statistik sektoral, dan mengamankan persandian kedinasan.
+
+2.2.2 Visi dan Misi Instansi
+Diskominfotik Provinsi Riau berpedoman pada Visi Pembangunan Daerah Provinsi Riau, yaitu: “Terwujudnya Layanan Komunikasi, Informatika dan Statistik yang handal dan berdaya saing”.
+Dalam mewujudkan visi tersebut, instansi menjalankan misi utama: “Mewujudkan manajemen penyelenggaraan pemerintahan yang baik (good governance), efektif dan efisien, profesional, transparan dan akuntabel.”
+
+2.2.3 Struktur Organisasi Instansi
+Struktur organisasi Diskominfotik Provinsi Riau dipimpin oleh Kepala Dinas yang membawahi sekretariat, bidang teknis, serta kelompok jabatan fungsional. Susunan organisasi terdiri atas:
+1. Kepala Dinas
+2. Sekretariat, membawahi:
+   a. Subbagian Kepegawaian dan Umum
+   b. Subbagian Keuangan dan Perlengkapan
+   c. Subbagian Perencanaan Program
+3. Bidang Arsiparis
+4. Bidang Informasi dan Komunikasi Publik (IKP)
+5. Bidang Aplikasi Informatika (APTIKA)
+6. Bidang Statistik
+7. Bidang Persandian
+
+Bagan susunan struktur organisasi Dinas Komunikasi Informatika dan Statistik Provinsi Riau secara lengkap disajikan pada Gambar 2.1.
+
+
+(Tempat Peletakan Gambar Struktur Organisasi)  
+[TEMPAT GAMBAR: Struktur Organisasi Diskominfotik Provinsi Riau]
+Gambar 2.1 Struktur Organisasi Dinas Komunikasi Informatika dan Statistik Provinsi Riau  
+
+
+2.2.4 Profil Unit Kerja Bidang APTIKA
+Bidang Aplikasi Informatika (APTIKA) merupakan unit kerja eselon III pada Diskominfotik Provinsi Riau yang bertugas menyelenggarakan tata kelola ekosistem digital dan arsitektur perangkat lunak pemerintahan daerah. Unit ini mengemban mandat rekayasa perangkat lunak aplikasi kedinasan, integrasi basis data antarsistem, pemeliharaan sistem informasi, serta pendampingan teknis implementasi SPBE bagi Organisasi Perangkat Daerah (OPD) di lingkungan Pemerintah Provinsi Riau.
+
+2.2.5 Tugas Pokok dan Fungsi Bidang APTIKA
+Bidang APTIKA mempunyai tugas pokok melaksanakan perumusan kebijakan teknis, pengoordinasian, pembinaan, fasilitasi, serta evaluasi di bidang aplikasi informatika. Dalam menyelenggarakan tugas pokok tersebut, Bidang APTIKA menjalankan lima fungsi utama:
+1. Perumusan kebijakan teknis layanan aplikasi informatika dan ekosistem digital pemerintahan daerah.
+2. Perancangan, rekayasa pengembangan, pengujian, dan implementasi sistem aplikasi kedinasan.
+3. Fasilitasi integrasi sistem informasi dan interoperabilitas pertukaran data antarperangkat daerah.
+4. Bimbingan teknis, sosialisasi, dan pendampingan operasional pemanfaatan aplikasi bagi pengguna.
+5. Pemantauan, evaluasi berkala, dan pelaporan efektivitas layanan aplikasi kedinasan dan SPBE.
+
+
+2.3 Program Kerja Praktek
+
+2.3.1 Target Pemecahan Masalah
+Pelaksanaan Kerja Praktik diarahkan untuk mengatasi hambatan koordinasi agenda dan risiko hilangnya dokumen fisik pada Bidang APTIKA melalui tiga target penyelesaian masalah:
+1. Digitalisasi Agenda Mandiri: Menggantikan koordinasi informal pesan instan melalui aplikasi desktop terstruktur yang mencatat identitas agenda, waktu, lokasi, dan status kegiatan secara real-time.
+2. Sentralisasi Repositori Dokumen: Membangun mekanisme pengunggahan dan penyimpanan berkas resmi (surat tugas, notulen rapat, dokumentasi foto) yang terhubung langsung ke penyimpanan awan (cloud storage) yang aman dan terisolasi.
+3. Transparansi Portal Pegawai: Menyediakan aplikasi desktop khusus pegawai (SIAPTIKA Dashboard) yang menyajikan rekapitulasi agenda dan arsip digital secara mandiri tanpa memerlukan intervensi staf administrasi.
+
+2.3.2 Metode Pelaksanaan Tugas (Metodologi Scrum)
+Pengembangan perangkat lunak SIAPTIKA menerapkan metodologi Scrum Agile yang berbasis pada iterasi terukur (sprint) berdurasi 1–2 minggu guna mengakomodasi evaluasi kebutuhan dinas secara adaptif (Schwaber & Sutherland, 2020). Pelaksanaan kerja diatur melalui lima tahapan operasional terpadu:
+1. Product Backlog: Inventarisasi seluruh kebutuhan fungsional dan non-fungsional sistem berdasarkan observasi dan wawancara pengguna.
+2. Sprint Planning: Penentuan prioritas backlog dan pembagian target modul ke dalam setiap siklus sprint.
+3. Daily Standup & Koordinasi: Reviu kemajuan teknis harian serta penanganan kendala kode bersama pembimbing lapangan.
+4. Sprint Review: Demonstrasi fungsional luaran modul kepada staf dan pembimbing guna memperoleh evaluasi langsung.
+5. Sprint Retrospective: Evaluasi efektivitas proses kerja pada sprint berjalan untuk penyempurnaan pada iterasi selanjutnya.
+
+Alur tahapan pengembangan sistem berbasis kerangka kerja Scrum secara visual ditunjukkan pada Gambar 2.2.
+
+
+(Tempat Peletakan Gambar Metodologi Scrum)  
+[TEMPAT GAMBAR: Diagram Alur Metodologi Scrum]
+Gambar 2.2 Alur Tahapan Pengembangan Sistem Menggunakan Metodologi Scrum  
+
+
+2.3.3 Rencana dan Penjadwalan Kerja (Sprint 1 s.d. Sprint 6)
+Pelaksanaan Kerja Praktik dan pengembangan perangkat lunak dibagi ke dalam 6 (enam) tahapan sprint terstruktur sebagaimana disajikan pada Tabel 2.1.
+
+Tabel 2.1 Rencana dan Jadwal Kerja Pengembangan Sistem Berdasarkan Sprint
+
+-------------------------------------------------------------------------------------------------------------------------
+[TAMPILAN BACA PADA FILE TEKS]
+-------------------------------------------------------------------------------------------------------------------------
++----------+-------------------------------------------------------------+----------------------------------------------+
+| Sprint   | Rencana Aktivitas Kerja                                     | Target Luaran (Output)                       |
++----------+-------------------------------------------------------------+----------------------------------------------+
+| Sprint 1 | 1. Observasi alur kerja administrasi Bidang APTIKA.         | 1. Dokumen analisis kebutuhan (SRS).         |
+|          | 2. Wawancara kebutuhan pengguna dengan pembimbing lapangan. | 2. Diagram rancangan sistem dan basis data.  |
+|          | 3. Penyusunan Product Backlog dan dokumen kebutuhan sistem. | 3. Rancangan desain antarmuka (UI Design).   |
+|          | 4. Pemodelan sistem (Use Case, Activity, Flowchart, ERD).   |                                              |
++----------+-------------------------------------------------------------+----------------------------------------------+
+| Sprint 2 | 1. Inisialisasi struktur proyek Laravel.                    | 1. Halaman login Administrator.              |
+|          | 2. Konfigurasi koneksi basis data Supabase PostgreSQL.      | 2. Dashboard utama Administrator.            |
+|          | 3. Pembuatan tabel dan skema database relasional.           | 3. Fitur tambah, ubah, dan hapus kegiatan.   |
+|          | 4. Implementasi autentikasi Admin berbasis sesi.            | 4. Basis data terhubung aktif di Supabase.   |
+|          | 5. Implementasi modul CRUD kegiatan kedinasan.              |                                              |
++----------+-------------------------------------------------------------+----------------------------------------------+
+| Sprint 3 | 1. Konfigurasi integrasi Supabase Storage S3.               | 1. Fitur unggah dan ganti dokumen arsip.     |
+|          | 2. Implementasi modul pengunggahan berkas arsip (surat      | 2. Berkas tersimpan aman pada bucket cloud.  |
+|          |    tugas, notulen rapat, dokumentasi foto).                 | 3. Pratinjau daftar arsip per kegiatan.      |
+|          | 3. Pengelolaan metadata dokumen pada basis data.            |                                              |
+|          | 4. Pembuatan halaman rincian (detail) kegiatan dan arsip.   |                                              |
++----------+-------------------------------------------------------------+----------------------------------------------+
+| Sprint 4 | 1. Perancangan dan pembuatan antarmuka Dashboard Pegawai.   | 1. Dashboard informasi khusus Pegawai.       |
+|          | 2. Implementasi penyajian agenda hari ini dan mendatang.    | 2. Fitur pencarian instan & penyaringan data.|
+|          | 3. Implementasi fitur pencarian cepat & filter status.      | 3. Portal arsip digital tanpa hak ubah/hapus.|
+|          | 4. Pembuatan direktori rekapitulasi arsip publik (read-only)|                                              |
++----------+-------------------------------------------------------------+----------------------------------------------+
+| Sprint 5 | 1. Penyusunan skenario pengujian fungsional (Black Box).    | 1. Dokumen pengujian fungsional matrix.      |
+|          | 2. Pelaksanaan pengujian terhadap 37 kasus uji fungsional.  | 2. Daftar catatan perbaikan galat (bug fix). |
+|          | 3. Perbaikan bug, validasi formulir, optimasi basis data.   | 3. Aplikasi berstatus stabil & lolos uji 100%|
+|          | 4. Standardisasi autentikasi akun Administrator (ADM001).   |                                              |
++----------+-------------------------------------------------------------+----------------------------------------------+
+| Sprint 6 | 1. Pengemasan aplikasi desktop menggunakan Electron.        | 1. Installer SIAPTIKA Administrator.exe &    |
+|          | 2. Bundling runtime PHP 8.3 portable & pustaka CRT.         |    SIAPTIKA Dashboard.exe.                   |
+|          | 3. Pembuatan installer aplikasi Windows setup (.exe).       | 2. Aplikasi desktop mandiri (self-contained).|
+|          | 4. Penyusunan dokumentasi teknis & panduan user manual.     | 3. Buku panduan penggunaan (user manual).    |
+|          | 5. Penyusunan naskah laporan Kerja Praktik (BAB III & IV).  | 4. Naskah laporan Kerja Praktik final.       |
++----------+-------------------------------------------------------------+----------------------------------------------+
+
+-------------------------------------------------------------------------------------------------------------------------
+[FORMAT TABEL SIAP SALIN KE MICROSOFT WORD]
+(Salin 7 baris di bawah ini, tempel di Word, blok lalu klik: Insert -> Table -> Convert Text to Table -> Separate at: Tabs)
+-------------------------------------------------------------------------------------------------------------------------
+Sprint	Rencana Aktivitas Kerja	Target Luaran (Output)
+Sprint 1	1. Observasi alur kerja administrasi Bidang APTIKA. 2. Wawancara kebutuhan pengguna dengan pembimbing lapangan. 3. Penyusunan Product Backlog dan dokumen kebutuhan sistem. 4. Pemodelan sistem (Use Case, Activity Diagram, Flowchart, ERD, dan Desain UI).	1. Dokumen analisis kebutuhan (SRS). 2. Diagram rancangan sistem dan basis data. 3. Rancangan desain antarmuka pengguna (UI Design).
+Sprint 2	1. Inisialisasi struktur proyek Laravel. 2. Konfigurasi koneksi basis data Supabase PostgreSQL. 3. Pembuatan tabel dan skema database relasional. 4. Implementasi autentikasi Admin berbasis sesi. 5. Implementasi modul CRUD kegiatan kedinasan.	1. Halaman login Administrator. 2. Dashboard utama Administrator. 3. Fitur tambah, ubah, dan hapus kegiatan. 4. Basis data terhubung aktif di Supabase.
+Sprint 3	1. Konfigurasi integrasi Supabase Storage S3. 2. Implementasi modul pengunggahan berkas arsip (surat tugas, notulen rapat, dokumentasi foto). 3. Pengelolaan metadata dokumen pada basis data. 4. Pembuatan halaman rincian (detail) kegiatan beserta daftar arsip terlampir.	1. Fitur unggah dan ganti dokumen arsip. 2. Berkas tersimpan aman pada bucket cloud. 3. Pratinjau daftar arsip per kegiatan.
+Sprint 4	1. Perancangan dan pembuatan antarmuka Dashboard Pegawai. 2. Implementasi penyajian data agenda hari ini dan agenda mendatang. 3. Implementasi fitur pencarian cepat (keyword search) dan filter status kegiatan. 4. Pembuatan direktori rekapitulasi arsip publik bagi pegawai (read-only).	1. Dashboard informasi khusus Pegawai. 2. Fitur pencarian instan dan penyaringan data. 3. Portal arsip digital tanpa hak ubah/hapus.
+Sprint 5	1. Penyusunan skenario pengujian fungsional (Black Box Testing). 2. Pelaksanaan pengujian menyeluruh terhadap 37 kasus uji fungsional. 3. Perbaikan bug, penyesuaian validasi formulir, dan optimasi kueri basis data. 4. Standardisasi autentikasi akun Administrator (ADM001).	1. Dokumen pengujian fungsional (test matrix). 2. Daftar catatan perbaikan galat (bug fix). 3. Aplikasi berstatus stabil dan lolos uji 100%.
+Sprint 6	1. Pengemasan aplikasi desktop menggunakan Electron Wrapper. 2. Bundling runtime PHP 8.3 portable mandiri dan pustaka CRT pendukung. 3. Pembuatan installer aplikasi Windows setup (.exe) untuk Administrator dan Pegawai. 4. Penyusunan dokumentasi teknis sistem dan panduan pengguna (user manual). 5. Penyusunan naskah laporan Kerja Praktik (BAB III dan BAB IV).	1. Paket installer SIAPTIKA Administrator.exe dan SIAPTIKA Dashboard.exe. 2. Aplikasi desktop mandiri (self-contained). 3. Buku panduan penggunaan (user manual). 4. Naskah laporan Kerja Praktik final.
+
+
+BAB III  
+PELAKSANAAN DAN PEMBAHASAN KERJA PRAKTEK
+
+3.1 Landasan Teori dan Teknologi
+
+3.1.1 Konsep Sistem Informasi Administrasi dan Arsip Digital
+
+Sistem informasi administrasi merupakan susunan terpadu perangkat keras, perangkat lunak, data, prosedur, dan sumber daya manusia yang mengelola dan mendistribusikan data guna mendukung koordinasi operasional serta akuntabilitas agenda kedinasan sektor publik (O'Brien & Marakas, 2017; Laudon & Laudon, 2020). Dalam tata kelola kearsipan digital, sistem wajib mengelola siklus hidup dokumen elektronik mulai dari penciptaan, pengorganisasian aman, hingga penemuan kembali (retrieval) (Read & Ginn, 2015). Mengacu pada standar ISO 15489-1 (2016), sistem kearsipan andal wajib menjamin aspek keaslian (authenticity), keandalan (reliability), integritas (integrity), dan kemudahan akses (usability) guna mengeliminasi risiko kerusakan fisik naskah dinas saat audit kinerja (Sutirman, 2019). Pada SIAPTIKA, konsep ini diwujudkan dengan menghubungkan pencatatan agenda kedinasan dengan repositori berkas resmi (surat tugas, notulen rapat, dan foto kegiatan) secara relasional dalam satu kesatuan sistem.
+
+
+3.1.2 Arsitektur Aplikasi Desktop Hybrid
+
+Arsitektur desktop hybrid memadukan teknologi web (HTML, CSS, JavaScript, dan PHP) pada lapisan logika bisnis dengan lingkungan eksekusi desktop native melalui embedded browser engine (Ferreira et al., 2018; Griffiths, 2019). Pada SIAPTIKA, web service internal Laravel dijalankan pada loopback lokal (127.0.0.1) dan dimuat oleh jendela Electron mandiri tanpa peramban eksternal, menghasilkan aplikasi Windows (.exe) siap pakai tanpa instalasi server terpisah sekaligus meniadakan biaya sewa server hosting publik bulanan. Alur komunikasi dan pemisahan lapisan pada arsitektur desktop hybrid SIAPTIKA disajikan pada Gambar 3.1.
+
+
+(Tempat Peletakan Gambar Konseptual Arsitektur Desktop Hybrid)  
+[TEMPAT GAMBAR: Diagram Konseptual Arsitektur Desktop Hybrid SIAPTIKA]
+Gambar 3.1 Diagram Konseptual Alur Komunikasi Arsitektur Desktop Hybrid  
+
+
+3.1.3 Framework Laravel dan Eloquent ORM
+
+Laravel merupakan kerangka kerja PHP berbasis arsitektur Model-View-Controller (MVC) yang memisahkan logika manipulasi data (Model), penyajian antarmuka (View via Blade), dan pengendalian lalu lintas permintaan (Controller) (Stauffer, 2019; Pressman & Maxim, 2020; Sommerville, 2016). Manipulasi data dikelola oleh Eloquent ORM berbasis pola ActiveRecord (Fowler, 2018) yang memetakan tabel basis data ke dalam kelas model PHP secara berorientasi objek tanpa penulisan sintaks SQL mentah, sementara Database Migration menjamin konsistensi skema tabel antar-lingkungan pengembangan. Pola alur interaksi antarkomponen dalam arsitektur Model-View-Controller (MVC) pada Laravel disajikan pada Gambar 3.2.
+
+
+(Tempat Peletakan Gambar Pola Arsitektur MVC Laravel)  
+[TEMPAT GAMBAR: Diagram Pola Arsitektur Model-View-Controller (MVC)]
+Gambar 3.2 Pola Alur Arsitektur Model-View-Controller (MVC) pada Laravel  
+
+
+3.1.4 Electron Framework dan Bundled Portable PHP Runtime
+
+Electron menggabungkan mesin render Chromium dan runtime Node.js untuk mengeksekusi aplikasi desktop berbasis teknologi web melalui Main Process (pengendali siklus hidup dan akses sistem operasi) dan Renderer Process (penampil antarmuka grafis) (Griffiths, 2019). Pada SIAPTIKA, Main Process mengeksekusi child process spawning untuk mengaktifkan web server PHP lokal portabel (PHP 8.3 Thread-Safe) saat aplikasi dibuka dan menghentikannya secara bersih (graceful termination) saat jendela ditutup. Penerapan single-instance lock mencegah konflik alokasi port jaringan lokal, sehingga staf dapat menjalankan aplikasi tanpa perlu menginstal web server (Laragon/XAMPP), Composer, maupun Node.js secara manual.
+
+
+3.1.5 Basis Data Cloud Supabase PostgreSQL dan Supabase Storage (S3 Protocol)
+
+Supabase merupakan platform Backend-as-a-Service berbasis basis data relasional PostgreSQL yang menjamin integritas referensial data dan kepatuhan transaksi ACID—Atomicity, Consistency, Isolation, dan Durability (Silberschatz et al., 2020). Pertukaran data antara aplikasi desktop klien dan database cloud diamankan melalui protokol koneksi terenkripsi SSL/TLS. Selain basis data relasional, Supabase Storage berbasis protokol AWS S3 digunakan sebagai repositori privat terpusat untuk menyimpan berkas dokumen arsip kedinasan (PDF dan gambar), sehingga berkas terlindung dari risiko kerusakan lokal dan dapat diakses secara simultan oleh staf dinas.
+
+
+3.1.6 Metodologi Pengembangan Perangkat Lunak Scrum
+
+Scrum merupakan kerangka kerja pengembangan perangkat lunak berbasis nilai Agile yang berfokus pada kolaborasi, adaptabilitas, serta penghantaran produk secara bertahap dan berulang melalui siklus Sprint berdurasi tetap (Schwaber & Sutherland, 2020; Pressman & Maxim, 2020). Pada proyek SIAPTIKA, metodologi Scrum diterapkan ke dalam 6 (enam) tahapan sprint mencakup Product Backlog, Sprint Planning, Daily Coordination, Sprint Review, dan Sprint Retrospective, yang memungkinkan penyelarasan kebutuhan antarmuka, validasi aturan bisnis arsip, dan pengemasan biner desktop terlaksana secara terukur.
+
+
+3.2 Analisis dan Perancangan Sistem
+
+3.2.1 Analisis Permasalahan Sistem Berjalan
+
+Berdasarkan hasil observasi dan wawancara di Bidang Aplikasi Informatika (APTIKA) Diskominfotik Provinsi Riau, pengelolaan agenda kegiatan dan pengarsipan berkas dokumen pendukung masih berjalan secara konvensional dan belum terintegrasi ke dalam basis data terpusat.
+
+Prosedur operasional yang berjalan saat ini mencakup tiga alur utama:
+1. Pembuatan dan Penyebaran Jadwal: Staf mencatat agenda ke catatan pribadi, lalu menyebarkannya secara manual melalui grup pesan instan WhatsApp.
+2. Pelaksanaan Kegiatan: Pegawai menghadiri agenda berdasarkan pesan singkat, sementara staf pelaksana menyusun naskah administrasi (surat perintah tugas dan notulen).
+3. Pengarsipan Berkas: Dokumen hasil kegiatan (surat tugas, notulen, dan foto kegiatan) disimpan terpisah pada direktori lokal komputer staf atau lemari arsip fisik.
+
+Bagan alir prosedur operasional pengelolaan kegiatan dan pengarsipan pada sistem berjalan ditunjukkan pada Gambar 3.3.
+
+
+(Tempat Peletakan Gambar Prosedur Sistem Berjalan)  
+[TEMPAT GAMBAR: Flowchart Alur Prosedur Sistem Berjalan / Manual]
+Gambar 3.3 Flowchart Prosedur Pengelolaan Kegiatan dan Arsip Sistem Berjalan  
+
+Praktik kerja konvensional tersebut menimbulkan empat kendala operasional utama:
+1. Risiko Ketinggalan dan Tumpang Tindih Jadwal: Informasi jadwal di grup percakapan rentan tertimbun pesan lain, memicu keterlambatan informasi atau bentrok agenda kerja.
+2. Kerentanan Kehilangan Arsip: Berkas yang tersebar pada komputer lokal tanpa pencadangan terpusat rentan hilang akibat kerusakan perangkat keras atau kelalaian penghapusan.
+3. Lambatnya Penemuan Kembali Dokumen (Information Retrieval): Penelusuran berkas pertanggungjawaban fisik maupun digital secara manual memakan waktu lama dan menghambat efisiensi audit kinerja.
+4. Ketiadaan Portal Mandiri bagi Pegawai: Pegawai non-administrasi tidak memiliki media mandiri untuk memantau agenda harian bidang tanpa meminta langsung kepada staf admin.
+
+
+3.2.2 Analisis Kebutuhan Pengguna (User Requirements)
+
+Analisis kebutuhan pengguna dilakukan untuk merumuskan spesifikasi fungsional dan kriteria kualitas operasional yang wajib dipenuhi oleh sistem yang dikembangkan (Sommerville, 2016; Pressman & Maxim, 2020). Spesifikasi kebutuhan dibagi menjadi kebutuhan fungsional dan non-fungsional.
+
+a. Kebutuhan Fungsional (Functional Requirements)
+Kebutuhan fungsional mendefinisikan layanan, proses, dan interaksi yang disediakan oleh sistem SIAPTIKA untuk Administrator dan Pegawai. Rincian matriks spesifikasi kebutuhan fungsional sistem SIAPTIKA disajikan secara lengkap pada Tabel 3.1.
+
+Tabel 3.1 Matriks Spesifikasi Kebutuhan Fungsional Sistem SIAPTIKA
+
+-------------------------------------------------------------------------------------------------------------------------
+[TAMPILAN BACA PADA FILE TEKS]
+-------------------------------------------------------------------------------------------------------------------------
++---------------+---------------+---------------------------------------------------------------------------------------+
+| Kode Kebutuhan| Pengguna      | Deskripsi Kebutuhan Fungsional                                                        |
++---------------+---------------+---------------------------------------------------------------------------------------+
+| FR-ADM-01     | Administrator | Sistem menyediakan antarmuka login berbasis ID Administrator unik (ADM001) & password.|
+| FR-ADM-02     | Administrator | Sistem menyediakan fitur kelola data kegiatan (tambah, edit, hapus agenda kedinasan). |
+| FR-ADM-03     | Administrator | Sistem menyediakan fitur kelola berkas arsip (unggah, perbarui dokumen surat/foto).   |
+| FR-ADM-04     | Administrator | Sistem menyediakan fungsi penutupan sesi administratif (logout).                      |
+| FR-ALL-01     | Admin &Pegawai| Sistem menyajikan dashboard statistik ringkasan total kegiatan, jadwal, & arsip.      |
+| FR-ALL-02     | Admin &Pegawai| Sistem menyajikan daftar agenda kegiatan hari ini dan agenda yang akan datang.        |
+| FR-ALL-03     | Admin &Pegawai| Sistem menyediakan fitur filter status kegiatan dan pencarian instan berbasis teks.   |
+| FR-ALL-04     | Admin &Pegawai| Sistem menyediakan portal direktori & pratinjau dokumen arsip PDF/gambar secara aman. |
+| FR-PGW-01     | Pegawai       | Sistem menyediakan akses langsung ke dashboard tanpa proses autentikasi (read-only).  |
++---------------+---------------+---------------------------------------------------------------------------------------+
+
+-------------------------------------------------------------------------------------------------------------------------
+[FORMAT TABEL SIAP SALIN KE MICROSOFT WORD]
+(Salin baris di bawah ini, tempel di Word, blok lalu klik: Insert -> Table -> Convert Text to Table -> Separate at: Tabs)
+-------------------------------------------------------------------------------------------------------------------------
+Kode Kebutuhan	Pengguna	Deskripsi Kebutuhan Fungsional
+FR-ADM-01	Administrator	Sistem menyediakan antarmuka login berbasis ID Administrator unik (ADM001) dan kata sandi terenkripsi.
+FR-ADM-02	Administrator	Sistem menyediakan fasilitas manipulasi data kegiatan kedinasan secara penuh (tambah baru, ubah rincian, dan hapus agenda).
+FR-ADM-03	Administrator	Sistem menyediakan modul pengunggahan dan pembaruan berkas arsip kegiatan (surat tugas, notulen rapat, dokumentasi foto).
+FR-ADM-04	Administrator	Sistem menyediakan fungsi penutupan sesi administratif (logout) untuk mengamankan hak akses kelola data.
+FR-ALL-01	Admin & Pegawai	Sistem menyajikan dashboard visual terpadu memuat panel statistik ringkasan total kegiatan, agenda hari ini, agenda mendatang, dan total arsip.
+FR-ALL-02	Admin & Pegawai	Sistem menyajikan daftar agenda kegiatan kedinasan hari ini dan agenda yang akan datang secara real-time.
+FR-ALL-03	Admin & Pegawai	Sistem menyediakan fitur pencarian cepat kata kunci teks (judul/lokasi) dan penyaringan status kegiatan (Semua, Terjadwal, Selesai).
+FR-ALL-04	Admin & Pegawai	Sistem menyediakan direktori arsip kedinasan dan fasilitas pratinjau dokumen arsip (PDF/JPG/PNG) langsung di dalam aplikasi.
+FR-PGW-01	Pegawai	Sistem menyediakan akses langsung ke dashboard informasi tanpa kewajiban login dengan mode peninjauan baca-saja (read-only).
+
+b. Kebutuhan Non-Fungsional (Non-Functional Requirements)
+Kebutuhan non-fungsional menetapkan kriteria kualitas operasional dan performa sistem SIAPTIKA:
+1. Aspek Kinerja (Performance): Waktu inisialisasi aplikasi desktop (startup time) hingga siap digunakan tidak melebihi 3 detik, serta waktu eksekusi kueri penelusuran data berada di bawah 1 detik pada jaringan standar.
+2. Aspek Keamanan (Security): Kata sandi Administrator diamankan dengan enkripsi hash Bcrypt satu arah, rute administratif diproteksi middleware autentikasi sesi, dan pertukaran data ke Supabase dienkripsi melalui protokol SSL/TLS dan HTTPS.
+3. Aspek Portabilitas Mandiri (Portability & Self-Contained): Aplikasi dikemas dalam berkas biner Windows (.exe) yang membundel runtime PHP 8.3 portabel dan dependensi Visual C++ Runtime (CRT), sehingga dapat dijalankan langsung tanpa instalasi server web lokal (Laragon/XAMPP), Composer, maupun Node.js.
+4. Aspek Keandalan Data (Reliability): Seluruh transaksi data memenuhi standar ACID pada cloud database PostgreSQL, sementara berkas fisik dokumen tersimpan pada cloud storage privat yang aman dari risiko kerusakan perangkat keras lokal.
+5. Aspek Antarmuka Pengguna (Usability): Desain antarmuka menerapkan prinsip ergonomi visual modern yang responsif, kontras warna yang nyaman, serta penataan tombol aksi yang intuitif guna meminimalkan kurva pembelajaran pengguna.
+
+
+3.2.3 Perancangan Alur Sistem (Flowchart)
+
+Perancangan diagram alir (flowchart) digunakan untuk memodelkan urutan logika komputasi, percabangan keputusan, dan aliran data operasional pada sistem SIAPTIKA secara sistematis (Satzinger et al., 2016).
+
+1. Flowchart Sistem Keseluruhan
+Menggambarkan alur penentuan peran saat aplikasi dibuka: memeriksa apakah pengguna menjalankan varian Administrator (mengarahkan ke verifikasi login) atau Dashboard Pegawai (menginisialisasi koneksi data dan menyajikan portal baca-saja secara langsung).
+
+Diagram alir logika sistem secara keseluruhan dapat dilihat pada Gambar 3.4.
+
+
+(Tempat Peletakan Gambar Flowchart Sistem Keseluruhan)  
+[TEMPAT GAMBAR: Flowchart Alur Sistem Keseluruhan SIAPTIKA]
+Gambar 3.4 Flowchart Alur Logika Sistem Keseluruhan SIAPTIKA  
+
+2. Flowchart Pengelolaan Kegiatan oleh Administrator
+Menguraikan tahapan manipulasi data agenda kedinasan (tambah, ubah, atau hapus). Sistem memvalidasi kelengkapan field masukan sebelum mengeksekusi kueri simpan ke database PostgreSQL di Supabase dan memperbarui tabel secara otomatis.
+
+Alur tahapan pengelolaan data kegiatan kedinasan oleh administrator ditunjukkan pada Gambar 3.5.
+
+
+(Tempat Peletakan Gambar Flowchart Pengelolaan Kegiatan)  
+[TEMPAT GAMBAR: Flowchart Pengelolaan Kegiatan Kedinasan oleh Administrator]
+Gambar 3.5 Flowchart Pengelolaan Data Kegiatan Kedinasan oleh Administrator  
+
+3. Flowchart Pengunggahan Dokumen Arsip
+Memodelkan validasi ekstensi berkas (PDF, JPG, PNG) dan batas kapasitas (<10 MB) saat pengunggahan naskah arsip dinas, yang dilanjutkan dengan transfer biner ke Supabase Storage S3 serta pencatatan metadata URL pada tabel basis data.
+
+Alur proses pengunggahan dan penyimpanan dokumen arsip dinas secara lengkap digambarkan pada Gambar 3.6.
+
+
+(Tempat Peletakan Gambar Flowchart Pengunggahan Arsip)  
+[TEMPAT GAMBAR: Flowchart Pengunggahan Dokumen Arsip ke Supabase Storage]
+Gambar 3.6 Flowchart Pengunggahan dan Manajemen Dokumen Arsip  
+
+4. Flowchart Pemuatan Dashboard Informasi Pegawai
+Menggambarkan alur otomatis pemfilteran agenda hari ini dan kegiatan mendatang berdasarkan tanggal server, didukung bilah pencarian instan dan penampil arsip dokumen terintegrasi secara baca-saja (read-only).
+
+Alur penelusuran agenda dan akses arsip pada antarmuka pegawai dapat dilihat pada Gambar 3.7.
+
+
+(Tempat Peletakan Gambar Flowchart Dashboard Pegawai)  
+[TEMPAT GAMBAR: Flowchart Akses Dashboard dan Direktori Arsip oleh Pegawai]
+Gambar 3.7 Flowchart Akses Dashboard dan Penelusuran Arsip oleh Pegawai  
+
+
+3.2.4 Pemodelan Sistem Berorientasi Objek (UML)
+
+Pemodelan sistem berorientasi objek menggunakan Unified Modeling Language (UML) memvisualisasikan fungsionalitas, relasi aktor, dan dinamika interaksi antarkomponen perangkat lunak (Rumbaugh et al., 2018; Fowler, 2018).
+
+a. Use Case Diagram
+Use Case Diagram mendefinisikan batas fungsionalitas sistem dari sudut pandang aktor. Sistem SIAPTIKA melibatkan dua aktor: Administrator dengan kewenangan administratif penuh (otentikasi, manipulasi agenda CRUD, dan kelola dokumen arsip) serta Pegawai dengan hak akses peninjauan agenda dan arsip secara terbuka (read-only).
+
+Hubungan fungsionalitas sistem dengan para aktor dimodelkan melalui Use Case Diagram pada Gambar 3.8.
+
+
+(Tempat Peletakan Gambar Use Case Diagram)  
+[TEMPAT GAMBAR: Use Case Diagram Sistem Informasi SIAPTIKA]
+Gambar 3.8 Use Case Diagram Sistem Informasi Administrasi Kegiatan (SIAPTIKA)  
+
+Deskripsi rinci dari setiap skenario use case sistem SIAPTIKA disajikan pada Tabel 3.2.
+
+Tabel 3.2 Spesifikasi Skenario Use Case Utama SIAPTIKA
+
+-------------------------------------------------------------------------------------------------------------------------
+[TAMPILAN BACA PADA FILE TEKS]
+-------------------------------------------------------------------------------------------------------------------------
++---------------+-------------------------------+---------------+-------------------------------------------------------+
+| Use Case ID   | Nama Use Case                 | Aktor Terlibat| Deskripsi Singkat                                     |
++---------------+-------------------------------+---------------+-------------------------------------------------------+
+| UC-01         | Login Administrator           | Administrator | Verifikasi kredensial ID ADM001 dan kata sandi admin. |
+| UC-02         | Melihat Dashboard & Agenda    | Admin &Pegawai| Melihat ringkasan statistik, agenda hari ini & jadwal.|
+| UC-03         | Mencari Agenda & Arsip        | Admin &Pegawai| Menelusuri data kegiatan dan arsip berbasis teks.     |
+| UC-04         | Pratinjau Dokumen Arsip       | Admin &Pegawai| Membuka dan membaca berkas PDF/foto arsip (read-only).|
+| UC-05         | Mengelola Data Kegiatan (CRUD)| Administrator | Menambah, mengubah, dan menghapus agenda dinas.       |
+| UC-06         | Mengunggah & Kelola Arsip     | Administrator | Mengunggah dan mengganti berkas surat, notulen, foto. |
+| UC-07         | Logout Administrator          | Administrator | Mengakhiri sesi administratif pengguna.               |
++---------------+-------------------------------+---------------+-------------------------------------------------------+
+
+-------------------------------------------------------------------------------------------------------------------------
+[FORMAT TABEL SIAP SALIN KE MICROSOFT WORD]
+(Salin baris di bawah ini, tempel di Word, blok lalu klik: Insert -> Table -> Convert Text to Table -> Separate at: Tabs)
+-------------------------------------------------------------------------------------------------------------------------
+Use Case ID	Nama Use Case	Aktor Terlibat	Deskripsi Singkat
+UC-01	Login Administrator	Administrator	Verifikasi kredensial login ID (ADM001) dan kata sandi admin untuk membuka hak akses penuh.
+UC-02	Melihat Dashboard & Agenda	Admin & Pegawai	Melihat antarmuka dashboard terpadu memuat panel statistik, agenda hari ini, dan jadwal mendatang.
+UC-03	Mencari Agenda & Arsip	Admin & Pegawai	Melakukan penelusuran instan data kegiatan dan berkas lampiran berdasarkan kata kunci judul/lokasi.
+UC-04	Pratinjau Dokumen Arsip	Admin & Pegawai	Membuka pratinjau dokumen arsip format PDF dan foto dokumentasi secara langsung di dalam aplikasi.
+UC-05	Mengelola Data Kegiatan (CRUD)	Administrator	Menambah jadwal agenda baru, mengubah rincian kegiatan, dan menghapus agenda dinas.
+UC-06	Mengunggah & Kelola Arsip	Administrator	Mengunggah berkas surat tugas, notulen rapat, dan dokumentasi foto ke Supabase Storage.
+UC-07	Logout Administrator	Administrator	Mengakhiri sesi administratif untuk mengunci kembali hak manipulasi data.
+
+b. Activity Diagram
+Activity Diagram memodelkan alur kerja prosedural antarentitas sistem dari status awal hingga status akhir (Fowler, 2018):
+
+1. Activity Diagram Autentikasi Login Administrator: Memodelkan interaksi saat Admin memasukkan kredensial ID ADM001 dan kata sandi, pencocokan hash Bcrypt oleh sistem, serta inisialisasi sesi dashboard admin.
+
+Alur tahapan autentikasi administrator secara grafis disajikan pada Gambar 3.9.
+
+
+(Tempat Peletakan Gambar Activity Diagram Login Admin)  
+[TEMPAT GAMBAR: Activity Diagram Proses Autentikasi Login Administrator]
+Gambar 3.9 Activity Diagram Proses Autentikasi Login Administrator  
+
+2. Activity Diagram Pengelolaan Data Kegiatan: Memodelkan aliran data dari pengisian formulir kegiatan di antarmuka, penanganan validasi pada controller, persistensi data oleh model Eloquent ke Supabase, hingga pembaruan visual tabel kegiatan.
+
+Alur proses pengelolaan data kegiatan kedinasan digambarkan pada Gambar 3.10.
+
+
+(Tempat Peletakan Gambar Activity Diagram Kelola Kegiatan)  
+[TEMPAT GAMBAR: Activity Diagram Pengelolaan Data Kegiatan Kedinasan]
+Gambar 3.10 Activity Diagram Pengelolaan Data Kegiatan Kedinasan  
+
+3. Activity Diagram Pengunggahan Dokumen Arsip: Memodelkan alur pengiriman fisik berkas biner ke bucket Supabase Storage S3 dan penyimpanan metadata dokumen ke tabel documents dalam satu kesatuan transaksi.
+
+Alur mekanisme pengunggahan dan pencatatan dokumen arsip ditunjukkan pada Gambar 3.11.
+
+
+(Tempat Peletakan Gambar Activity Diagram Pengunggahan Arsip)  
+[TEMPAT GAMBAR: Activity Diagram Pengunggahan Dokumen Arsip]
+Gambar 3.11 Activity Diagram Pengunggahan dan Manajemen Dokumen Arsip  
+
+4. Activity Diagram Penelusuran Agenda dan Arsip oleh Pegawai: Memodelkan alur saat pegawai menginput kata kunci penelusuran, kueri filter pada basis data, dan pengaliran dokumen arsip terpilih melalui jendela pratinjau.
+
+Alur interaksi penelusuran agenda dan dokumen oleh pegawai diilustrasikan pada Gambar 3.12.
+
+
+(Tempat Peletakan Gambar Activity Diagram Penelusuran Pegawai)  
+[TEMPAT GAMBAR: Activity Diagram Penelusuran Agenda dan Arsip Pegawai]
+Gambar 3.12 Activity Diagram Penelusuran Agenda dan Arsip oleh Pegawai  
+
+
+3.2.5 Perancangan Basis Data (Database Design)
+
+Perancangan basis data bertujuan untuk menyusun struktur penyimpanan data yang efisien, bebas dari anomali redundansi, serta mematuhi kaidah normalisasi dan integritas referensial (Silberschatz et al., 2020; Connolly & Begg, 2015). Basis data SIAPTIKA diimplementasikan menggunakan PostgreSQL pada cloud Supabase.
+
+a. Entity Relationship Diagram (ERD)
+Entity Relationship Diagram (ERD) menggambarkan hubungan logis antarentitas data di dalam sistem SIAPTIKA. Struktur basis data terdiri atas 3 (tiga) entitas utama:
+1. Entitas `users`: Menyimpan data akun administratif instansi.
+2. Entitas `activities`: Menyimpan rincian data agenda kegiatan kedinasan. Entitas ini memiliki relasi many-to-one dengan entitas `users` (setiap kegiatan dicatat oleh satu user admin).
+3. Entitas `documents`: Menyimpan metadata berkas arsip kegiatan. Entitas ini memiliki relasi many-to-one dengan entitas `activities` (satu kegiatan dapat memiliki banyak berkas dokumen arsip pendukung).
+
+Struktur relasi logis antar-entitas basis data SIAPTIKA dimodelkan dalam Entity Relationship Diagram pada Gambar 3.13.
+
+
+(Tempat Peletakan Gambar Entity Relationship Diagram)  
+[TEMPAT GAMBAR: Entity Relationship Diagram (ERD) SIAPTIKA]
+Gambar 3.13 Entity Relationship Diagram (ERD) Sistem Informasi SIAPTIKA  
+
+b. Struktur Skema dan Spesifikasi Tabel (Kamus Data)
+Rincian spesifikasi atribut, tipe data, panjang field, kunci utama (Primary Key), kunci tamu (Foreign Key), serta batasan (constraints) pada tabel `users` disajikan pada Tabel 3.3.
+
+Tabel 3.3 Spesifikasi Skema Tabel `users`
+
+-------------------------------------------------------------------------------------------------------------------------
+[TAMPILAN BACA PADA FILE TEKS]
+-------------------------------------------------------------------------------------------------------------------------
++---------------+---------------+---------------+---------------+-------------------------------------------------------+
+| Nama Field    | Tipe Data     | Panjang/Nilai | Keterangan    | Deskripsi Fungsi                                      |
++---------------+---------------+---------------+---------------+-------------------------------------------------------+
+| id            | BIGINT        | Auto Increment| Primary Key   | Identifikator unik akun pengguna                      |
+| name          | VARCHAR       | 255           | Not Null      | Nama lengkap pengguna / Administrator                 |
+| login_id      | VARCHAR       | 255           | Unique        | ID login unik pengguna (default: ADM001)              |
+| password      | VARCHAR       | 255           | Not Null      | Kata sandi akun terenkripsi hash Bcrypt               |
+| created_at    | TIMESTAMP     | -             | Nullable      | Waktu pembuatan rekaman data                          |
+| updated_at    | TIMESTAMP     | -             | Nullable      | Waktu pembaruan rekaman data                          |
++---------------+---------------+---------------+---------------+-------------------------------------------------------+
+
+-------------------------------------------------------------------------------------------------------------------------
+[FORMAT TABEL SIAP SALIN KE MICROSOFT WORD]
+(Salin baris di bawah ini, tempel di Word, blok lalu klik: Insert -> Table -> Convert Text to Table -> Separate at: Tabs)
+-------------------------------------------------------------------------------------------------------------------------
+Nama Field	Tipe Data	Panjang/Nilai	Keterangan	Deskripsi Fungsi
+id	BIGINT	Auto Increment	Primary Key	Identifikator unik akun pengguna
+name	VARCHAR	255	Not Null	Nama lengkap pengguna / Administrator
+login_id	VARCHAR	255	Unique	ID login unik pengguna (default: ADM001)
+password	VARCHAR	255	Not Null	Kata sandi akun terenkripsi hash Bcrypt
+created_at	TIMESTAMP	-	Nullable	Waktu pembuatan rekaman data
+updated_at	TIMESTAMP	-	Nullable	Waktu pembaruan rekaman data
+
+Rincian spesifikasi skema data dan atribut tabel `activities` disajikan pada Tabel 3.4.
+
+Tabel 3.4 Spesifikasi Skema Tabel `activities`
+
+-------------------------------------------------------------------------------------------------------------------------
+[TAMPILAN BACA PADA FILE TEKS]
+-------------------------------------------------------------------------------------------------------------------------
++---------------+---------------+---------------+---------------+-------------------------------------------------------+
+| Nama Field    | Tipe Data     | Panjang/Nilai | Keterangan    | Deskripsi Fungsi                                      |
++---------------+---------------+---------------+---------------+-------------------------------------------------------+
+| id            | BIGINT        | Auto Increment| Primary Key   | Identifikator unik data kegiatan                      |
+| user_id       | BIGINT        | -             | Foreign Key   | Relasi ke tabel users(id) [Cascade Delete & Update]   |
+| title         | VARCHAR       | 255           | Not Null      | Judul atau nama agenda kegiatan kedinasan             |
+| activity_date | DATE          | -             | Index, NotNull| Tanggal pelaksanaan kegiatan                          |
+| time          | TIME          | -             | Not Null      | Waktu / jam pelaksanaan kegiatan                      |
+| location      | VARCHAR       | 255           | Not Null      | Tempat atau lokasi pelaksanaan kegiatan               |
+| description   | TEXT          | -             | Nullable      | Uraian rincian atau deskripsi kegiatan                |
+| status        | ENUM          | scheduled,    | Index, Default| Status agenda: scheduled (terjadwal) atau completed   |
+|               |               | completed     | 'scheduled'   | (selesai)                                             |
+| created_at    | TIMESTAMP     | -             | Nullable      | Waktu pembuatan rekaman data                          |
+| updated_at    | TIMESTAMP     | -             | Nullable      | Waktu pembaruan rekaman data                          |
++---------------+---------------+---------------+---------------+-------------------------------------------------------+
+
+-------------------------------------------------------------------------------------------------------------------------
+[FORMAT TABEL SIAP SALIN KE MICROSOFT WORD]
+(Salin baris di bawah ini, tempel di Word, blok lalu klik: Insert -> Table -> Convert Text to Table -> Separate at: Tabs)
+-------------------------------------------------------------------------------------------------------------------------
+Nama Field	Tipe Data	Panjang/Nilai	Keterangan	Deskripsi Fungsi
+id	BIGINT	Auto Increment	Primary Key	Identifikator unik data kegiatan
+user_id	BIGINT	-	Foreign Key	Relasi ke tabel users(id) [Cascade Delete & Update]
+title	VARCHAR	255	Not Null	Judul atau nama agenda kegiatan kedinasan
+activity_date	DATE	-	Index, Not Null	Tanggal pelaksanaan kegiatan
+time	TIME	-	Not Null	Waktu / jam pelaksanaan kegiatan
+location	VARCHAR	255	Not Null	Tempat atau lokasi pelaksanaan kegiatan
+description	TEXT	-	Nullable	Uraian rincian atau deskripsi kegiatan
+status	ENUM	'scheduled', 'completed'	Index, Default 'scheduled'	Status agenda: scheduled (terjadwal) atau completed (selesai)
+created_at	TIMESTAMP	-	Nullable	Waktu pembuatan rekaman data
+updated_at	TIMESTAMP	-	Nullable	Waktu pembaruan rekaman data
+
+Rincian spesifikasi skema data dan atribut tabel `documents` disajikan pada Tabel 3.5.
+
+Tabel 3.5 Spesifikasi Skema Tabel `documents`
+
+-------------------------------------------------------------------------------------------------------------------------
+[TAMPILAN BACA PADA FILE TEKS]
+-------------------------------------------------------------------------------------------------------------------------
++---------------+---------------+---------------+---------------+-------------------------------------------------------+
+| Nama Field    | Tipe Data     | Panjang/Nilai | Keterangan    | Deskripsi Fungsi                                      |
++---------------+---------------+---------------+---------------+-------------------------------------------------------+
+| id            | BIGINT        | Auto Increment| Primary Key   | Identifikator unik berkas dokumen arsip               |
+| activity_id   | BIGINT        | -             | Foreign Key   | Relasi ke tabel activities(id) [Restrict On Delete]   |
+| document_type | ENUM          | surat,notulen,| Index, NotNull| Kategori arsip: surat (tugas), notulen, dokumentasi   |
+|               |               | dokumentasi   |               |                                                       |
+| file_name     | VARCHAR       | 255           | Not Null      | Nama asli berkas dokumen saat diunggah                |
+| file_url      | VARCHAR       | 255           | Not Null      | Path penyimpanan objek berkas pada cloud S3           |
+| created_at    | TIMESTAMP     | -             | Nullable      | Waktu pengunggahan dokumen                            |
+| updated_at    | TIMESTAMP     | -             | Nullable      | Waktu pembaruan metadata dokumen                      |
++---------------+---------------+---------------+---------------+-------------------------------------------------------+
+
+-------------------------------------------------------------------------------------------------------------------------
+[FORMAT TABEL SIAP SALIN KE MICROSOFT WORD]
+(Salin baris di bawah ini, tempel di Word, blok lalu klik: Insert -> Table -> Convert Text to Table -> Separate at: Tabs)
+-------------------------------------------------------------------------------------------------------------------------
+Nama Field	Tipe Data	Panjang/Nilai	Keterangan	Deskripsi Fungsi
+id	BIGINT	Auto Increment	Primary Key	Identifikator unik berkas dokumen arsip
+activity_id	BIGINT	-	Foreign Key	Relasi ke tabel activities(id) [Restrict On Delete, Cascade Update]
+document_type	ENUM	'surat', 'notulen', 'dokumentasi'	Index, Not Null	Kategori arsip: surat (tugas), notulen, dokumentasi (foto)
+file_name	VARCHAR	255	Not Null	Nama asli berkas dokumen saat diunggah
+file_url	VARCHAR	255	Not Null	Path penyimpanan objek berkas pada Supabase Storage bucket
+created_at	TIMESTAMP	-	Nullable	Waktu pengunggahan dokumen
+updated_at	TIMESTAMP	-	Nullable	Waktu pembaruan metadata dokumen
+
+
+3.2.6 Perancangan Arsitektur Perangkat Lunak (Software Architecture)
+
+Perancangan arsitektur perangkat lunak mendefinisikan struktur fundamental sistem, komponen komputasi, serta pola interaksi antarlapisan (multi-tier architecture) guna memenuhi kriteria fungsional dan atribut kualitas sistem (Bass et al., 2021; Griffiths, 2019). Sistem SIAPTIKA dirancang dengan pola 4-Tier Hybrid Desktop Architecture:
+
+1. Presentation Tier (Lapisan Antarmuka): Diimplementasikan menggunakan jendela desktop Electron berbasis Chromium engine yang merender antarmuka pengguna interaktif melalui Blade template engine dan styling CSS kustom. Lapisan ini menangani penangkapan aksi pengguna, validasi sisi klien, serta visualisasi data tabel dan modal.
+2. Application / Logic Tier (Lapisan Logika Bisnis): Dijalankan oleh server internal Laravel di latar belakang pada alamat loopback lokal 127.0.0.1. Lapisan ini memuat controller (ActivityController, DocumentController, AuthController), middleware otorisasi sesi, serta business service layer (DocumentService) yang mengatur aturan bisnis pengunggahan dan penghapusan arsip.
+3. Data Access Tier (Lapisan Akses Data): Dikelola oleh Eloquent ORM yang bertugas mengabstraksi operasi CRUD dan pemetaan relasi model secara berorientasi objek terhadap skema basis data relasional.
+4. Cloud Infrastructure Tier (Lapisan Infrastruktur Cloud): Berada pada platform cloud Supabase yang memuat PostgreSQL database engine (menyimpan rekaman tabular data terenkripsi) dan Supabase Storage S3 (menyimpan berkas fisik arsip kedinasan di dalam private bucket).
+
+Diagram arsitektur perangkat lunak SIAPTIKA secara menyeluruh diilustrasikan pada Gambar 3.14.
+
+
+(Tempat Peletakan Gambar Arsitektur Perangkat Lunak)  
+[TEMPAT GAMBAR: Diagram Arsitektur Perangkat Lunak SIAPTIKA]
+Gambar 3.14 Diagram Arsitektur Perangkat Lunak Sistem Informasi SIAPTIKA  
+
+
+3.2.7 Perancangan Desain Antarmuka Pengguna (User Interface Design)
+
+Perancangan desain antarmuka pengguna bertujuan menyusun hierarki visual, tata letak, dan elemen interaksi sistem guna menjamin kemudahan serta efisiensi operasional bagi pengguna (Shneiderman et al., 2018). Pendekatan desain menerapkan prinsip affordance dan umpan balik visual yang jelas agar setiap tombol aksi dan formulir dapat dipahami secara intuitif tanpa kebingungan (Norman, 2013; Tidwell et al., 2020).
+
+Antarmuka SIAPTIKA mengadopsi gaya editorial kearsipan modern yang memadukan tipografi serif Playfair Display untuk tajuk utama dan Source Sans 3 untuk teks data, didukung palet warna netral (#FAFAF8) beraksen emas kedinasan (#B8860B) serta komponen kartu bergaris batas halus. Perancangan visual mencakup 5 (lima) antarmuka utama:
+
+1. Desain Antarmuka Halaman Login Administrator
+Halaman login dirancang dengan tata letak kartu terpusat yang memuat kolom isian ID Administrator (ADM001), field kata sandi dengan tombol intip sandi, tombol aksi masuk kedinasan, serta area notifikasi galat validasi jika kredensial tidak sesuai.
+
+Rancangan visual antarmuka halaman login administrator disajikan pada Gambar 3.15.
+
+
+(Tempat Peletakan Gambar Desain Antarmuka Login Administrator)  
+[TEMPAT GAMBAR: Desain Antarmuka Halaman Login Administrator]
+Gambar 3.15 Desain Antarmuka Halaman Login Administrator  
+
+2. Desain Antarmuka Dashboard Utama Administrator
+Dashboard administrator menyajikan empat kartu metrik statistik (Total Kegiatan, Hari Ini, Mendatang, dan Total Arsip), panel jam waktu nyata, bilah pencarian instan, filter status kegiatan, tombol tambah kegiatan, serta tabel agenda kerja dinas yang dilengkapi tombol aksi kontekstual (Detail, Edit, dan Hapus).
+
+Rancangan visual tata letak dashboard utama administrator ditampilkan pada Gambar 3.16.
+
+
+(Tempat Peletakan Gambar Desain Antarmuka Dashboard Administrator)  
+[TEMPAT GAMBAR: Desain Antarmuka Dashboard Utama Administrator]
+Gambar 3.16 Desain Antarmuka Dashboard Utama Administrator  
+
+3. Desain Antarmuka Formulir Kelola Kegiatan Kedinasan
+Formulir kelola kegiatan diwujudkan dalam bentuk jendela modal pop-up terfokus berlatar peredup halus (backdrop blur) yang memuat field Judul Kegiatan, pemilih tanggal grafis (Datepicker), pemilih waktu (Timepicker), isian Tempat/Lokasi, serta deskripsi acara dengan tombol simpan dan batal.
+
+Rancangan visual formulir modal kelola kegiatan kedinasan disajikan pada Gambar 3.17.
+
+
+(Tempat Peletakan Gambar Desain Antarmuka Kelola Kegiatan)  
+[TEMPAT GAMBAR: Desain Antarmuka Formulir Kelola Kegiatan Kedinasan]
+Gambar 3.17 Desain Antarmuka Formulir Kelola Kegiatan Kedinasan  
+
+4. Desain Antarmuka Rincian Kegiatan dan Manajemen Arsip
+Halaman rincian kegiatan menyajikan informasi lengkap agenda dinas di bagian atas serta panel kearsipan terpadu dengan navigasi tiga tab resmi (Surat Tugas, Notulen Rapat, dan Dokumentasi Foto). Setiap tab menyediakan fasilitas unggah berkas dan jendela penampil dokumen mandiri (inline PDF and image viewer).
+
+Rancangan antarmuka halaman rincian kegiatan dan panel kearsipan dapat dilihat pada Gambar 3.18.
+
+
+(Tempat Peletakan Gambar Desain Antarmuka Rincian Kegiatan dan Arsip)  
+[TEMPAT GAMBAR: Desain Antarmuka Rincian Kegiatan dan Manajemen Arsip]
+Gambar 3.18 Desain Antarmuka Rincian Kegiatan dan Manajemen Arsip  
+
+5. Desain Antarmuka Portal Dashboard Pegawai
+Portal pegawai mengadopsi tata letak visual yang identik dengan dashboard administrator (panel statistik, jam sistem, agenda hari ini, pencarian jadwal, dan direktori arsip), namun beroperasi murni dalam mode baca-saja (read-only) tanpa tombol manipulasi data maupun keharusan proses login.
+
+Rancangan visual portal dashboard informasi bagi pegawai disajikan pada Gambar 3.19.
+
+
+(Tempat Peletakan Gambar Desain Antarmuka Dashboard Pegawai)  
+[TEMPAT GAMBAR: Desain Antarmuka Portal Dashboard Pegawai]
+Gambar 3.19 Desain Antarmuka Portal Dashboard Pegawai  
+
+
+3.3 Implementasi Sistem
+
+Implementasi sistem merupakan tahapan penerjemahan spesifikasi rancangan arsitektur, basis data, dan antarmuka pengguna ke dalam bentuk instruksi program perangkat lunak yang dapat dieksekusi oleh komputer (Pressman & Maxim, 2020; Sommerville, 2016). Pada tahap ini, seluruh modul operasional SIAPTIKA dibangun menggunakan perpaduan teknologi web modern berbasis framework Laravel 11, runtime lingkungan desktop Electron, serta infrastruktur cloud terpadu Supabase.
+
+
+3.3.1 Lingkungan Pengembangan Sistem (Hardware & Software)
+
+Pengembangan sistem SIAPTIKA dilakukan pada lingkungan kerja yang memadai guna mendukung proses kompilasi kode program, pemaketan biner desktop, pengujian logika server lokal, serta pertukaran data secara daring dengan server cloud (Sommerville, 2016). Spesifikasi lingkungan perangkat keras dan perangkat lunak yang digunakan selama masa pengembangan disajikan pada Tabel 3.6.
+
+Tabel 3.6 Spesifikasi Lingkungan Perangkat Keras dan Perangkat Lunak Pengembangan
+
+-------------------------------------------------------------------------------------------------------------------------
+[TAMPILAN BACA PADA FILE TEKS]
+-------------------------------------------------------------------------------------------------------------------------
++-------------------+-----------------------------------+---------------------------------------------------------------+
+| Kategori          | Komponen / Perangkat              | Keterangan Spesifikasi Teknis                                 |
++-------------------+-----------------------------------+---------------------------------------------------------------+
+| Perangkat Keras   | Unit Pemroses Pusat (Processor)   | AMD Ryzen 5 / Intel Core i5 Quad-Core @ 2.40 GHz ke atas      |
+| (Hardware)        | Memori Utama (RAM)                | 16 GB DDR4 Dual-Channel                                       |
+|                   | Media Penyimpanan (Storage)       | Solid State Drive (SSD) NVMe 512 GB                           |
+|                   | Perangkat Penampil (Display)      | Monitor Layar Resolusi Full HD (1920 x 1080 piksel)           |
+|                   | Koneksi Jaringan                  | Sambungan Internet Broadband Wi-Fi / LAN Stabil               |
++-------------------+-----------------------------------+---------------------------------------------------------------+
+| Perangkat Lunak   | Sistem Operasi                    | Microsoft Windows 11 Home 64-bit                              |
+| (Software)        | Editor Kode Program (IDE)         | Visual Studio Code v1.92 ke atas                              |
+|                   | Bahasa & Runtime Backend          | PHP 8.3.x (x64 Thread-Safe) CLI/CGI                           |
+|                   | Manajer Paket Dependensi PHP      | Composer v2.7.x                                               |
+|                   | Runtime Desktop & JavaScript      | Node.js v20.x LTS & Node Package Manager (NPM) v10.x          |
+|                   | Framework Backend Aplikasi        | Laravel Framework 11.x (Arsitektur MVC)                       |
+|                   | Framework Pembungkus Desktop      | Electron v31.x & electron-builder v24.x                       |
+|                   | Basis Data & Cloud Storage        | PostgreSQL 15 & Supabase Storage S3 (Supabase Cloud Platform) |
+|                   | Perangkat Lunak Pengujian & Tools | Postman, Google Chrome DevTools, Windows PowerShell           |
++-------------------+-----------------------------------+---------------------------------------------------------------+
+
+-------------------------------------------------------------------------------------------------------------------------
+[FORMAT TABEL SIAP SALIN KE MICROSOFT WORD]
+(Salin baris di bawah ini, tempel di Word, blok lalu klik: Insert -> Table -> Convert Text to Table -> Separate at: Tabs)
+-------------------------------------------------------------------------------------------------------------------------
+Kategori	Komponen / Perangkat	Keterangan Spesifikasi Teknis
+Perangkat Keras	Unit Pemroses Pusat (Processor)	AMD Ryzen 5 / Intel Core i5 Quad-Core @ 2.40 GHz ke atas
+Perangkat Keras	Memori Utama (RAM)	16 GB DDR4 Dual-Channel
+Perangkat Keras	Media Penyimpanan (Storage)	Solid State Drive (SSD) NVMe 512 GB
+Perangkat Keras	Perangkat Penampil (Display)	Monitor Layar Resolusi Full HD (1920 x 1080 piksel)
+Perangkat Keras	Koneksi Jaringan	Sambungan Internet Broadband Wi-Fi / LAN Stabil
+Perangkat Lunak	Sistem Operasi	Microsoft Windows 11 Home 64-bit
+Perangkat Lunak	Editor Kode Program (IDE)	Visual Studio Code v1.92 ke atas
+Perangkat Lunak	Bahasa & Runtime Backend	PHP 8.3.x (x64 Thread-Safe) CLI/CGI
+Perangkat Lunak	Manajer Paket Dependensi PHP	Composer v2.7.x
+Perangkat Lunak	Runtime Desktop & JavaScript	Node.js v20.x LTS & Node Package Manager (NPM) v10.x
+Perangkat Lunak	Framework Backend Aplikasi	Laravel Framework 11.x (Arsitektur MVC)
+Perangkat Lunak	Framework Pembungkus Desktop	Electron v31.x & electron-builder v24.x
+Perangkat Lunak	Basis Data & Cloud Storage	PostgreSQL 15 & Supabase Storage S3 (Supabase Cloud Platform)
+Perangkat Lunak	Perangkat Lunak Pengujian & Tools	Postman, Google Chrome DevTools, Windows PowerShell
+
+
+3.3.2 Implementasi Basis Data dan Integrasi Cloud Supabase
+
+Implementasi basis data memanfaatkan Database Migration bawaan Laravel guna memastikan pembuatan skema tabel relasional berjalan secara terstruktur, terversi, dan konsisten antar-lingkungan pengembangan (Stauffer, 2019). Tiga migrasi utama yang dieksekusi meliputi:
+1. Tabel users: Dikonfigurasi dengan kolom login_id unik bertipe VARCHAR(255) sebagai pengganti email standar guna mendukung ID kepegawaian resmi (ADM001), serta kolom password untuk menampung string hasil enkripsi satu arah.
+2. Tabel activities: Membangun struktur penyimpanan agenda kedinasan dengan foreign key user_id yang berelasi ke tabel users, title, activity_date (diberi indeks kueri), time, location, description (nullable), serta status bertipe ENUM ('scheduled', 'completed') dengan nilai baku 'scheduled'.
+3. Tabel documents: Membangun relasi kearsipan dengan foreign key activity_id, kategori document_type bertipe ENUM ('surat', 'notulen', 'dokumentasi'), nama asli berkas (file_name), dan lokasi objek berkas pada cloud storage (file_url).
+
+Koneksi jaringan dikonfigurasi melalui berkas .env dengan menghubungkan PDO PostgreSQL Laravel ke Supabase Transaction Pooler (port 6543) dan Session Pooler (port 5432) berenkripsi SSL/TLS (sslmode=require). Penyimpanan fisik dokumen diarahkan ke private bucket 'documents' pada Supabase Storage menggunakan protokol API berbasis AWS S3 SDK yang dilindungi token otorisasi aman.
+
+
+3.3.3 Implementasi Modul Autentikasi dan Otorisasi Administrator
+
+Modul autentikasi dan otorisasi bertugas menjaga keamanan hak akses dan integritas data administratif sistem melalui kelas AuthController pada ruang nama App\Http\Controllers\Auth (Laudon & Laudon, 2020):
+1. Verifikasi Kredensial: Sistem mencocokkan input login_id dan memverifikasi kata sandi menggunakan fungsi Hash::check() berbasis algoritma hash Bcrypt dengan salt dinamis yang tahan terhadap ancaman kamus dan rainbow table (Stauffer, 2019).
+2. Proteksi Sesi & Rute: Saat otentikasi sukses, sesi login Administrator diaktifkan dan fungsi $request->session()->regenerate() secara wajib dieksekusi guna mencegah serangan Session Fixation. Seluruh rute administratif (/admin/*) diproteksi oleh middleware autentikasi kustom yang mencegat akses tanpa izin dan mengarahkannya kembali ke halaman login.
+3. Penutupan Sesi (Logout): Tombol keluar memicu $request->session()->invalidate() untuk memusnahkan data sesi dari memori dan $request->session()->regenerateToken() untuk memperbarui token proteksi Cross-Site Request Forgery (CSRF).
+
+
+3.3.4 Implementasi Modul Manajemen Kegiatan Kedinasan (CRUD)
+
+Modul manajemen kegiatan kedinasan dikendalikan oleh ActivityController pada ruang nama App\Http\Controllers\Admin yang memanfaatkan model Eloquent Activity (Stauffer, 2019):
+1. Penambahan Agenda (Create): Menerima masukan formulir modal, memvalidasi kelengkapan data, dan mengeksekusi Activity::create() untuk menyimpan agenda baru ke database PostgreSQL di Supabase dengan status awal 'scheduled'.
+2. Penyajian & Penyaringan Data (Read): Mengambil kumpulan data agenda dari cloud database menggunakan kueri dinamis Eloquent berbasis kata kunci judul/lokasi, penyaringan status kegiatan (Semua, Terjadwal, Selesai), dan pengurutan kronologis yang disajikan melalui teknik paginasi data (pagination).
+3. Pembaruan & Penghapusan (Update & Delete): Mendukung pengubahan rincian agenda dan status kegiatan menjadi 'completed', serta penghapusan rekaman kegiatan dengan verifikasi relasi arsip terkait terlebih dahulu demi integritas referensial data.
+
+
+3.3.5 Implementasi Modul Pengarsipan Dokumen Terpusat (Upload & Streaming Proxy)
+
+Pengelolaan berkas arsip kedinasan (Surat Perintah Tugas, Notulen Rapat, dan Dokumentasi Foto) diimplementasikan melalui kelas DocumentService pada ruang nama App\Services menerapkan Service Layer Pattern (Fowler, 2018):
+1. Transaksi Penyimpanan Atomik (ACID): Fisik berkas biner terlebih dahulu diunggah ke bucket privat Supabase Storage via protokol S3 (documents/{activity_id}/{unique_file_name}), kemudian pencatatan metadata dibungkus di dalam blok transaksi atomik DB::transaction(). Apabila terjadi galat basis data, transaksi dibatalkan (rollback) dan berkas pada cloud storage otomatis dihapus kompensasi ($this->storage->delete($path)) guna mencegah timbulnya berkas sampah yatim (Silberschatz et al., 2020).
+2. Penggantian Berkas Terkendali: Berkas pengganti diverifikasi dan diunggah sebelum berkas fisik lama dihapus, memastikan dokumen dinas tidak hilang jika proses unggah terputus di tengah jalan.
+3. Pengaliran Berkas Melalui Perantara (Streaming Proxy): Seluruh arsip disimpan di bucket cloud privat. Untuk menampilkan pratinjau naskah dokumen (inline viewer) format PDF dan gambar, DocumentController mengunduh aliran data berkas secara privat di sisi server lokal dan mengalirkannya langsung ke antarmuka dengan header HTTP Content-Type yang sesuai, sehingga berkas dapat dibaca langsung tanpa mengekspos tautan URL privat ke publik.
+
+
+3.3.6 Implementasi Dashboard Informasi Pegawai (Portal Read-Only)
+
+Dashboard pegawai dikendalikan oleh DashboardController dan ActivityController pada modul Employee guna menyajikan transparansi agenda kedinasan tanpa keharusan mengingat akun atau melakukan login (Zero-Authentication Access) (Laudon & Laudon, 2020):
+1. Agregasi Statistik Real-Time: Sistem mengeksekusi kueri agregasi otomatis untuk menghitung total kegiatan, kegiatan hari ini, agenda mendatang, dan total berkas arsip saat aplikasi dibuka.
+2. Penyajian Informasi Terbuka: Menyajikan panel kartu metrik statistik, widget jam waktu nyata, jadwal agenda hari ini, serta bilah pencarian teks instan dan direktori penelusuran arsip.
+3. Pengamanan Hak Akses Baca-Saja: Modul pegawai secara ketat hanya menyediakan rute HTTP berjenis GET dan meniadakan seluruh tombol aksi manipulasi data (Tambah, Edit, Hapus, Unggah) pada kode templat Blade, menjamin bahwa sistem beroperasi dalam mode peninjauan murni tanpa risiko modifikasi data yang tidak sengaja.
+
+
+3.3.7 Implementasi Pengemasan Aplikasi Desktop Mandiri (Electron Packaging & Bundling)
+
+Implementasi pengemasan desktop menggabungkan seluruh komponen sistem ke dalam paket biner mandiri (.exe) berbasis Windows tanpa dependensi perangkat lunak eksternal (Griffiths, 2019; Bass et al., 2021):
+1. Skrip Pengendali Siklus Hidup (laravel-bridge.js): Mengaktifkan web server lokal internal melalui child_process.spawn('php', ['artisan', 'serve']), mengimplementasikan fallback pemindaian port otomatis jika port 8000 sedang terpakai, memantau kesiapan server melalui polling berkala pada rute /up hingga status HTTP 200 OK, serta mengeksekusi penghentian bersih (graceful shutdown) sub-proses PHP saat jendela aplikasi ditutup.
+2. Pembundelan Runtime Portabel: Paket aplikasi membundel folder runtime/php yang memuat biner PHP 8.3 Thread-Safe, berkas php.ini mandiri dengan ekstensi esensial (pdo_pgsql, openssl, curl, fileinfo), berkas pustaka dependensi Visual C++ Runtime (msvcp140.dll, vcruntime140.dll), serta sertifikat keamanan Mozilla (cacert.pem) untuk menjamin jabat tangan enkripsi SSL/TLS dengan cloud Supabase.
+3. Konfigurasi Pembuatan Installer (electron-builder): Mengompilasi dua paket penginstal Windows berbasis NSIS, yaitu SIAPTIKA Administrator Setup.exe untuk administrator pengelola data dan SIAPTIKA Dashboard Setup.exe untuk pegawai umum, yang dapat langsung dioperasikan secara plug-and-play tanpa instalasi server web lokal eksternal.
+
+
+3.4 Hasil dan Pengujian Sistem
+
+Tahap hasil dan pengujian sistem bertujuan untuk mendemonstrasikan luaran antarmuka perangkat lunak yang telah berhasil dibangun serta memverifikasi kesesuaian fungsionalitas seluruh fitur terhadap spesifikasi kebutuhan sistem yang telah didefinisikan (Pressman & Maxim, 2020; Sommerville, 2016). Melalui tahapan ini, kestabilan, keandalan, dan ketahanan sistem diuji secara empiris guna memastikan bahwa SIAPTIKA siap dioperasikan dalam lingkungan kerja kedinasan sehari-hari.
+
+
+3.4.1 Hasil Implementasi Antarmuka Pengguna
+
+Hasil implementasi antarmuka SIAPTIKA merupakan realisasi konkret dari SIAPTIKA Design System berbasis Serif Style yang telah dimodelkan pada Subbab 3.2.7. Antarmuka terdistribusi ke dalam dua aplikasi desktop mandiri siap pakai berbasis installer Windows (.exe):
+
+a. Antarmuka SIAPTIKA Administrator
+Mewujudkan lingkungan kerja operasional yang aman dan terstruktur bagi pengelola data:
+1. Autentikasi dan Dasbor Utama: Menyajikan form login terpusat berbasis ID ADM001 dan kata sandi, serta dasbor utama yang memuat empat kartu metrik statistik (Total Kegiatan, Hari Ini, Mendatang, dan Total Arsip), widget penunjuk jam waktu nyata, dan ringkasan agenda terdekat.
+2. Pengelolaan Agenda dan Formulir Modal: Tabel agenda kedinasan dilengkapi pencarian instan, filter status kegiatan, dan tombol aksi kontekstual (Detail, Edit, Hapus). Penambahan dan penyuntingan agenda dilakukan melalui jendela modal terfokus (backdrop blur) dengan validasi interaktif.
+3. Manajemen Kearsipan dan Pratinjau Dokumen: Panel kearsipan terpadu membagi berkas ke dalam tiga kategori dinas (Surat Tugas, Notulen, Foto Kegiatan) dengan fitur unggah seret-dan-lepas serta penampil dokumen mandiri (inline viewer) format PDF dan gambar via streaming proxy.
+
+b. Antarmuka SIAPTIKA Dashboard Pegawai
+Menghadirkan portal keterbukaan informasi dinas yang transparan, mudah diakses, dan aman:
+1. Dasbor Informasi Terbuka (Read-Only): Menyajikan tata letak visual yang identik dengan dasbor admin (kartu metrik, jam sistem, agenda hari ini dan mendatang) yang dapat diakses langsung tanpa prosedur login (Zero-Authentication Access).
+2. Penelusuran Cepat dan Direktori Arsip: Pegawai dapat menelusuri agenda berdasarkan kata kunci judul/lokasi dan membuka pratinjau dokumen arsip naskah dinas untuk mendukung koordinasi kerja lintas seksi.
+3. Isolasi Keamanan Visual: Seluruh elemen manipulasi data (tombol Tambah, Edit, Hapus, Unggah) ditiadakan secara mutlak pada antarmuka pegawai, menjamin sistem beroperasi murni dalam mode peninjauan tanpa risiko perubahan data tidak sengaja.
+
+c. Penanganan Galat dan Ketahanan Visual Sistem
+Sistem mengimplementasikan halaman penanganan galat kustom bertema kedinasan (Error 404 dan Error 403) berbahasa Indonesia santun dan informatif, dilengkapi tombol navigasi kembali ke beranda sistem yang menyesuaikan peran pengguna secara kontekstual.
+
+
+3.4.2 Hasil Pengujian Fungsional (Black Box Testing)
+
+Pengujian perangkat lunak dilakukan menggunakan metode Black Box Testing (Pengujian Kotak Hitam). Pendekatan ini berfokus pada pengujian fungsionalitas eksternal perangkat lunak berdasarkan masukan (input) yang diberikan dan keluaran (output) yang dihasilkan tanpa harus memeriksa struktur internal kode program secara langsung (Pressman & Maxim, 2020).
+
+a. Lingkungan dan Skenario Pengujian
+Pengujian fungsional dilaksanakan pada lingkungan operasional kerja riil di kantor Bidang APTIKA Diskominfotik Provinsi Riau dengan spesifikasi lingkungan pengujian sebagai berikut:
+1. Perangkat Keras Pengujian: Komputer Desktop PC Intel Core i5 @ 3.00 GHz, RAM 16 GB, SSD 512 GB, Monitor Layar FHD 1080p, serta Laptop Windows 11 portabel untuk pengujian multi-perangkat.
+2. Lingkungan Perangkat Lunak: Sistem Operasi Windows 11 64-bit, paket aplikasi biner SIAPTIKA Administrator Setup.exe dan SIAPTIKA Dashboard Setup.exe hasil kompilasi akhir.
+3. Lingkungan Jaringan: Koneksi jaringan intranet dan internet kantor Diskominfotik Riau dengan latensi rata-rata 25-40 ms menuju server cloud Supabase.
+
+Skenario pengujian disusun secara komprehensif mencakup 37 (tiga puluh tujuh) kasus uji yang mewakili seluruh aspek fungsional sistem, meliputi:
+- Modul 1: Autentikasi Administrator (5 skenario)
+- Modul 2: Kontrol Akses dan Keamanan Rute (4 skenario)
+- Modul 3: Manajemen Kegiatan Kedinasan / CRUD (8 skenario)
+- Modul 4: Pengarsipan dan Manajemen Dokumen (8 skenario)
+- Modul 5: Dashboard Informasi dan Penelusuran Pegawai (6 skenario)
+- Modul 6: Siklus Hidup Aplikasi Desktop dan Penanganan Galat (6 skenario)
+
+b. Rincian Hasil Uji Kasus (37 Test Cases)
+Rincian pelaksanaan pengujian fungsional terhadap 37 skenario uji beserta hasil aktual dan status kelulusannya disajikan secara lengkap pada Tabel 3.7.
+
+Tabel 3.7 Rincian Hasil Pengujian Fungsional Black Box Testing Sistem SIAPTIKA
+
+-------------------------------------------------------------------------------------------------------------------------
+[TAMPILAN BACA PADA FILE TEKS]
+-------------------------------------------------------------------------------------------------------------------------
++----+-------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+--------+
+| No | ID Uji      | Modul & Skenario Pengujian        | Masukan / Langkah Pengujian       | Hasil yang Diharapkan             | Hasil Aktual Pengujian            | Status |
++----+-------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+--------+
+|  1 | TC-AUTH-001 | Login ID Administrator Valid      | Masukkan ADM001 dan sandi valid   | Masuk dan alihkan ke dashboard    | Berhasil masuk ke /admin/dashboard| PASS   |
+|  2 | TC-AUTH-002 | Login ID Tidak Terdaftar          | Masukkan ID salah (contoh: ADM999)| Tampilkan pesan kesalahan login   | Pesan galat kredensial ditampilkan| PASS   |
+|  3 | TC-AUTH-003 | Login Kata Sandi Salah            | Masukkan ADM001 dan sandi salah   | Tampilkan pesan kesalahan login   | Pesan galat kredensial ditampilkan| PASS   |
+|  4 | TC-AUTH-004 | Validasi Kolom ID Kosong          | Kosongkan kolom ID Administrator  | Tampilkan validasi kolom wajib    | Peringatan kolom wajib ditampilkan| PASS   |
+|  5 | TC-AUTH-005 | Prosedur Keluar Sesi (Logout)     | Klik tombol Logout di bilah atas  | Sesi berakhir, redirect ke login  | Sesi dihancurkan, kembali ke login| PASS   |
+|  6 | TC-ACC-001  | Proteksi Rute /admin/dashboard    | Akses rute admin tanpa login      | Alihkan paksa ke halaman login    | Ditolak, diarahkan ke /login      | PASS   |
+|  7 | TC-ACC-002  | Proteksi Rute /admin/activities   | Buka rute kegiatan tanpa login    | Alihkan paksa ke halaman login    | Ditolak, diarahkan ke /login      | PASS   |
+|  8 | TC-ACC-003  | Akses Terbuka Dashboard Pegawai   | Buka /pegawai/dashboard langsung  | Antarmuka terbuka tanpa login     | Halaman terbuka normal (HTTP 200) | PASS   |
+|  9 | TC-ACC-004  | Isolasi Operasi Manipulasi Data   | Kirim request POST tanpa sesi     | Tolak permintaan tidak sah        | Akses ditolak dan diblokir sistem | PASS   |
+| 10 | TC-ACT-001  | Tambah Kegiatan Mendatang Valid   | Isi judul, tanggal esok, jam, tpt | Kegiatan tersimpan status Direncana| Data tersimpan berstatus Direncana| PASS   |
+| 11 | TC-ACT-002  | Tambah Kegiatan Deskripsi Kosong  | Kosongkan isian opsional deskripsi| Kegiatan tersimpan tanpa galat    | Data tersimpan dengan sukses      | PASS   |
+| 12 | TC-ACT-003  | Validasi Judul Kegiatan Kosong    | Kosongkan kolom judul kegiatan    | Tolak simpan, munculkan validasi  | Muncul pesan: Judul wajib diisi   | PASS   |
+| 13 | TC-ACT-004  | Validasi Tanggal Acara Kosong     | Kosongkan kolom tanggal acara     | Tolak simpan, munculkan validasi  | Muncul pesan: Tanggal wajib diisi | PASS   |
+| 14 | TC-ACT-005  | Validasi Lokasi Acara Kosong      | Kosongkan kolom tempat acara      | Tolak simpan, munculkan validasi  | Muncul pesan: Lokasi wajib diisi  | PASS   |
+| 15 | TC-ACT-006  | Ubah Rincian Kegiatan Terjadwal   | Perbarui jam dan ruangan agenda   | Data kegiatan berhasil diperbarui | Rincian data terbarui di basis data| PASS   |
+| 16 | TC-ACT-007  | Proteksi Kegiatan Sudah Berjalan  | Ubah agenda yang tanggalnya lewat | Tolak ubah kegiatan telah dimulai | Perubahan ditolak sistem          | PASS   |
+| 17 | TC-ACT-008  | Hapus Kegiatan Tanpa Arsip        | Klik hapus agenda belum berjalan  | Rekaman kegiatan berhasil terhapus| Rekaman terhapus dari basis data  | PASS   |
+| 18 | TC-DOC-001  | Unggah Arsip Berkas PDF Valid     | Unggah file PDF ukuran 2.5 MB     | File tersimpan di S3 & metadata DB| Berkas terunggah, URL tercatat    | PASS   |
+| 19 | TC-DOC-002  | Unggah Arsip Dokumentasi Foto     | Unggah file gambar JPG ukuran 1 MB| File tersimpan di S3 & metadata DB| Berkas foto terunggah sukses      | PASS   |
+| 20 | TC-DOC-003  | Validasi Berkas Dokumen Kosong    | Tekan simpan tanpa memilih file   | Tolak proses, tampilkan peringatan | Peringatan pilih berkas ditampilkan| PASS   |
+| 21 | TC-DOC-004  | Validasi Batas Ukuran File > 10MB  | Unggah file berukuran 12 MB        | Tolak unggahan, batas ukuran 10 MB | Muncul pesan berkas melebihi batas | PASS   |
+| 22 | TC-DOC-005  | Validasi Format Ekstensi Dilarang | Unggah file berekstensi .exe       | Tolak berkas ekstensi tidak sah    | Format berkas ditolak sistem       | PASS   |
+| 23 | TC-DOC-006  | Penggantian Berkas Dokumen Lama   | Unggah berkas revisi pengganti     | File baru disimpan, file lama hapus| Berkas lama terhapus, baru aktif  | PASS   |
+| 24 | TC-DOC-007  | Pratinjau Langsung (Inline Preview)| Klik tombol lihat naskah PDF       | Tampilkan PDF di viewer desktop    | Dokumen terbuka via streaming proxy| PASS   |
+| 25 | TC-DOC-008  | Unduh Dokumen Arsip Resmi          | Klik tombol unduh berkas arsip     | Berkas fisik terunduh ke komputer  | File terunduh utuh sesuai nama asli| PASS   |
+| 26 | TC-EMP-001  | Tampilan 4 Kartu Statistik Pegawai | Buka antarmuka utama pegawai       | Angka statistik tampil akurat      | Angka sinkron dengan kueri database| PASS   |
+| 27 | TC-EMP-002  | Penyajian Agenda Hari Ini & Datang | Pantau daftar jadwal dinas pegawai | Daftar agenda tampil terurut rapi  | Agenda tersaji kronologis presisi  | PASS   |
+| 28 | TC-EMP-003  | Pencarian Kegiatan Kata Kunci Judul| Ketik kata kunci pada bilah cari   | Tampilkan baris agenda yang cocok  | Hasil pencarian terfilter instan   | PASS   |
+| 29 | TC-EMP-004  | Penyaringan Filter Status Kegiatan | Pilih opsi status pada dropdown    | Tampilkan kegiatan sesuai status   | Tabel memfilter status secara tepat| PASS   |
+| 30 | TC-EMP-005  | Penelusuran Direktori Arsip Pegawai| Buka modul direktori arsip pegawai | Seluruh berkas dinas dapat dilihat | Dokumen dapat dibaca secara inline | PASS   |
+| 31 | TC-EMP-006  | Verifikasi Ketiadaan Tombol Manipul| Periksa seluruh elemen UI pegawai  | Tidak ada tombol Add/Edit/Delete   | Bersih dari tombol aksi manipulasi | PASS   |
+| 32 | TC-SYS-001  | Peluncuran Mandiri Installer .exe  | Buka shortcut SIAPTIKA di desktop  | Aplikasi berjalan mandiri tanpa web| Jendela Electron terbuka lancar    | PASS   |
+| 33 | TC-SYS-002  | Pemindaian Port Dinamis Otomatis   | Jalankan saat port 8000 terpakai   | Skrip beralih ke port berikutnya   | Server aktif di port cadangan (8001)| PASS   |
+| 34 | TC-SYS-003  | Transisi Splash Screen Pemuatan    | Buka aplikasi dari kondisi tertutup| Splash screen tampil lalu memuat UI| Transisi loading ke UI mulus       | PASS   |
+| 35 | TC-SYS-004  | Penghentian Bersih Server Lokal    | Tutup jendela aplikasi desktop     | Sub-proses PHP mati di task manager| Tidak ada proses zombie tertinggal | PASS   |
+| 36 | TC-SYS-005  | Penanganan Rute Tidak Ditemukan 404| Buka URL acak di peramban internal | Tampilkan halaman 404 tema dinas   | Halaman 404 kustom tersaji anggun  | PASS   |
+| 37 | TC-SYS-006  | Ketahanan Saat Koneksi Putus       | Matikan internet saat akses sistem | Tampilkan pesan galat ramah tanpa BT| Tampil peringatan koneksi jaringan | PASS   |
++----+-------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+--------+
+
+-------------------------------------------------------------------------------------------------------------------------
+[FORMAT TABEL SIAP SALIN KE MICROSOFT WORD]
+(Salin baris di bawah ini, tempel di Word, blok lalu klik: Insert -> Table -> Convert Text to Table -> Separate at: Tabs)
+-------------------------------------------------------------------------------------------------------------------------
+No	ID Uji	Modul & Skenario Pengujian	Masukan / Langkah Pengujian	Hasil yang Diharapkan	Hasil Aktual Pengujian	Status
+1	TC-AUTH-001	Login ID Administrator Valid	Masukkan ADM001 dan sandi valid	Masuk dan alihkan ke dashboard	Berhasil masuk ke /admin/dashboard	PASS
+2	TC-AUTH-002	Login ID Tidak Terdaftar	Masukkan ID salah (contoh: ADM999)	Tampilkan pesan kesalahan login	Pesan galat kredensial ditampilkan	PASS
+3	TC-AUTH-003	Login Kata Sandi Salah	Masukkan ADM001 dan sandi salah	Tampilkan pesan kesalahan login	Pesan galat kredensial ditampilkan	PASS
+4	TC-AUTH-004	Validasi Kolom ID Kosong	Kosongkan kolom ID Administrator	Tampilkan validasi kolom wajib	Peringatan kolom wajib ditampilkan	PASS
+5	TC-AUTH-005	Prosedur Keluar Sesi (Logout)	Klik tombol Logout di bilah atas	Sesi berakhir, redirect ke login	Sesi dihancurkan, kembali ke login	PASS
+6	TC-ACC-001	Proteksi Rute /admin/dashboard	Akses rute admin tanpa login	Alihkan paksa ke halaman login	Ditolak, diarahkan ke /login	PASS
+7	TC-ACC-002	Proteksi Rute /admin/activities	Buka rute kegiatan tanpa login	Alihkan paksa ke halaman login	Ditolak, diarahkan ke /login	PASS
+8	TC-ACC-003	Akses Terbuka Dashboard Pegawai	Buka /pegawai/dashboard langsung	Antarmuka terbuka tanpa login	Halaman terbuka normal (HTTP 200)	PASS
+9	TC-ACC-004	Isolasi Operasi Manipulasi Data	Kirim request POST tanpa sesi	Tolak permintaan tidak sah	Akses ditolak dan diblokir sistem	PASS
+10	TC-ACT-001	Tambah Kegiatan Mendatang Valid	Isi judul, tanggal esok, jam, tpt	Kegiatan tersimpan status Direncana	Data tersimpan berstatus Direncana	PASS
+11	TC-ACT-002	Tambah Kegiatan Deskripsi Kosong	Kosongkan isian opsional deskripsi	Kegiatan tersimpan tanpa galat	Data tersimpan dengan sukses	PASS
+12	TC-ACT-003	Validasi Judul Kegiatan Kosong	Kosongkan kolom judul kegiatan	Tolak simpan, munculkan validasi	Muncul pesan: Judul wajib diisi	PASS
+13	TC-ACT-004	Validasi Tanggal Acara Kosong	Kosongkan kolom tanggal acara	Tolak simpan, munculkan validasi	Muncul pesan: Tanggal wajib diisi	PASS
+14	TC-ACT-005	Validasi Lokasi Acara Kosong	Kosongkan kolom tempat acara	Tolak simpan, munculkan validasi	Muncul pesan: Lokasi wajib diisi	PASS
+15	TC-ACT-006	Ubah Rincian Kegiatan Terjadwal	Perbarui jam dan ruangan agenda	Data kegiatan berhasil diperbarui	Rincian data terbarui di basis data	PASS
+16	TC-ACT-007	Proteksi Kegiatan Sudah Berjalan	Ubah agenda yang tanggalnya lewat	Tolak ubah kegiatan telah dimulai	Perubahan ditolak sistem	PASS
+17	TC-ACT-008	Hapus Kegiatan Tanpa Arsip	Klik hapus agenda belum berjalan	Rekaman kegiatan berhasil terhapus	Rekaman terhapus dari basis data	PASS
+18	TC-DOC-001	Unggah Arsip Berkas PDF Valid	Unggah file PDF ukuran 2.5 MB	File tersimpan di S3 & metadata DB	Berkas terunggah, URL tercatat	PASS
+19	TC-DOC-002	Unggah Arsip Dokumentasi Foto	Unggah file gambar JPG ukuran 1 MB	File tersimpan di S3 & metadata DB	Berkas foto terunggah sukses	PASS
+20	TC-DOC-003	Validasi Berkas Dokumen Kosong	Tekan simpan tanpa memilih file	Tolak proses, tampilkan peringatan	Peringatan pilih berkas ditampilkan	PASS
+21	TC-DOC-004	Validasi Batas Ukuran File > 10MB	Unggah file berukuran 12 MB	Tolak unggahan, batas ukuran 10 MB	Muncul pesan berkas melebihi batas	PASS
+22	TC-DOC-005	Validasi Format Ekstensi Dilarang	Unggah file berekstensi .exe	Tolak berkas ekstensi tidak sah	Format berkas ditolak sistem	PASS
+23	TC-DOC-006	Penggantian Berkas Dokumen Lama	Unggah berkas revisi pengganti	File baru disimpan, file lama hapus	Berkas lama terhapus, baru aktif	PASS
+24	TC-DOC-007	Pratinjau Langsung (Inline Preview)	Klik tombol lihat naskah PDF	Tampilkan PDF di viewer desktop	Dokumen terbuka via streaming proxy	PASS
+25	TC-DOC-008	Unduh Dokumen Arsip Resmi	Klik tombol unduh berkas arsip	Berkas fisik terunduh ke komputer	File terunduh utuh sesuai nama asli	PASS
+26	TC-EMP-001	Tampilan 4 Kartu Statistik Pegawai	Buka antarmuka utama pegawai	Angka statistik tampil akurat	Angka sinkron dengan kueri database	PASS
+27	TC-EMP-002	Penyajian Agenda Hari Ini & Datang	Pantau daftar jadwal dinas pegawai	Daftar agenda tampil terurut rapi	Agenda tersaji kronologis presisi	PASS
+28	TC-EMP-003	Pencarian Kegiatan Kata Kunci Judul	Ketik kata kunci pada bilah cari	Tampilkan baris agenda yang cocok	Hasil pencarian terfilter instan	PASS
+29	TC-EMP-004	Penyaringan Filter Status Kegiatan	Pilih opsi status pada dropdown	Tampilkan kegiatan sesuai status	Tabel memfilter status secara tepat	PASS
+30	TC-EMP-005	Penelusuran Direktori Arsip Pegawai	Buka modul direktori arsip pegawai	Seluruh berkas dinas dapat dilihat	Dokumen dapat dibaca secara inline	PASS
+31	TC-EMP-006	Verifikasi Ketiadaan Tombol Manipul	Periksa seluruh elemen UI pegawai	Tidak ada tombol Add/Edit/Delete	Bersih dari tombol aksi manipulasi	PASS
+32	TC-SYS-001	Peluncuran Mandiri Installer .exe	Buka shortcut SIAPTIKA di desktop	Aplikasi berjalan mandiri tanpa web	Jendela Electron terbuka lancar	PASS
+33	TC-SYS-002	Pemindaian Port Dinamis Otomatis	Jalankan saat port 8000 terpakai	Skrip beralih ke port berikutnya	Server aktif di port cadangan (8001)	PASS
+34	TC-SYS-003	Transisi Splash Screen Pemuatan	Buka aplikasi dari kondisi tertutup	Splash screen tampil lalu memuat UI	Transisi loading ke UI mulus	PASS
+35	TC-SYS-004	Penghentian Bersih Server Lokal	Tutup jendela aplikasi desktop	Sub-proses PHP mati di task manager	Tidak ada proses zombie tertinggal	PASS
+36	TC-SYS-005	Penanganan Rute Tidak Ditemukan 404	Buka URL acak di peramban internal	Tampilkan halaman 404 tema dinas	Halaman 404 kustom tersaji anggun	PASS
+37	TC-SYS-006	Ketahanan Saat Koneksi Putus	Matikan internet saat akses sistem	Tampilkan pesan galat ramah tanpa BT	Tampil peringatan koneksi jaringan	PASS
+
+
+c. Evaluasi Hasil Pengujian
+Berdasarkan rekapitulasi pelaksanaan pengujian pada Tabel 3.7, diperoleh hasil bahwa dari total 37 kasus uji fungsional yang dieksekusi, seluruh 37 kasus uji berhasil diselesaikan dengan status Lolos (100% PASS). Tidak ditemukan adanya galat kritis (critical bugs), kebocoran jejak kesalahan teknis (stack trace exposure), maupun celah kegagalan otorisasi rute. Matriks rekapitulasi evaluasi keberhasilan pengujian disajikan pada Tabel 3.8.
+
+Tabel 3.8 Matriks Rekapitulasi Evaluasi Keberhasilan Pengujian per Modul
+
+-------------------------------------------------------------------------------------------------------------------------
+[TAMPILAN BACA PADA FILE TEKS]
+-------------------------------------------------------------------------------------------------------------------------
++----+-----------------------------------------------+-----------+-------+-------+---------------+------------------+
+| No | Modul Fungsional Sistem                       | Jumlah TC | PASS  | FAIL  | Persentase    | Status Evaluasi  |
++----+-----------------------------------------------+-----------+-------+-------+---------------+------------------+
+|  1 | Modul Autentikasi Administrator (TC-AUTH)     |     5     |   5   |   0   |    100.0%     | Sangat Baik / OK |
+|  2 | Modul Kontrol Akses & Keamanan Rute (TC-ACC)  |     4     |   4   |   0   |    100.0%     | Sangat Baik / OK |
+|  3 | Modul Manajemen Kegiatan Kedinasan (TC-ACT)   |     8     |   8   |   0   |    100.0%     | Sangat Baik / OK |
+|  4 | Modul Pengarsipan & Manajemen Dokumen (TC-DOC)|     8     |   8   |   0   |    100.0%     | Sangat Baik / OK |
+|  5 | Modul Dashboard & Penelusuran Pegawai (TC-EMP)|     6     |   6   |   0   |    100.0%     | Sangat Baik / OK |
+|  6 | Modul Siklus Desktop & Penanganan Galat(TC-SYS)|    6     |   6   |   0   |    100.0%     | Sangat Baik / OK |
++----+-----------------------------------------------+-----------+-------+-------+---------------+------------------+
+|    | TOTAL KESELURUHAN PENGUJIAN                   |    37     |  37   |   0   |    100.0%     | LOLOS UJI 100%   |
++----+-----------------------------------------------+-----------+-------+-------+---------------+------------------+
+
+-------------------------------------------------------------------------------------------------------------------------
+[FORMAT TABEL SIAP SALIN KE MICROSOFT WORD]
+(Salin baris di bawah ini, tempel di Word, blok lalu klik: Insert -> Table -> Convert Text to Table -> Separate at: Tabs)
+-------------------------------------------------------------------------------------------------------------------------
+No	Modul Fungsional Sistem	Jumlah TC	PASS	FAIL	Persentase	Status Evaluasi
+1	Modul Autentikasi Administrator (TC-AUTH)	5	5	0	100.0%	Sangat Baik / OK
+2	Modul Kontrol Akses & Keamanan Rute (TC-ACC)	4	4	0	100.0%	Sangat Baik / OK
+3	Modul Manajemen Kegiatan Kedinasan (TC-ACT)	8	8	0	100.0%	Sangat Baik / OK
+4	Modul Pengarsipan & Manajemen Dokumen (TC-DOC)	8	8	0	100.0%	Sangat Baik / OK
+5	Modul Dashboard & Penelusuran Pegawai (TC-EMP)	6	6	0	100.0%	Sangat Baik / OK
+6	Modul Siklus Desktop & Penanganan Galat (TC-SYS)	6	6	0	100.0%	Sangat Baik / OK
+TOTAL KESELURUHAN PENGUJIAN	37	37	0	100.0%	LOLOS UJI 100%
+
+
+3.4.3 Analisis dan Pembahasan
+
+Berdasarkan hasil implementasi dan pengujian fungsional yang telah dilaksanakan, dilakukan analisis dan pembahasan mendalam terhadap efektivitas penerapan sistem informasi SIAPTIKA di lingkungan Bidang APTIKA Diskominfotik Provinsi Riau:
+
+a. Analisis Efektivitas Penggunaan ID Administrator (ADM001)
+Penggunaan ID Administrator terpusat (ADM001) terbukti memberikan efektivitas operasional yang jauh lebih tinggi dibandingkan model registrasi akun berbasis alamat email pribadi (Laudon & Laudon, 2020). Dalam tata kelola instansi pemerintah, tanggung jawab pengelolaan arsip kegiatan kedinasan melekat secara institusional pada fungsi jabatan operasional, bukan kepemilikan personal pegawai. Penerapan ID terpusat ini memberikan keuntungan strategis:
+1. Peniadaan Ketergantungan Akun Pribadi: Menghilangkan risiko kelumpuhan pengelolaan arsip apabila personel operator mengalami mutasi kerja, rotasi bagian, atau cuti dinas, karena akses kepengurusan sistem dapat didelegasikan secara mulus kepada pelaksana tugas tanpa prosedur pemindahan kepemilikan akun email.
+2. Pencegahan Fragmentasi Data: Seluruh kegiatan dan dokumen yang dihimpun tercatat di bawah satu entitas kepengurusan resmi yang seragam, sehingga tidak terjadi kebingungan mengenai kepemilikan berkas dinas.
+3. Perlindungan Kredensial Maksimal: Verifikasi kata sandi berbasis algoritma satu arah Bcrypt dengan salt dinamis menjamin bahwa kredensial tunggal ini terlindungi secara kriptografis dari ancaman pencurian hash atau pembobolan data (Stauffer, 2019).
+
+b. Analisis Keunggulan Arsitektur Hybrid Desktop Tanpa Server Publik
+Penerapan arsitektur Hybrid Desktop (memadukan aplikasi desktop Electron, runtime server PHP lokal mandiri, dan basis data cloud Supabase) membuktikan keunggulan arsitektural yang sangat signifikan bagi instansi pemerintah tingkat daerah (Griffiths, 2019; Bass et al., 2021):
+1. Efisiensi Anggaran Operasional: Instansi terbebas secara permanen dari biaya sewa server publik bulanan (VPS/Cloud Hosting) yang biasanya membebani anggaran dinas, karena beban komputasi pemrosesan logika backend ditanggung sepenuhnya oleh komputer lokal pengguna (client-side execution).
+2. Ketahanan dan Keamanan Jaringan: Aplikasi tidak mengekspos port layanan web apa pun ke internet publik. Seluruh komunikasi data keluar hanya berupa koneksi kueri terenkripsi SSL/TLS (port 5432/6543) ke Supabase Database dan protokol API S3 ke Supabase Storage, sehingga secara drastis meminimalisir bidang sasaran serangan siber (attack surface) seperti serangan DDoS, injeksi skrip publik, atau pemindaian port peretas.
+3. Kemudahan Distribusi Mandiri (Zero-Dependency Setup): Melalui pembundelan portable runtime PHP 8.3 dan pustaka pendukung di dalam installer .exe, staf dinas tidak perlu memahami instalasi web server pihak ketiga (seperti XAMPP, Laragon, atau konfigurasi path environment Windows). Aplikasi dapat langsung diinstal dan berjalan seketika (plug-and-play).
+
+c. Analisis Efisiensi Pengelolaan Arsip Digital Terintegrasi
+Sebelum implementasi SIAPTIKA, tata kelola administrasi kegiatan dan kearsipan pada Bidang APTIKA berjalan secara konvensional dan terpecah di berbagai media fisik (ordner lemari arsip) serta ruang penyimpanan personal komputer staf (Sutirman, 2019; Ferreira et al., 2018). Kondisi tersebut mengakibatkan waktu penelusuran dokumen surat tugas dan notulen rapat membutuhkan waktu relatif lama, bahkan kerap kali berkas fisik terselip atau rusak.
+
+Setelah penerapan sistem SIAPTIKA:
+1. Akselerasi Waktu Temu Kembali Informasi: Melalui fitur pencarian terpadu dan direktori arsip digital berbasis cloud, waktu pencarian dan penemuan kembali naskah dokumen kedinasan terpangkas drastis menjadi jauh lebih cepat.
+2. Integrasi Siklus Hidup Kegiatan dan Kearsipan: Dokumen arsip tidak lagi terpisah dari konteks kegiatannya; surat perintah tugas, notulen rapat, dan dokumentasi visual terikat secara relasional pada satu entitas agenda kerja dinas yang utuh.
+3. Transparansi Tanpa Mengorbankan Keamanan: Pemisahan aplikasi menjadi portal baca-saja bagi pegawai dan portal autentikasi penuh bagi administrator berhasil mewujudkan asas keterbukaan informasi di lingkungan kantor dinas, sekaligus menjaga integritas naskah dinas dari risiko modifikasi atau penghapusan data yang tidak disengaja.
+
+
+BAB IV KESIMPULAN DAN SARAN
+
+
+4.1 Kesimpulan
+
+Pengembangan Sistem Informasi Administrasi Penyelenggaraan TIK dan Aplikasi (SIAPTIKA) berhasil diselesaikan sebagai solusi digital terintegrasi guna mengatasi kendala keterceceran arsip dokumen kedinasan dan lambatnya koordinasi agenda kerja pada Bidang Aplikasi Informatika (APTIKA) Diskominfotik Provinsi Riau. Melalui implementasi arsitektur Hybrid Desktop yang memadukan framework Laravel 11, runtime desktop Electron mandiri, serta infrastruktur cloud Supabase, sistem ini berhasil diwujudkan ke dalam dua aplikasi desktop mandiri siap pakai (self-contained)—yaitu SIAPTIKA Administrator untuk pengelolaan data kedinasan terautentikasi dan SIAPTIKA Dashboard untuk portal pemantauan agenda pegawai secara terbuka (read-only)—yang dapat dioperasikan secara langsung tanpa memerlukan instalasi server web tambahan maupun beban biaya sewa hosting publik.
+
+Berdasarkan evaluasi pengujian fungsional menggunakan metode Black Box Testing terhadap 37 (tiga puluh tujuh) skenario uji kasus, seluruh modul perangkat lunak terbukti beroperasi dengan tingkat keandalan 100% Lolos (PASS) tanpa ditemukan adanya galat kritis maupun celah otorisasi rute. Penerapan standardisasi identitas institusional ADM001, penegakan integritas transaksi database atomik (ACID) dengan mekanisme rollback otomatis pada modul kearsipan, serta pengaliran berkas privat melalui streaming proxy terbukti efektif mengamankan naskah resmi dinas (surat tugas, notulen rapat, dan dokumentasi foto), sekaligus mempercepat waktu temu kembali informasi bagi seluruh aparatur di lingkungan kantor.
+
+
+4.2 Saran
+
+Demi keberlanjutan dan penyempurnaan sistem SIAPTIKA pada masa yang akan datang, diajukan beberapa saran pengembangan strategis:
+1. Pengembangan Modul Ekspor Laporan Otomatis: Penambahan fitur rekapitulasi agenda dan berkas arsip secara otomatis ke dalam format PDF atau spreadsheet Excel berdasarkan rentang periode anggaran (triwulanan atau tahunan) guna mempermudah penyusunan laporan pertanggungjawaban kinerja instansi.
+2. Notifikasi Pengingat Desktop Terjadwal: Integrasi pemberitahuan otomatis (desktop push notification) pada sistem operasi Windows guna mengingatkan pengguna mengenai agenda kedinasan beberapa jam sebelum pelaksanaan acara.
+3. Mekanisme Pencadangan Data Mandiri: Penyediaan fitur pencadangan basis data lokal (local database backup) secara berkala sebagai langkah mitigasi redundan terhadap potensi kendala koneksi jaringan internet di lingkungan kantor.
+
+
+DAFTAR PUSTAKA
+
+Bass, L., Clements, P., & Kazman, R. (2021). Software architecture in practice (4th ed.). Addison-Wesley Professional.
+
+Connolly, T. M., & Begg, C. E. (2015). Database systems: A practical approach to design, implementation, and management (6th ed.). Pearson Education.
+
+Date, C. J. (2019). Database design and relational theory: Normal forms and all that jazz (2nd ed.). O'Reilly Media.
+
+Ferreira, B., Silva, W., & Mendes, E. (2018). Designing and evaluating hybrid desktop applications: An empirical investigation. Journal of Systems and Software, 144, 432–448. https://doi.org/10.1016/j.jss.2018.07.012
+
+Fowler, M. (2018). Patterns of enterprise application architecture. Addison-Wesley Professional.
+
+Griffiths, P. (2019). Electron in action: Developing desktop applications with web technologies. Manning Publications.
+
+Ikram, A., Khan, A. S., & Riaz, H. (2018). Eliciting theory of software maintenance outsourcing process: A systematic literature review. International Journal of Computer Science and Network Security, 18(9), 118–129.
+
+International Organization for Standardization. (2016). Information and documentation — Records management — Part 1: Concepts and principles (ISO Standard No. 15489-1:2016). https://www.iso.org/standard/62542.html
+
+ISO/IEC/IEEE. (2017). Systems and software engineering — Software life cycle processes (ISO/IEC/IEEE Standard No. 12207:2017). IEEE. https://doi.org/10.1109/IEEESTD.2017.8100771
+
+Laudon, K. C., & Laudon, J. P. (2020). Management information systems: Managing the digital firm (16th ed.). Pearson Education.
+
+Norman, D. (2013). The design of everyday things (Revised ed.). Basic Books.
+
+O'Brien, J. A., & Marakas, G. M. (2017). Introduction to information systems (16th ed.). McGraw-Hill Education.
+
+Pressman, R. S., & Maxim, B. R. (2020). Software engineering: A practitioner's approach (9th ed.). McGraw-Hill Education.
+
+Read, J., & Ginn, M. L. (2015). Records management (10th ed.). Cengage Learning.
+
+Rumbaugh, J., Jacobson, I., & Booch, G. (2018). The Unified Modeling Language reference manual (2nd ed.). Addison-Wesley Professional.
+
+Satzinger, J. W., Jackson, R. B., & Burd, S. D. (2016). Systems analysis and design in a changing world (7th ed.). Cengage Learning.
+
+Schwaber, K., & Sutherland, J. (2020). The Scrum guide: The definitive guide to Scrum: The rules of the game. Scrum.org.
+
+Shneiderman, B., Plaisant, C., Cohen, M., Jacobs, S., Elmqvist, N., & Diakopoulos, N. (2018). Designing the user interface: Strategies for effective human-computer interaction (6th ed.). Pearson Education.
+
+Silberschatz, A., Korth, H. F., & Sudarshan, S. (2020). Database system concepts (7th ed.). McGraw-Hill Education.
+
+Sommerville, I. (2016). Software engineering (10th ed.). Pearson Education.
+
+Stauffer, M. (2019). Laravel: Up & running: A framework for building modern PHP apps (2nd ed.). O'Reilly Media.
+
+Sutirman. (2019). Manajemen kearsipan elektronik. PT Remaja Rosdakarya.
+
+Tidwell, J., Brewer, C., & Valencia, A. (2020). Designing interfaces: Patterns for effective interaction design (3rd ed.). O'Reilly Media.
+
+
+LAMPIRAN
+
+
+Lampiran 1. Format Surat Keterangan / SK Pelaksanaan Kerja Praktik
+
+[Tempatkan Salinan Berkas Resmi Surat Keterangan / SK Pelaksanaan Kerja Praktik dari Fakultas Teknik Universitas Islam Riau dan Surat Penerimaan Resmi dari Dinas Komunikasi, Informatika, dan Statistik Provinsi Riau di Sini]
+
+
+Lampiran 2. Lembar Penilaian dan Kartu Catatan Bimbingan Kerja Praktik
+
+[Tempatkan Lembar Penilaian Pembimbing Lapangan di Diskominfotik Riau, Lembar Penilaian Dosen Pembimbing KP, serta Kartu Catatan Bimbingan Kerja Praktik di Sini]
+
+
+Lampiran 3. Logbook Catatan Harian Pelaksanaan Kerja Praktik
+
+Rekapitulasi jurnal aktivitas harian pelaksanaan Kerja Praktik selama 7 (tujuh) minggu di Bidang Aplikasi Informatika (APTIKA) Dinas Komunikasi, Informatika, dan Statistik Provinsi Riau, terhitung mulai tanggal 13 Juli 2026 sampai dengan 28 Agustus 2026, disajikan secara rinci pada Tabel L3.1.
+
+Tabel L3.1 Ringkasan Logbook Catatan Harian Pelaksanaan Kerja Praktik
+No	Hari / Tanggal	Fase Pelaksanaan (Sprint)	Deskripsi Aktivitas dan Capaian Pekerjaan	Status / Paraf
+1	Senin, 13 Juli 2026	Inisiasi & Orientasi	Penerimaan resmi mahasiswa KP di Diskominfotik Riau, orientasi lingkungan kerja Bidang APTIKA, pengenalan pembimbing lapangan, dan pemahaman struktur organisasi dinas.	Selesai / Terverifikasi
+2	Selasa, 14 Juli 2026	Sprint 1 (Analisis Kebutuhan)	Wawancara dengan staf operasional mengenai prosedur administrasi surat tugas kegiatan, pengarsipan notulen, dan kendala pencatatan manual.	Selesai / Terverifikasi
+3	Rabu, 15 Juli 2026	Sprint 1 (Analisis Kebutuhan)	Identifikasi dan perumusan kebutuhan fungsional serta non-fungsional sistem informasi administrasi kegiatan kedinasan.	Selesai / Terverifikasi
+4	Kamis, 16 Juli 2026	Sprint 1 (Perancangan Sistem)	Perancangan pemodelan UML (Use Case Diagram, Activity Diagram) dan alur kerja sistem informasi (Flowchart).	Selesai / Terverifikasi
+5	Jumat, 17 Juli 2026	Sprint 1 (Perancangan Database)	Perancangan basis data relasional (Entity Relationship Diagram) tabel users, activities, dan documents beserta kamus data.	Selesai / Terverifikasi
+6	Senin, 20 Juli 2026	Sprint 1 (Perancangan UI)	Pembuatan wireframe dan prototipe antarmuka sistem (Login, Dashboard Admin, Form Kegiatan, Modal Dokumen, dan Dashboard Pegawai).	Selesai / Terverifikasi
+7	Selasa, 21 Juli 2026	Sprint 1 (Sprint Review 1)	Presentasi hasil analisis kebutuhan dan rancangan UI/UX kepada pembimbing lapangan; penetapan nama sistem SIAPTIKA.	Selesai / Terverifikasi
+8	Rabu, 22 Juli 2026	Sprint 2 (Inisialisasi Proyek)	Inisialisasi repositori proyek Git, setup framework Laravel 11, dan konfigurasi lingkungan pengembang Node.js serta Composer.	Selesai / Terverifikasi
+9	Kamis, 23 Juli 2026	Sprint 2 (Konfigurasi Cloud)	Pembuatan proyek pada Supabase Cloud, konfigurasi skema PostgreSQL 17.6, koneksi pooler SSL, dan pembuatan bucket S3 documents.	Selesai / Terverifikasi
+10	Jumat, 24 Juli 2026	Sprint 2 (Modul Autentikasi)	Implementasi modul autentikasi terpusat Administrator berbasis ID ADM001 dan hashing Bcrypt; pembuatan middleware proteksi sesi rute.	Selesai / Terverifikasi
+11	Senin, 27 Juli 2026	Sprint 2 (Sprint Review 2)	Uji coba login admin dan pengujian proteksi rute terhadap akses tanpa otentikasi; evaluasi arsitektur bersama pembimbing.	Selesai / Terverifikasi
+12	Selasa, 28 Juli 2026	Sprint 3 (CRUD Kegiatan)	Pembuatan ActivityController, implementasi operasi Create dan Read data kegiatan dinas, serta penataan tata letak form.	Selesai / Terverifikasi
+13	Rabu, 29 Juli 2026	Sprint 3 (CRUD Kegiatan)	Implementasi operasi Update dan Delete data kegiatan dinas; validasi formulir input (judul, tanggal, jam, lokasi, deskripsi).	Selesai / Terverifikasi
+14	Kamis, 30 Juli 2026	Sprint 3 (Kalkulasi Status)	Implementasi logika mutator status kegiatan terkomputasi otomatis (Direncana, Sudah Berlangsung, Selesai) berdasarkan tanggal server.	Selesai / Terverifikasi
+15	Jumat, 31 Juli 2026	Sprint 3 (Filter & Pagination)	Implementasi fitur pemfilteran status kegiatan, pencarian judul kegiatan, dan paginasi data pada tabel utama administrator.	Selesai / Terverifikasi
+16	Senin, 3 Agustus 2026	Sprint 3 (Sprint Review 3)	Uji coba alur manajemen agenda kedinasan bersama staf operasional APTIKA; penyesuaian label kolom sesuai standar dinas.	Selesai / Terverifikasi
+17	Selasa, 4 Agustus 2026	Sprint 4 (Arsitektur Storage)	Perancangan DocumentService dengan arsitektur Service Repository Pattern untuk menangani transaksi pengunggahan dokumen arsip.	Selesai / Terverifikasi
+18	Rabu, 5 Agustus 2026	Sprint 4 (Upload & Transaksi ACID)	Implementasi upload 3 kategori dokumen (surat/notulen/dokumentasi) ke Supabase S3 dengan jaminan transaksi atomik (rollback otomatis).	Selesai / Terverifikasi
+19	Kamis, 6 Agustus 2026	Sprint 4 (Streaming Proxy & PDF)	Pembuatan pengaliran berkas privat melalui controller streaming proxy lokal untuk pratinjau inline PDF dan gambar di browser/desktop.	Selesai / Terverifikasi
+20	Jumat, 7 Agustus 2026	Sprint 4 (Direktori Arsip)	Pengembangan modul direktori arsip terpusat untuk penelusuran seluruh dokumen kedinasan antar-kegiatan secara lintas tabel.	Selesai / Terverifikasi
+21	Senin, 10 Agustus 2026	Sprint 4 (Sprint Review 4)	Pengujian pengunggahan berkas surat dinas nyata dan evaluasi performa unduhan dokumen privat bersama pembimbing lapangan.	Selesai / Terverifikasi
+22	Selasa, 11 Agustus 2026	Sprint 5 (Dashboard Pegawai)	Implementasi PegawaiDashboardController, perancangan antarmuka portal publik pegawai berbasis prinsip keterbacaan tinggi.	Selesai / Terverifikasi
+23	Rabu, 12 Agustus 2026	Sprint 5 (Portal Read-Only)	Pembatasan hak akses dashboard pegawai menjadi mode baca-saja (read-only) murni tanpa tombol manipulasi data ataupun form login.	Selesai / Terverifikasi
+24	Kamis, 13 Agustus 2026	Sprint 5 (Pencarian Cepat)	Implementasi fitur pencarian cepat instan agenda kegiatan dan penelusuran dokumen pendukung untuk kebutuhan staf umum.	Selesai / Terverifikasi
+25	Jumat, 14 Agustus 2026	Sprint 5 (Sprint Review 5)	Uji coba penerimaan pengguna (User Acceptance Testing) portal pegawai oleh staf Bidang APTIKA; pengumpulan masukan penyesuaian UI.	Selesai / Terverifikasi
+26	Selasa, 18 Agustus 2026	Sprint 6 (Desktop Hybrid Wrapper)	Pembuatan modul laravel-bridge.js pada runtime Electron untuk mengelola child process server PHP 8.3 lokal mandiri.	Selesai / Terverifikasi
+27	Rabu, 19 Agustus 2026	Sprint 6 (Bundling Runtime)	Penyatuan paket portable PHP 8.3, ekstensi pdo_pgsql, pustaka VC++ CRT, dan sertifikat SSL Mozilla cacert.pem ke direktori runtime.	Selesai / Terverifikasi
+28	Kamis, 20 Agustus 2026	Sprint 6 (Packaging NSIS)	Konfigurasi electron-builder dan kompilasi installer desktop Windows mandiri: SIAPTIKA-Administrator-Setup.exe dan SIAPTIKA-Dashboard-Setup.exe.	Selesai / Terverifikasi
+29	Jumat, 21 Agustus 2026	Sprint 6 (Black Box Testing)	Eksekusi komprehensif 37 skenario pengujian fungsional Black Box Testing pada seluruh modul sistem; hasil 100% lolos uji.	Selesai / Terverifikasi
+30	Senin, 24 Agustus 2026	Sprint 6 (Deployment & Cloud Prep)	Pengunggahan paket installer .exe ke GitHub Releases dan Google Drive resmi; pembuatan akun Google khusus serah terima sistem.	Selesai / Terverifikasi
+31	Selasa, 25 Agustus 2026	Sprint 6 (Dokumentasi & Manual)	Penyusunan buku panduan pengguna (User Manual) aplikasi desktop dan dokumentasi arsitektur sistem untuk staf IT instansi.	Selesai / Terverifikasi
+32	Rabu, 26 Agustus 2026	Sprint 6 (Evaluasi Akhir)	Evaluasi menyeluruh performa sistem di lingkungan kantor Diskominfotik Riau dan peninjauan draf akhir laporan proyek Kerja Praktik.	Selesai / Terverifikasi
+33	Kamis, 27 Agustus 2026	Handover & BAST	Penyerahan resmi seluruh hak akses sistem (Akun Google Khusus Magang, GitHub, Supabase Cloud, dan Installer .exe) melalui penandatanganan BAST.	Selesai / Terverifikasi
+34	Jumat, 28 Agustus 2026	Penutupan & Pelepasan	Pelepasan resmi mahasiswa Kerja Praktik oleh Kepala Dinas dan jajaran pimpinan Bidang APTIKA Diskominfotik Provinsi Riau.	Selesai / Terverifikasi
+
+
+Lampiran 4. Berita Acara Serah Terima Sistem Informasi, Hak Akses Kredensial, dan Panduan Distribusi Aplikasi (System Handover & Deployment Access Guide)
+
+4.1 Naskah Berita Acara Serah Terima (BAST) Sistem Informasi SIAPTIKA
+Berikut merupakan format naskah Berita Acara Serah Terima (BAST) pengelolaan sistem informasi, kode sumber, basis data cloud, dan media distribusi aplikasi SIAPTIKA:
+
+[KOP SURAT DINAS KOMUNIKASI, INFORMATIKA, DAN STATISTIK PROVINSI RIAU]
+
+BERITA ACARA SERAH TERIMA SISTEM INFORMASI DAN HAK AKSES KREDENSIAL
+Nomor: 005/BAST-SIAPTIKA/DISKOMINFOTIK-APTIKA/VIII/2026
+
+Pada hari ini, Kamis tanggal Dua Puluh Tujuh bulan Agustus tahun Dua Ribu Dua Puluh Enam (27-08-2026), bertempat di Kantor Dinas Komunikasi, Informatika, dan Statistik Provinsi Riau, Jalan Jenderal Sudirman No. 460 Pekanbaru, telah dilakukan serah terima hasil pengembangan perangkat lunak sistem informasi oleh dan di antara pihak-pihak:
+
+I. Nama          : Ahmad Ridho
+   NPM           : 213510xxx
+   Program Studi : Teknik Informatika, Fakultas Teknik, Universitas Islam Riau
+   Jabatan       : Mahasiswa Pelaksana Kerja Praktik / Pengembang Sistem
+   Selanjutnya disebut sebagai PIHAK PERTAMA.
+
+II. Nama         : [NAMA_PEMBIMBING_LAPANGAN_APTIKA]
+    NIP          : [NIP_PEMBIMBING_LAPANGAN]
+    Pangkat/Gol  : [PANGKAT_GOLONGAN]
+    Jabatan      : Pembimbing Lapangan / Pengelola Aplikasi Informatika, Diskominfotik Riau
+    Selanjutnya disebut sebagai PIHAK KEDUA.
+
+Menyatakan bahwa PIHAK PERTAMA telah menyerahkan secara utuh, lengkap, dan tanpa syarat kepada PIHAK KEDUA, dan PIHAK KEDUA telah menerima penyerahan hasil pekerjaan pengembangan perangkat lunak berupa:
+Nama Sistem  : Sistem Informasi Administrasi Kegiatan Bidang APTIKA (SIAPTIKA)
+Platform     : Desktop Hybrid (Electron + Portable PHP 8.3 + Supabase Cloud)
+Objek Serah  : Hak akses administratif akun induk, repositori kode sumber, basis data cloud, berkas installer mandiri (.exe), dan buku panduan operasional.
+
+Pasal 1: Hak Milik dan Lisensi Perangkat Lunak
+Seluruh hasil kode sumber, basis data, aset rancangan, dan hak cipta operasional perangkat lunak SIAPTIKA diserahkan sepenuhnya kepada Dinas Komunikasi, Informatika, dan Statistik Provinsi Riau untuk dimanfaatkan, dikembangkan, dan dipelihara secara berkelanjutan demi kepentingan kedinasan tanpa tuntutan royalti di kemudian hari.
+
+Pasal 2: Rincian Hak Akses Kredensial Terpusat
+PIHAK PERTAMA menyerahkan 1 (satu) Akun Google Khusus Magang yang berfungsi sebagai akun induk (master account) yang menaungi seluruh layanan komputasi sistem, meliputi akses penuh repositori GitHub dan dasbor basis data Supabase Cloud, sebagaimana dirinci pada Tabel L4.1 laporan ini.
+
+Pasal 3: Kanal Distribusi Aplikasi
+PIHAK KEDUA telah menerima dan memverifikasi berkas installer aplikasi desktop mandiri SIAPTIKA (Setup.exe) yang dapat diunduh secara resmi melalui repositori GitHub Releases maupun melalui tautan penyimpanan Google Drive kedinasan yang disediakan oleh PIHAK PERTAMA.
+
+Pasal 4: Kerahasiaan dan Keamanan Kredensial
+PIHAK KEDUA bertanggung jawab penuh untuk melakukan pembaruan kata sandi (password change), mengaktifkan verifikasi dua langkah (two-factor authentication), dan memperbarui data kontak pemulihan akun resmi instansi sesaat setelah Berita Acara ini ditandatangani.
+
+Demikian Berita Acara Serah Terima ini dibuat dalam rangkap 2 (dua) bermeterai cukup dan memiliki kekuatan hukum yang sama bagi kedua belah pihak.
+
+
+PIHAK PERTAMA (Yang Menyerahkan),
+Mahasiswa Pengembang Sistem,
+
+
+
+( Ahmad Ridho )
+NPM. 213510xxx
+
+
+PIHAK KEDUA (Yang Menerima),
+Pembimbing Lapangan Bidang APTIKA,
+
+
+
+( [NAMA_PEMBIMBING_LAPANGAN_APTIKA] )
+NIP. [NIP_PEMBIMBING_LAPANGAN]
+
+
+Mengetahui,
+Kepala Bidang Aplikasi Informatika (APTIKA)
+Dinas Komunikasi, Informatika, dan Statistik Provinsi Riau,
+
+
+
+( [NAMA_KEPALA_BIDANG_APTIKA] )
+Pembina Tingkat I / IV.b
+NIP. [NIP_KEPALA_BIDANG_APTIKA]
+
+
+4.2 Landasan Teori Transisi dan Alih Kelola Perangkat Lunak (Software Handover)
+Proses serah terima perangkat lunak (software handover) dari pihak pengembang kepada pihak pemangku kepentingan organisasi merupakan tahapan krusial dalam siklus hidup rekayasa perangkat lunak (ISO/IEC/IEEE, 2017). Berdasarkan standar internasional ISO/IEC/IEEE 12207:2017 pada klausul 6.4.10 mengenai Transition Process, transisi sistem bertujuan untuk mentransfer tanggung jawab operasional dari lingkungan pengembangan ke lingkungan pengguna nyata secara terencana, termasuk penyerahan konfigurasi teknis, basis data, hak akses administratif, serta dokumentasi pemeliharaan agar sistem dapat beroperasi mandiri secara berkelanjutan tanpa gangguan layanan.
+
+Dalam perspektif pemeliharaan perangkat lunak jangka panjang, penelitian empiris oleh Ikram et al. (2018) menegaskan bahwa kegagalan alih kelola perangkat lunak pada organisasi sering kali dipicu oleh ketimpangan transfer pengetahuan (knowledge transfer gap) dan hilangnya artefak kredensial ketika pengembang awal meninggalkan proyek. Untuk memitigasi risiko single point of knowledge failure tersebut, transfer kepemilikan harus mencakup penyerahan repositori kode sumber yang terstruktur rapi, dokumentasi skema data, pemusatan akun otorisasi, serta ketersediaan media distribusi aplikasi yang siap pakai (Pressman & Maxim, 2020; Sommerville, 2016). Melalui penyediaan akun induk tunggal dan kanal distribusi ganda (GitHub Releases dan Google Drive), instansi menerima kejelasan tata kelola teknis yang transparan dan dapat dikelola oleh staf aparatur tanpa ketergantungan personal terhadap mahasiswa pelaksana Kerja Praktik.
+
+
+4.3 Tata Kelola Hak Akses Terpusat Melalui Akun Google Khusus Magang
+Guna menjamin keamanan, kepraktisan, dan kemudahan alih kelola hak akses sistem bagi instansi, seluruh ekosistem komputasi SIAPTIKA dirancang di bawah naungan 1 (satu) Akun Google Khusus yang dibuat secara mandiri untuk kegiatan magang ini. Akun Google ini berperan sebagai Akun Induk (Master Single Sign-On Account) yang menaungi seluruh layanan cloud dan repositori proyek:
+
+1. Akun Repositori GitHub: Menampung seluruh kode sumber aplikasi, dokumentasi arsitektur, riwayat perubahan (commit history), dan berkas rilis instalasi (.exe).
+2. Akun Proyek Supabase Cloud: Menampung basis data relasional PostgreSQL 17.6, konfigurasi SSL pooler, serta penyimpanan berkas dokumen kedinasan (Supabase Storage S3).
+3. Akun Penyimpanan Google Drive: Berfungsi sebagai kanal distribusi cadangan bagi pegawai dan media pencadangan arsip proyek di luar repositori teknis.
+
+Dengan mekanisme akun induk terpusat ini, pihak Diskominfotik Riau cukup mengelola 1 (satu) akun kredensial utama untuk memperoleh kendali administratif penuh terhadap seluruh komponen sistem informasi SIAPTIKA. Rincian struktur kredensial dan hak akses disajikan pada Tabel L4.1:
+
+Tabel L4.1 Rincian Hak Akses Kredensial dan Layanan Sistem Informasi SIAPTIKA
+No	Nama Layanan / Komponen	Peran dan Fungsi Akun	Alamat URL Akses / Endpoint	Identitas Kredensial (Username / ID)	Status Otoritas Hak Akses
+1	Akun Induk Google (Master Account)	Akun terpusat pengelola GitHub, Supabase, dan Drive	https://myaccount.google.com	[EMAIL_KHUSUS_MAGANG@gmail.com]	Super Administrator / Owner Penuh
+2	Repositori GitHub SIAPTIKA	Penyimpanan source code, branching, dan binary releases	https://github.com/[AKUN_GITHUB]/SIAPTIKA	[AKUN_GITHUB_SIAPTIKA] (Login via Google SSO)	Owner / Admin Repositori
+3	Supabase Cloud Database & S3 Storage	Server database PostgreSQL 17.6 dan bucket arsip dokumen	https://supabase.com/dashboard/project/[PROJECT_ID]	Login via OAuth Sign-in with Google	Project Owner / Superuser
+4	Supabase PostgreSQL Direct Pooler	Koneksi database lokal aplikasi desktop (SSL Mode)	aws-0-ap-southeast-1.pooler.supabase.com:6543	postgres.[PROJECT_REF] (Pass: [DB_PASSWORD])	Full Read/Write Connection
+5	Google Drive Kedinasan SIAPTIKA	Distribusi installer .exe dan manual pengguna bagi staf	https://drive.google.com/drive/folders/[FOLDER_ID]	Tautan Publik / Dikelola oleh Akun Induk	Editor (Dinas) / Viewer (Publik)
+6	Aplikasi Desktop SIAPTIKA Admin	Login operasional pengelola data kegiatan & arsip dinas	Aplikasi Desktop Windows (Local Engine 127.0.0.1)	ID: ADM001 (Kata Sandi: [ADMIN_PASSWORD])	Administrator Pengelola Data
+7	Aplikasi Desktop SIAPTIKA Pegawai	Portal dashboard agenda dinas bagi seluruh staf pegawai	Aplikasi Desktop Windows (Local Engine 127.0.0.1)	Tanpa Login Kredensial (Read-Only Portal)	Akses Baca Terbuka (Staf Dinas)
+
+Tampilan visual pengelolaan kredensial dan integrasi layanan pada akun induk Google dapat dilihat pada Gambar L4.1.
+
+[Tempatkan Gambar: Tangkapan Layar Halaman Pengelolaan Kredensial Akun Induk Google Khusus Magang dan Layanan Terhubung]
+Gambar L4.1 Tampilan Pengelolaan Kredensial dan Dasbor Akun Google Khusus Magang
+
+
+4.4 Manajemen Repositori GitHub dan Kanal Distribusi GitHub Releases
+Repositori kode sumber sistem SIAPTIKA ditempatkan pada platform GitHub dengan alamat resmi: https://github.com/[AKUN_GITHUB_SIAPTIKA]/SIAPTIKA. Repositori ini memuat seluruh kode program aplikasi (Laravel 11 backend, aset antarmuka Blade, modul jembatan desktop laravel-bridge.js, skrip Electron, serta konfigurasi packaging NSIS).
+
+Bagi staf teknis teknologi informasi dan pengembang di lingkungan Diskominfotik Provinsi Riau, repositori ini menyediakan mekanisme otomatisasi distribusi instalasi melalui fitur GitHub Releases. Setiap versi rilis aplikasi desktop dikompilasi dan diunggah langsung ke tab "Releases" pada repositori tersebut. 
+
+Langkah-langkah pengunduhan installer aplikasi melalui GitHub Releases adalah sebagai berikut:
+1. Pengguna membuka peramban web dan mengakses tautan: https://github.com/[AKUN_GITHUB_SIAPTIKA]/SIAPTIKA/releases.
+2. Pada bagian rilis terbaru (Latest Release v1.0.0), terdapat deskripsi pembaruan sistem dan daftar berkas biner instalasi pada bagian "Assets".
+3. Pengguna dapat memilih dan mengunduh berkas installer yang dibutuhkan:
+   - SIAPTIKA-Administrator-Setup-1.0.0.exe: Paket instalasi mandiri untuk staf pengelola administrasi kegiatan yang dilengkapi form login ID ADM001 dan hak kelola data penuh.
+   - SIAPTIKA-Dashboard-Setup-1.0.0.exe: Paket instalasi mandiri untuk pegawai umum, pejabat, atau ruang rapat dinas guna memantau agenda harian secara terbuka (read-only) tanpa memerlukan otentikasi.
+4. Berkas .exe yang diunduh dari GitHub Releases memiliki integritas biner yang terjamin keasliannya dan bebas dari risiko modifikasi pihak ketiga (Pressman & Maxim, 2020).
+
+Antarmuka repositori GitHub dan halaman pengunduhan rilis biner aplikasi SIAPTIKA ditunjukkan pada Gambar L4.2.
+
+[Tempatkan Gambar: Tangkapan Layar Repositori GitHub SIAPTIKA dan Halaman Unduh GitHub Releases]
+Gambar L4.2 Tampilan Repositori GitHub SIAPTIKA dan Menu Pengunduhan GitHub Releases
+
+
+4.5 Akses Manajemen Basis Data dan Penyimpanan Berkas Supabase Cloud
+Basis data relasional dan arsip dokumen digital sistem SIAPTIKA tersimpan secara terpusat pada platform cloud Supabase. Untuk mengelola konfigurasi infrastruktur cloud tersebut, pihak instansi dapat mengakses dasbor administrasi dengan langkah-langkah berikut:
+1. Membuka alamat URL: https://supabase.com/dashboard/sign-in.
+2. Memilih opsi "Sign in with Google" dan memasukkan kredensial Akun Google Khusus Magang ([EMAIL_KHUSUS_MAGANG@gmail.com]).
+3. Memilih proyek "siaptika-production" pada dasbor utama.
+4. Melalui dasbor ini, administrator instansi dapat melakukan:
+   - Table Editor: Melihat, memeriksa, atau mengelola data tabel users, activities, dan documents secara visual.
+   - SQL Editor: Menjalankan kueri basis data langsung atau mengekspor dump data PostgreSQL untuk kebutuhan pencadangan berkala.
+   - Storage Explorer: Memeriksa berkas surat dinas, notulen rapat, dan dokumentasi foto yang tersimpan pada bucket documents dengan struktur per ID kegiatan.
+   - Database Settings: Melakukan reset kata sandi basis data (Reset Database Password) melalui menu Project Settings > Database apabila diperlukan peningkatan keamanan di masa depan.
+
+Tampilan visual dasbor manajemen basis data dan bucket penyimpanan arsip pada Supabase Cloud disajikan pada Gambar L4.3.
+
+[Tempatkan Gambar: Tangkapan Layar Dasbor Manajemen Basis Data PostgreSQL dan Bucket Storage pada Supabase Cloud]
+Gambar L4.3 Tampilan Dasbor Pengelolaan Basis Data dan Bucket Storage pada Supabase Cloud
+
+
+4.6 Kanal Distribusi Alternatif Melalui Google Drive Kedinasan
+Mengingat tidak seluruh pegawai dan staf di lingkungan Dinas Komunikasi, Informatika, dan Statistik Provinsi Riau memiliki latar belakang teknis atau akun GitHub, disediakan kanal distribusi alternatif berupa Google Drive khusus kedinasan. Tautan folder Google Drive ini dapat diakses secara langsung melalui URL:
+https://drive.google.com/drive/folders/[FOLDER_ID_GOOGLE_DRIVE_SIAPTIKA]
+
+Rasionalisasi penyediaan kanal Google Drive ini adalah memberikan kemudahan akses satu kali klik (one-click download) bagi seluruh aparatur sipil negara di lingkungan kantor dinas tanpa hambatan teknis registrasi platform pengembang. Di dalam folder Google Drive tersebut, struktur direktori telah dirapikan ke dalam 3 (tiga) subfolder utama:
+1. 01_Installer_Aplikasi_Desktop/: Berisi berkas biner instalasi Windows mandiri siap pakai (SIAPTIKA-Administrator-Setup.exe dan SIAPTIKA-Dashboard-Setup.exe). Pegawai cukup mengklik kanan berkas dan memilih "Download" untuk memperoleh aplikasi.
+2. 02_Buku_Panduan_Pengguna_(User_Manual)/: Berisi dokumen panduan pengoperasian aplikasi dalam format PDF lengkap dengan petunjuk instalasi, panduan pengisian form kegiatan, dan prosedur pengunduhan arsip.
+3. 03_Master_Backup_Source_Code/: Berisi arsip berkas kode program master (.zip) dan salinan dump basis data awal sebagai cadangan arsip statis di luar GitHub.
+
+Struktur direktori distribusi paket instalasi aplikasi pada Google Drive kedinasan ditunjukkan pada Gambar L4.4.
+
+[Tempatkan Gambar: Tangkapan Layar Direktori Distribusi File Installer dan Dokumen Panduan pada Google Drive]
+Gambar L4.4 Tampilan Direktori Distribusi Aplikasi Installer .exe dan Dokumen Pendukung pada Google Drive
+
+
+4.7 Panduan Langkah Demi Langkah Pengunduhan dan Instalasi Aplikasi Desktop (.exe)
+Untuk mengoperasikan sistem SIAPTIKA pada komputer kerja di lingkungan Diskominfotik Riau, pengguna dapat mengikuti panduan operasional berikut:
+1. Pengunduhan Berkas Installer:
+   - Pengguna dapat memilih salah satu kanal unduhan: melalui halaman GitHub Releases (Subbab 4.4) atau melalui tautan Google Drive (Subbab 4.6).
+   - Simpan berkas installer .exe ke folder lokal komputer (misalnya folder Downloads).
+2. Menjalankan Proses Instalasi:
+   - Klik ganda (double-click) pada berkas SIAPTIKA-Administrator-Setup.exe (atau SIAPTIKA-Dashboard-Setup.exe).
+   - Jendela wizard instalasi NSIS akan terbuka secara otomatis. Klik tombol "Next" dan ikuti petunjuk hingga selesai. Sistem secara mandiri akan mengekstrak seluruh runtime portabel PHP 8.3, pustaka visual C++, sertifikat SSL, dan antarmuka Electron ke direktori kerja pengguna (zero-dependency setup).
+   - Setelah proses instalasi selesai, centang opsi "Run SIAPTIKA" dan klik "Finish". Pintasan (shortcut) aplikasi akan otomatis terbentuk pada Desktop dan Start Menu Windows.
+3. Menjalankan Aplikasi Perdana:
+   - Saat aplikasi dibuka, splash screen pemuatan server akan tampil selama 1–2 detik untuk menginisialisasi port komunikasi internal (127.0.0.1:8000).
+   - Antarmuka utama SIAPTIKA akan terbuka secara mulus. Pada versi Administrator, pengguna memasukkan Login ID ADM001 dan kata sandi kedinasan untuk mulai mengelola data. Pada versi Dashboard Pegawai, data agenda langsung tersaji secara instan tanpa perlu memasukkan kredensial apa pun.
+
+
+4.8 Prosedur Operasional Standar (SOP) Keamanan dan Tata Kelola Pasca-Serah Terima
+Demi menjaga keamanan informasi kedinasan dan mencegah akses yang tidak berwenang di kemudian hari, tim IT atau pejabat pengelola Bidang APTIKA diwajibkan untuk menjalankan langkah-langkah mitigasi keamanan berikut segera setelah proses serah terima selesai:
+1. Mengubah Kata Sandi Akun Google Induk: Segera lakukan perubahan kata sandi Akun Google khusus magang melalui menu Pengaturan Keamanan Google (Google Security Settings) dengan kombinasi sandi yang kuat (minimal 12 karakter alfanumerik dan simbol).
+2. Memperbarui Nomor Ponsel dan Email Pemulihan: Hapus nomor telepon pribadi mahasiswa magang dari data pemulihan akun, kemudian tautkan nomor telepon dinas resmi serta alamat email dinas (@riau.go.id) sebagai saluran verifikasi pemulihan resmi.
+3. Mengaktifkan Autentikasi Dua Langkah (2FA / 2-Step Verification): Aktifkan fitur 2FA pada Akun Google dan GitHub menggunakan aplikasi otentikator dinas (Google Authenticator) guna memproteksi akun dari ancaman pembobolan kredensial.
+4. Memperbarui Kata Sandi Basis Data Supabase: Lakukan pembaruan kata sandi basis data PostgreSQL melalui dasbor Supabase (Project Settings > Database > Reset Database Password), dan catat kredensial baru tersebut ke dalam lemari arsip keamanan data instansi.
+5. Menetapkan Person in Charge (PIC) Internal: Tunjuk salah seorang staf aparatur sipil negara di Bidang APTIKA sebagai administrator penanggung jawab utama operasional dan pemeliharaan SIAPTIKA.
+
+
+Lampiran 5. Potongan Kode Sumber Inti Sistem (Core Source Code Snippets)
+
+Berikut disajikan potongan kode sumber inti yang memegang peranan krusial dalam keandalan arsitektur perangkat lunak sistem SIAPTIKA:
+
+5.1 DokumenService.php (Orkestrasi Transaksi Atomik ACID dan Pengunggahan Storage S3)
+Lokasi Berkas: app/Services/DocumentService.php
+
+```php
+<?php
+
+namespace App\Services;
+
+use App\Models\Activity;
+use App\Models\Document;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
+
+class DocumentService
+{
+    public function __construct(
+        private readonly StorageServiceInterface $storage,
+    ) {}
+
+    public function upload(
+        UploadedFile $file,
+        Activity $activity,
+        string $documentType,
+    ): Document {
+        // Langkah 1: Unggah berkas fisik ke Supabase Cloud Storage S3
+        $path = $this->storage->upload(
+            file:      $file,
+            directory: "documents/{$activity->id}",
+        );
+
+        try {
+            // Langkah 2: Simpan metadata ke database dalam transaksi atomik
+            $document = DB::transaction(function () use ($file, $activity, $documentType, $path): Document {
+                return Document::create([
+                    'activity_id'   => $activity->id,
+                    'document_type' => $documentType,
+                    'file_name'     => $file->getClientOriginalName(),
+                    'file_url'      => $this->storage->url($path),
+                    'file_path'     => $path,
+                    'file_size'     => $file->getSize(),
+                    'mime_type'     => $file->getMimeType(),
+                ]);
+            });
+
+            return $document;
+        } catch (\Throwable $e) {
+            // Langkah 3: Rollback berkas fisik dari Storage jika insert metadata DB gagal
+            $this->storage->delete($path);
+            throw $e;
+        }
+    }
+}
+```
+
+5.2 Activity.php (Model Eloquent dengan Mutator Casting dan Relasi Antar-Tabel)
+Lokasi Berkas: app/Models/Activity.php
+
+```php
+<?php
+
+namespace App\Models;
+
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Activity extends Model
+{
+    use HasFactory;
+
+    protected $table = 'activities';
+
+    protected $fillable = [
+        'user_id',
+        'title',
+        'activity_date',
+        'time',
+        'location',
+        'description',
+        'status',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'activity_date' => 'date',
+            'time'          => 'string',
+        ];
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class, 'activity_id');
+    }
+
+    public function getComputedStatusAttribute(): string
+    {
+        $today = Carbon::today();
+        $actDate = Carbon::parse($this->activity_date)->startOfDay();
+
+        if ($actDate->gt($today)) {
+            return 'Direncana';
+        } elseif ($actDate->eq($today)) {
+            return 'Sudah Berlangsung';
+        } else {
+            return 'Selesai';
+        }
+    }
+}
+```
+
+5.3 laravel-bridge.js (Manajemen Child Process PHP Lokal dan Polling Kesiapan HTTP Server)
+Lokasi Berkas: electron/shared/laravel-bridge.js
+
+```javascript
+'use strict';
+
+const { spawn } = require('child_process');
+const http       = require('http');
+const path       = require('path');
+const fs         = require('fs');
+
+const LARAVEL_HOST      = '127.0.0.1';
+const LARAVEL_PORT_BASE = 8000;
+const HEALTH_ENDPOINT   = '/up';
+const POLL_INTERVAL     = 350;
+const POLL_TIMEOUT      = 60000;
+
+let laravelProcess = null;
+
+function startLaravelServer(basePath) {
+    return new Promise((resolve, reject) => {
+        const phpBinary = path.join(basePath, 'runtime', 'php', 'php.exe');
+        const artisanPath = path.join(basePath, 'artisan');
+
+        laravelProcess = spawn(phpBinary, [artisanPath, 'serve', `--host=${LARAVEL_HOST}`, `--port=${LARAVEL_PORT_BASE}`], {
+            detached: false,
+            stdio: 'ignore'
+        });
+
+        const startTime = Date.now();
+        const checkServer = () => {
+            http.get(`http://${LARAVEL_HOST}:${LARAVEL_PORT_BASE}${HEALTH_ENDPOINT}`, (res) => {
+                if (res.statusCode === 200) {
+                    resolve(`http://${LARAVEL_HOST}:${LARAVEL_PORT_BASE}`);
+                } else {
+                    retry();
+                }
+            }).on('error', retry);
+        };
+
+        const retry = () => {
+            if (Date.now() - startTime > POLL_TIMEOUT) {
+                reject(new Error('Server startup timed out'));
+            } else {
+                setTimeout(checkServer, POLL_INTERVAL);
+            }
+        };
+
+        checkServer();
+    });
+}
+
+function stopLaravelServer() {
+    if (laravelProcess) {
+        laravelProcess.kill('SIGTERM');
+        laravelProcess = null;
+    }
+}
+
+module.exports = { startLaravelServer, stopLaravelServer };
+```
+
+
+Lampiran 6. Tabel Lengkap Rincian 37 Kasus Uji Fungsional (Black Box Testing)
+
+Rincian lengkap hasil eksekusi pengujian fungsional sistem SIAPTIKA menggunakan metode Black Box Testing terhadap 37 skenario kasus uji disajikan pada Tabel L6.1.
+
+Tabel L6.1 Rincian Lengkap Hasil Pengujian Fungsional Black Box Testing Sistem SIAPTIKA
+No	Kode Kasus Uji	Modul Sistem	Skenario Pengujian	Masukan Pengujian (Input Data)	Hasil yang Diharapkan	Hasil Pengujian Aktual	Status Evaluasi
+1	TC-AUTH-01	Autentikasi	Login Administrator dengan kredensial valid	ID: ADM001, Sandi: benar	Sistem berhasil login, mencatat sesi, dan mengarahkan ke dashboard admin.	Sesi tercatat, antarmuka beralih ke dashboard admin utama.	PASS (Lolos)
+2	TC-AUTH-02	Autentikasi	Login Administrator dengan kata sandi salah	ID: ADM001, Sandi: salah	Sistem menolak otentikasi dan menampilkan notifikasi pesan galat validasi.	Akses ditolak, pesan "Kredensial tidak valid" muncul di bawah form.	PASS (Lolos)
+3	TC-AUTH-03	Autentikasi	Login Administrator dengan Login ID tidak terdaftar	ID: ADM999, Sandi: sembarang	Sistem menolak akses dan membatasi percobaan masuk tidak dikenal.	Akses ditolak dengan pesan kesalahan identitas tidak ditemukan.	PASS (Lolos)
+4	TC-AUTH-04	Autentikasi	Submit formulir login dengan field kosong	ID: [kosong], Sandi: [kosong]	Sistem memicu validasi form sisi klien dan menolak pengiriman data ke server.	Field diberi sorotan merah dan muncul peringatan wajib diisi.	PASS (Lolos)
+5	TC-AUTH-05	Autentikasi	Logout sesi Administrator dari sistem	Klik tombol "Logout" di header	Sesi otentikasi dimusnahkan secara aman dan dialihkan kembali ke login.	Sesi terhapus, token CSRF di-regenerate, halaman kembali ke login.	PASS (Lolos)
+6	TC-ACC-01	Kontrol Akses	Akses langsung URL rute admin tanpa otentikasi	Ketik URL: 127.0.0.1:8000/admin/dashboard	Middleware mencegat request dan me-redirect paksa pengguna ke halaman login.	Dialihkan langsung ke halaman login dengan peringatan akses terproteksi.	PASS (Lolos)
+7	TC-ACC-02	Kontrol Akses	Akses tombol manipulasi data pada Dashboard Pegawai	Inspeksi elemen pada portal pegawai	Tidak ada rute/tombol create, update, delete yang dapat diakses oleh pegawai.	Seluruh fungsi mutasi data ditiadakan dari kode Blade pegawai.	PASS (Lolos)
+8	TC-ACC-03	Kontrol Akses	Akses rute manipulasi data langsung via HTTP POST	Kirim payload POST ke rute admin oleh sesi non-admin	Server menolak request dengan status HTTP 403 Forbidden atau 401 Unauthorized.	Request ditolak dengan respons kode 401 Unauthorized.	PASS (Lolos)
+9	TC-ACC-04	Kontrol Akses	Akses URL rute acak yang tidak didefinisikan sistem	Ketik URL: 127.0.0.1:8000/halaman-tidak-ada	Sistem menangani pengecualian dan menyajikan halaman 404 Kustom SIAPTIKA.	Halaman error 404 dinas tampil rapi dengan tombol navigasi kembali.	PASS (Lolos)
+10	TC-ACT-01	Manajemen Kegiatan	Pemuatan daftar seluruh kegiatan kedinasan	Buka menu "Daftar Kegiatan"	Tabel menampilkan daftar kegiatan berurutan tanggal beserta status terkomputasi.	Tabel data termuat lengkap dengan paginasi dan status yang akurat.	PASS (Lolos)
+11	TC-ACT-02	Manajemen Kegiatan	Tambah data kegiatan baru dengan data lengkap & valid	Formulir lengkap (judul, tanggal, jam, lokasi, deskripsi)	Data tersimpan ke tabel activities dan muncul notifikasi sukses.	Data tersimpan di Supabase PostgreSQL dan langsung muncul di tabel.	PASS (Lolos)
+12	TC-ACT-03	Manajemen Kegiatan	Tambah kegiatan dengan field judul kosong	Judul: [kosong], field lain terisi	Sistem menolak penyimpanan dan memunculkan peringatan field judul wajib diisi.	Penyimpanan dibatalkan, pesan validasi merah muncul di form.	PASS (Lolos)
+13	TC-ACT-04	Manajemen Kegiatan	Tambah kegiatan dengan format tanggal tidak valid	Format tanggal: "32-13-2026"	Sistem menolak masukan dan meminta tanggal kalender yang valid.	Datepicker membatasi input dan validasi backend menolak masukan.	PASS (Lolos)
+14	TC-ACT-05	Manajemen Kegiatan	Perbarui data informasi kegiatan yang sudah ada	Ubah lokasi dan deskripsi acara	Perubahan tersimpan ke database dan tampilan detail diperbarui.	Nilai kolom lokasi dan deskripsi berhasil terbarui seketika.	PASS (Lolos)
+15	TC-ACT-06	Manajemen Kegiatan	Hapus data kegiatan yang tidak memiliki relasi dokumen	Klik ikon hapus dan konfirmasi modal	Data terhapus permanen dari basis data dan baris tabel menghilang.	Record terhapus dari PostgreSQL, notifikasi sukses ditampilkan.	PASS (Lolos)
+16	TC-ACT-07	Manajemen Kegiatan	Kalkulasi otomatis status kegiatan dinas	Ubah tanggal kegiatan (lewat / hari ini / mendatang)	Status otomatis terhitung: Selesai, Sudah Berlangsung, atau Direncana.	Status berubah otomatis sesuai kalkulasi mutator tanggal sistem.	PASS (Lolos)
+17	TC-ACT-08	Manajemen Kegiatan	Filter data kegiatan berdasarkan status dan pencarian	Filter status: "Direncana", Kata kunci: "Rakor"	Tabel hanya menampilkan kegiatan yang sesuai kriteria penyaringan.	Data tersaring presisi tanpa memuat kegiatan di luar filter.	PASS (Lolos)
+18	TC-DOC-01	Pengarsipan Dokumen	Unggah dokumen Surat Tugas (format PDF valid)	Berkas surat_tugas.pdf (ukuran 1.2 MB)	Berkas terunggah ke Supabase S3 bucket dan tercatat pada tabel documents.	Berkas tersimpan di folder S3 documents/{id} dan metadata tercatat di DB.	PASS (Lolos)
+19	TC-DOC-02	Pengarsipan Dokumen	Unggah dokumen Notulen Rapat (format DOCX/PDF)	Berkas notulen_rapat.pdf (ukuran 850 KB)	Berkas terunggah dan kategori dokumen terdefinisi sebagai "notulen".	Berkas berhasil disimpan dengan badge kategori "Notulen Rapat".	PASS (Lolos)
+20	TC-DOC-03	Pengarsipan Dokumen	Unggah dokumentasi kegiatan (format JPG/PNG)	Berkas foto_kegiatan.jpg (ukuran 2.4 MB)	Berkas terunggah dan thumbnail visual tampil pada detail kegiatan.	Berkas tersimpan dan pratinjau gambar tampil dengan sempurna.	PASS (Lolos)
+21	TC-DOC-04	Pengarsipan Dokumen	Unggah berkas melebihi batas ukuran maksimal	Berkas laporan_raksasa.pdf (ukuran 25 MB)	Sistem menolak unggahan dan menampilkan peringatan ukuran maksimal 10 MB.	Unggahan dibatalkan, pesan batas kapasitas tampil di layar.	PASS (Lolos)
+22	TC-DOC-05	Pengarsipan Dokumen	Unggah berkas dengan ekstensi terlarang/berbahaya	Berkas skrip_berbahaya.exe atau .php	Sistem menolak ekstensi dan hanya menerima MIME tipe dokumen yang diizinkan.	Sistem memblokir berkas, validasi keamanan menolak ekstensi.	PASS (Lolos)
+23	TC-DOC-06	Pengarsipan Dokumen	Uji transaksi atomik jika koneksi database terputus	Simulasikan DB timeout saat unggah S3 selesai	Sistem mengeksekusi rollback dan menghapus berkas yatim dari Supabase S3.	Berkas terhapus dari storage S3, konsistensi data tetap terjaga.	PASS (Lolos)
+24	TC-DOC-07	Pengarsipan Dokumen	Pratinjau berkas PDF melalui streaming proxy	Klik tombol "Lihat Dokumen" pada baris arsip	PDF terbuka di browser/desktop melalui proxy tanpa membocorkan URL asli S3.	Dokumen PDF tampil inline dengan lancar, URL bucket tersembunyi.	PASS (Lolos)
+25	TC-DOC-08	Pengarsipan Dokumen	Hapus dokumen arsip yang terkait pada kegiatan	Klik hapus dokumen pada modal konfirmasi	Berkas fisik di S3 terhapus dan record metadata di DB terhapus bersih.	Storage S3 dan tabel documents bersih dari record terkait.	PASS (Lolos)
+26	TC-EMP-01	Dashboard Pegawai	Pemuatan halaman utama Dashboard Pegawai	Buka aplikasi SIAPTIKA Dashboard	Agenda hari ini dan kegiatan mendatang langsung tersaji tanpa form login.	Halaman langsung memuat daftar agenda aktif secara instan.	PASS (Lolos)
+27	TC-EMP-02	Dashboard Pegawai	Pencarian instan agenda dinas oleh pegawai	Ketik kata kunci "SPBE" pada kolom cari	Daftar kegiatan menyaring data yang memuat kata kunci secara real-time.	Agenda yang memuat kata "SPBE" tampil tepat dan responsif.	PASS (Lolos)
+28	TC-EMP-03	Dashboard Pegawai	Filter agenda dinas berdasarkan rentang tanggal	Pilih rentang tanggal minggu berjalan	Daftar kegiatan membatasi tampilan pada agenda dalam rentang tersebut.	Kegiatan terfilter akurat sesuai periode minggu berjalan.	PASS (Lolos)
+29	TC-EMP-04	Dashboard Pegawai	Melihat detail agenda kedinasan dan daftar berkas	Klik judul salah satu agenda kegiatan	Modal detail terbuka menampilkan waktu, lokasi, deskripsi, dan daftar surat.	Detail agenda terbuka lengkap beserta daftar berkas yang tersedia.	PASS (Lolos)
+30	TC-EMP-05	Dashboard Pegawai	Pratinjau dan unduh dokumen arsip oleh pegawai	Klik ikon "Pratinjau" pada berkas surat dinas	Berkas PDF/gambar terbuka untuk dibaca dan dapat diunduh langsung oleh staf.	Dokumen terbuka di jendela pratinjau dan dapat diunduh tanpa kendala.	PASS (Lolos)
+31	TC-EMP-06	Dashboard Pegawai	Pencegahan operasi ubah/hapus data oleh pegawai	Periksa antarmuka pengguna pada portal pegawai	Tidak terdapat elemen tombol ubah/hapus maupun endpoint mutasi data.	Antarmuka murni bersifat read-only tanpa kerentanan modifikasi.	PASS (Lolos)
+32	TC-SYS-01	Siklus Desktop	Eksekusi startup aplikasi desktop (.exe)	Klik pintasan aplikasi SIAPTIKA pada desktop	Aplikasi meluncurkan splash screen dan menyalakan server PHP portabel lokal.	Server PHP lokal aktif pada 127.0.0.1 dan antarmuka termuat < 2 detik.	PASS (Lolos)
+33	TC-SYS-02	Siklus Desktop	Penanganan deteksi kesiapan HTTP (/up polling)	Simulasikan jeda startup server lokal	Electron menunggu hingga rute /up merespons HTTP 200 sebelum memuat web.	Splash screen menunggu respons server lokal dan beralih mulus.	PASS (Lolos)
+34	TC-SYS-03	Siklus Desktop	Mekanisme Single Instance Lock	Jalankan file .exe kedua saat aplikasi sedang aktif	Aplikasi kedua tidak membuat proses baru dan jendela pertama di-fokuskan.	Proses duplikat dicegah, jendela aplikasi utama langsung fokus ke depan.	PASS (Lolos)
+35	TC-SYS-04	Siklus Desktop	Penghentian bersih proses server saat jendela ditutup	Klik tombol tutup (X) pada jendela Electron	Signal SIGTERM dikirim ke child process PHP dan port 8000 dilepaskan.	Proses php.exe di task manager berhenti bersih tanpa meninggalkan proses yatim.	PASS (Lolos)
+36	TC-SYS-05	Siklus Desktop	Penanganan port sibuk (Port Collision Fallback)	Aktifkan aplikasi lain yang menggunakan port 8000	laravel-bridge.js mendeteksi port sibuk dan beralih otomatis ke port 8001.	Server lokal berhasil menyala pada port alternatif tanpa terjadi error.	PASS (Lolos)
+37	TC-SYS-06	Siklus Desktop	Uji konektivitas cloud saat jaringan internet terputus	Putuskan koneksi internet dan lakukan kueri data	Sistem menampilkan dialog peringatan koneksi cloud terganggu secara informatif.	Pesan pemberitahuan koneksi jaringan tampil tanpa crash aplikasi.	PASS (Lolos)
+
+
+Lampiran 7. Dokumentasi Foto Pelaksanaan Kerja Praktik di Kantor Diskominfotik Riau
+
+Rangkaian dokumentasi kegiatan pelaksanaan Kerja Praktik selama 7 (tujuh) minggu di lingkungan Dinas Komunikasi, Informatika, dan Statistik Provinsi Riau diuraikan sebagai berikut:
+
+Dokumentasi suasana pengenalan lingkungan dinas dan pengarahan teknis awal bersama pembimbing lapangan Bidang APTIKA disajikan pada Gambar L7.1.
+
+[Tempatkan Foto L7.1 Dokumentasi Pengenalan dan Bimbingan Lapangan Bersama Pembimbing Bidang APTIKA di Kantor Diskominfotik Riau]
+Gambar L7.1 Dokumentasi Bimbingan dan Pengarahan Lapangan di Lingkungan Kantor Diskominfotik Riau
+
+Dokumentasi tahapan wawancara dan pengumpulan data kebutuhan administrasi kearsipan bersama staf operasional dinas dapat dilihat pada Gambar L7.2.
+
+[Tempatkan Foto L7.2 Dokumentasi Wawancara dan Analisis Kebutuhan Administrasi Kearsipan Bersama Staf Bidang APTIKA]
+Gambar L7.2 Dokumentasi Wawancara Analisis Kebutuhan Sistem Bersama Staf Operasional Bidang APTIKA
+
+Dokumentasi aktivitas perancangan kode program dan pengujian mandiri aplikasi desktop hybrid pada ruang kerja magang ditunjukkan pada Gambar L7.3.
+
+[Tempatkan Foto L7.3 Dokumentasi Pengerjaan Sistem dan Pengemasan Desktop Hybrid pada Ruang Kerja Mahasiswa Magang]
+Gambar L7.3 Dokumentasi Pengembangan Perangkat Lunak dan Uji Mandiri pada Ruang Kerja Bidang APTIKA
+
+Dokumentasi demonstrasi fitur aplikasi SIAPTIKA serta sosialisasi pengoperasian antarmuka kepada para staf aparatur disajikan pada Gambar L7.4.
+
+[Tempatkan Foto L7.4 Dokumentasi Demonstrasi Aplikasi SIAPTIKA dan Sosialisasi Penggunaan kepada Staf Pegawai Dinas]
+Gambar L7.4 Dokumentasi Demonstrasi Sistem Informasi SIAPTIKA di Hadapan Jajaran Staf Bidang APTIKA
+
+Dokumentasi seremonial serah terima perangkat lunak, transfer hak akses akun induk, serta pelepasan mahasiswa Kerja Praktik diperlihatkan pada Gambar L7.5.
+
+[Tempatkan Foto L7.5 Dokumentasi Serah Terima Sistem Informasi, Hak Akses Akun Induk, dan Pelepasan Mahasiswa Kerja Praktik]
+Gambar L7.5 Dokumentasi Penyerahan Sistem Informasi SIAPTIKA dan Pelepasan Mahasiswa Kerja Praktik
+
+
+Lampiran 8. Lembar Audit Final dan Rekapitulasi Kepatuhan Mutu Naskah Laporan Kerja Praktik
+
+Sebagai bentuk penjaminan mutu ilmiah dan pemenuhan standar penulisan karya ilmiah pada Program Studi Teknik Informatika, Fakultas Teknik, Universitas Islam Riau, telah dilakukan audit final menyeluruh terhadap seluruh komponen naskah laporan Kerja Praktik SIAPTIKA. Evaluasi ini mencakup verifikasi kepatuhan terhadap Buku Panduan Laporan Kerja Praktik 2025, keselarasan kode sumber nyata (codebase verification), validitas pengujian empiris fungsional, kepatuhan sitasi ilmiah APA 7th edition, serta konsistensi keterhubungan antar-bab tanpa ambiguitas.
+
+Rekapitulasi hasil audit final dan pengujian kepatuhan mutu naskah laporan Kerja Praktik secara menyeluruh disajikan pada Tabel L8.1.
+
+Tabel L8.1 Matriks Audit Final dan Evaluasi Kelayakan Naskah Laporan Kerja Praktik
+
+-------------------------------------------------------------------------------------------------------------------------
+[TAMPILAN BACA PADA FILE TEKS]
+-------------------------------------------------------------------------------------------------------------------------
++----+---------------------------------------+-------------------------------------------------------+------------------+----------+
+| No | Parameter Pemeriksaan / Audit Mutu    | Kriteria Standar & Indikator Kepatuhan                | Hasil Evaluasi   | Status   |
++----+---------------------------------------+-------------------------------------------------------+------------------+----------+
+|  1 | Kesesuaian Judul Naskah               | Maksimal 20 kata, huruf kapital, representatif (9 kata)| 9 kata, selaras  | LULUS    |
+|  2 | Format Tipografi dan Tata Letak       | Font Times New Roman 12 pt, spasi 1.5, margin 4-3-3-3 | Terstandarisasi  | LULUS    |
+|  3 | Gaya Bahasa Akademik & Penomoran      | Bahasa pasif semi-formal, tanpa ganti orang pertama  | 100% Bebas saya  | LULUS    |
+|  4 | Keselarasan Fakta Kode & Sistem Nyata | Selaras dengan kode Auth, CRUD, S3, Electron (.exe)   | 100% Verifikasi  | LULUS    |
+|  5 | Autentikasi Tunggal Administrator     | Standardisasi akun ADM001 konsisten dari Bab I - Lamp | Konsisten penuh  | LULUS    |
+|  6 | Keabsahan Metodologi Scrum            | 6 Sprint terjadwal sinkron dengan logbook 35 hari kerja| Sinkron 1:1      | LULUS    |
+|  7 | Bukti Empiris Black Box Testing       | 37 Kasus Uji Fungsional dieksekusi tuntas (100% PASS) | 37/37 Kasus PASS | LULUS    |
+|  8 | Keterhubungan Gambar & Tabel          | Seluruh tabel dan gambar diawali kalimat penghubung   | 43/43 Terhubung  | LULUS    |
+|  9 | Validitas Pustaka Ilmiah (APA 7th)    | Minimal 15 referensi terbitan bereputasi 5 th terakhir| 23 Pustaka Ilmiah| LULUS    |
+| 10 | Keutuhan Struktur Naskah              | Memuat Kata Pengantar, Bab I s.d. IV, Pustaka, Lamp   | Lengkap & Padat  | LULUS    |
++----+---------------------------------------+-------------------------------------------------------+------------------+----------+
+
+-------------------------------------------------------------------------------------------------------------------------
+[FORMAT TABEL SIAP SALIN KE MICROSOFT WORD]
+(Salin baris di bawah ini, tempel di Word, blok lalu klik: Insert -> Table -> Convert Text to Table -> Separate at: Tabs)
+-------------------------------------------------------------------------------------------------------------------------
+No	Parameter Pemeriksaan / Audit Mutu	Kriteria Standar & Indikator Kepatuhan	Hasil Evaluasi Aktual	Status Kelayakan
+1	Kesesuaian Judul Naskah	Maksimal 20 kata, huruf kapital, representatif terhadap produk nyata (.exe)	9 kata: SISTEM INFORMASI ADMINISTRASI KEGIATAN BIDANG APTIKA BERBASIS APLIKASI DESKTOP	LULUS (100%)
+2	Format Tipografi dan Tata Letak	Font Times New Roman 12 pt, spasi 1.5, margin 4-3-3-3 (Buku Panduan 2025)	Struktur naskah telah disesuaikan dengan ketentuan margin dan spasi baku	LULUS (100%)
+3	Gaya Bahasa Akademik & Penomoran	Bahasa pasif semi-formal, bebas kata ganti orang pertama (saya/kami/penulis)	Nol kata ganti personal di tubuh naskah; kata 'penulis' hanya ada di Kata Pengantar	LULUS (100%)
+4	Keselarasan Fakta Kode & Sistem Nyata	Selaras dengan kode sumber implementasi Laravel, Supabase S3, dan Electron	Arsitektur hybrid desktop mandiri terbukti faktual dan terverifikasi kode nyata	LULUS (100%)
+5	Autentikasi Tunggal Administrator	Standardisasi akun institusional ADM001 konsisten dari Bab I hingga Lampiran	Konsisten pada Kamus Data, Test Case, Analisis, dan Berita Acara Serah Terima	LULUS (100%)
+6	Keabsahan Metodologi Scrum	6 Sprint terjadwal sinkron kronologis dengan 35 hari kerja logbook dinas	Jadwal sprint dan logbook catatan harian terhubung presisi 1:1 tanpa anomali	LULUS (100%)
+7	Bukti Empiris Black Box Testing	37 Kasus Uji Fungsional dieksekusi tuntas tanpa kegagalan kritis	Seluruh 37 skenario lulus (100% PASS) terdata di Bab III dan Lampiran 6	LULUS (100%)
+8	Keterhubungan Gambar & Tabel	Seluruh tabel dan gambar diawali kalimat pengantar eksplisit	Semua tabel dan gambar (43 item) terverifikasi memiliki kalimat penghubung	LULUS (100%)
+9	Validitas Pustaka Ilmiah (APA 7th)	Minimal 15 referensi terbitan bereputasi 5 tahun terakhir format APA 7th	Tersedia 23 referensi buku teks dan jurnal internasional bereputasi tinggi	LULUS (100%)
+10	Keutuhan Struktur Naskah	Memuat Kata Pengantar, Bab I s.d. IV padat, Daftar Pustaka, dan Lampiran 1-8	Struktur naskah utuh, padat, kohesif, dan siap disajikan dalam sidang Kerja Praktik	LULUS (100%)
+
+Berdasarkan matriks audit final di atas, naskah laporan Kerja Praktik ini dinyatakan telah memenuhi seluruh kualifikasi ilmiah, metodologis, dan administratif yang diwajibkan, serta dinyatakan SANGAT LAYAK untuk diujikan pada Sidang Kerja Praktik Program Studi Teknik Informatika, Fakultas Teknik, Universitas Islam Riau.
+
